@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+<meta name="generator" content="HTML Tidy, see www.w3.org">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+
+<title>eWaterCycle Dashboard</title>
+
+<!-- Latest compiled and minified CSS -->
+<link type="text/css" rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css">
+<!-- Optional theme -->
+<link type="text/css" rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+<!--[if lt IE 9]>
+    	<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+		<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+<style type="text/css">
+@import url(Cesium-b30/Build/Cesium/Widgets/widgets.css);
+/*
+body {
+	padding-top: 50px;
+}
+
+.starter-template {
+	padding: 40px 15px;
+	text-align: center;
+}
+
+.fullSize {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	border: none;
+	width: 100%;
+	height: 100%; 
+}
+
+.legendMenuItem {
+	padding: 0px 10px !important;
+}
+
+.logo-custom {
+  max-width: 20%;
+}
+
+.overflow-menu {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+*/
+
+.nav-pills>li>a {
+  border-radius: 4px;
+}
+.nav>li>a {
+	position: relative;
+	display: block;
+	padding: 10px 15px;
+}
+
+.nav-pills>li+li {
+  margin-left: 15px;
+}
+
+a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.navbar-custom {
+  pointer-events: none;
+  background-color: rgba(255, 255, 255, 0);
+}
+
+.navbar-right-custom {
+  padding: 10px 0px;
+  float: right !important;
+}
+
+.navbar-item-right-custom {
+  pointer-events: all;
+  float: right;
+}
+
+.img-responsive-custom {
+  display: block;
+  max-width: 65%;
+  height: auto;
+}
+
+.img-responsive-logo {
+  display: block;
+  max-width: 25%;
+  height: auto;
+}
+
+.cesium-widget-credits {
+	display: block;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	color: #ffffff;
+	font-size: 10px;
+	text-shadow: 0px 0px 2px #000000;
+	padding-right: 5px;
+	max-width: 60%;
+}
+</style>
+</head>
+<body style="overflow:hidden" ng-controller="BodyCtrl">
+	<header class="navbar navbar-custom navbar-fixed-top" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+				</button>
+				<a class="pull-left-custom" href="#"><img class="media-object img-responsive-custom" src="eWaterCycle_3.svg"></a>
+			</div>
+			
+			<div  class="nav nav-pills navbar-right-custom">
+			  <li>
+	        <div ng-controller="ViewModelCtrl" class="navbar-item-right-custom dropdown">
+	          <a data-toggle="dropdown" href="#"> Fly To <b class="caret"></b></a>
+	          <ul class="dropdown-menu" role="menu" style="height:300px; overflow-y:auto">
+	            <li ng-repeat="country in data.locations.countries | orderBy:'country'">
+	              <a ng-click=selectCountry(country.country)>{{country.country}}</a>
+	            </li>
+	          </ul>
+	        </div>
+        </li>
+        <li>	
+					<div ng-controller="ViewModelCtrl" class="navbar-item-right-custom dropdown">
+				    <a data-toggle="dropdown" href="#">{{ viewModel }} <b class="caret"></b></a>
+				    <ul class="dropdown-menu" role="menu">
+				      <li ng-repeat="choice in data.viewModels">
+				        <a ng-click=selectViewModel(choice)>{{choice}}</a>
+				      </li>
+				    </ul>
+				  </div>	
+        </li>
+        <li>  			  
+	        <div ng-controller="BodyCtrl" class="navbar-item-right-custom dropdown">
+	          <a data-toggle="dropdown" href="#">{{ selectedDataset.label }} <b class="caret"></b></a>
+	          <ul class="dropdown-menu" role="menu">
+	            <li ng-repeat="dataset in ncWMSdata.datasets">
+	              <a ng-click=selectDataset(dataset)>{{dataset.label}}</a>
+	            </li>
+	          </ul>
+	        </div>  
+        </li>
+        <li>  
+	        <div ng-controller="BodyCtrl" class="navbar-item-right-custom dropdown">
+	          <a data-toggle="dropdown" href="#"><canvas id='dropdown_canvas' style="width: 150px; height: 10px;"></canvas></a>
+	          <ul class="dropdown-menu" role="menu">
+	            <li ng-repeat="choice in ncWMSdata.paletteGraphics">	              
+	              <a ng-click=selectPalette(choice)>{{choice.html}}</a>
+	            </li>
+	          </ul>
+	        </div>
+        </li>
+      </div>
+			<!-- 
+		    
+		    <li class="dropdown"><a id="dropVariable" role="button" data-toggle="dropdown" href="#">Variable</a>
+          <ul id="menuVariable" class="dropdown-menu" role="menu" aria-labelledby="dropVariable">
+          </ul>
+        </li>
+        <li class="dropdown"><a id="dropPalette" role="button" data-toggle="dropdown" href="#">Pallette</a>
+					<ul id="menuPalette" class="dropdown-menu overflow-menu" role="menu" aria-labelledby="dropPalette"></ul>
+        </li>
+      </ul>
+				
+      -->
+			
+			<!--  
+				<ul class="nav nav-pills navbar-right-custom">
+					<li class="dropdown" is-open="status.isopen"><a id="dropView" role="button" data-toggle="dropdown" href="#">viewModel</a>
+						<ul id="menuView" class="dropdown-menu" role="menu" aria-labelledby="dropView">
+							<li role='presentation'><a role='menuitem' tabindex='-1' href='#' id='morphTo3DButton'>Globe View</a></li>
+							<li role='presentation'><a role='menuitem' tabindex='-1' href='#' id='morphTo2DButton'>Map View</a></li>
+							<li role='presentation'><a role='menuitem' tabindex='-1' href='#' id='morphToColumbusButton'>Columbus View</a></li>
+						</ul></li>
+					<li class="dropdown"><a id="dropVariable" role="button" data-toggle="dropdown" href="#">Variable</a>
+						<ul id="menuVariable" class="dropdown-menu" role="menu" aria-labelledby="dropVariable">
+						</ul></li>
+					<li class="dropdown"><a id="dropPalette" role="button" data-toggle="dropdown" href="#">Pallette</a>
+
+						<ul id="menuPalette" class="dropdown-menu overflow-menu" role="menu" aria-labelledby="dropPalette">
+						</ul></li>
+				</ul>
+				-->
+				<!-- /pills -->
+			<!-- </div> -->
+			<!--/.nav-collapse -->
+		</div>
+		<!--/.container-fluid -->
+	</header>
+	<!--/.navbar -->
+	<header class="navbar navbar-custom navbar-fixed-bottom" role="navigation">
+		<div class="navbar-container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+				</button>
+				<a class="pull-right-custom" href="http://www.esciencecenter.nl"><img class="media-object logo-custom navbar-right-custom img-responsive-logo" src="ESCIENCE_logo.png"></a>
+			</div>
+		</div>
+		<!--/.container-fluid -->
+	</header>
+	<!--/.navbar -->
+
+  <!-- build:js(.) scripts/oldieshim.js -->
+  <!--[if lt IE 9]>
+    <script src="bower_components/es5-shim/es5-shim.js"></script>
+    <script src="bower_components/json3/lib/json3.min.js"></script>
+    <![endif]-->
+  <!-- endbuild -->
+
+  <!-- build:js(.) scripts/vendor.js -->
+  <!-- bower:js -->
+  <script src="../bower_components/jquery/dist/jquery.js"></script>
+  <script src="../bower_components/angular/angular.js"></script>
+  <script src="../bower_components/json3/lib/json3.js"></script>
+  <script src="../bower_components/angular-resource/angular-resource.js"></script>
+  <script src="../bower_components/angular-cookies/angular-cookies.js"></script>
+  <script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
+  <script src="../bower_components/angular-animate/angular-animate.js"></script>
+  <script src="../bower_components/angular-touch/angular-touch.js"></script>
+  <script src="../bower_components/angular-route/angular-route.js"></script>
+  <!-- <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script> -->
+  <script src="../bower_components/ui.bootstrap/dist/ui-bootstrap-0.11.0.js"></script>
+  <!-- endbower -->
+  <!-- endbuild -->
+
+  <!-- build:js({.tmp,app}) scripts/scripts.js -->
+  <script src="scripts/app.js"></script>
+  <script src="scripts/controllers/main.js"></script>
+  <script src="scripts/controllers/about.js"></script>
+  <!-- endbuild -->
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script type="text/javascript" src="../bower_components/jquery/dist/jquery.min.js"></script>
+	<script type="text/javascript" src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../bower_components/ui.bootstrap/dist/ui-bootstrap-tpls-0.11.0.js"></script>
+
+	<div id="cesiumContainer" class="fullSize">
+		<script src="Cesium-b30/Build/Cesium/Cesium.js"></script>
+		<script type="text/javascript" src="cesiumDemo.js">doCesiumJSON()</script>
+	</div>
+
+</body>
+</html>
+
