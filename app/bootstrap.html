@@ -39,10 +39,6 @@ body {
 	height: 100%; 
 }
 
-.legendMenuItem {
-	padding: 0px 10px !important;
-}
-
 .logo-custom {
   max-width: 20%;
 }
@@ -52,6 +48,7 @@ body {
   overflow-y: hidden;
 }
 */
+
 
 .nav-pills>li>a {
   border-radius: 4px;
@@ -109,6 +106,10 @@ a {
 	padding-right: 5px;
 	max-width: 60%;
 }
+
+.legendMenuItem {
+  padding: 0px 10px !important;
+}
 </style>
 </head>
 <body style="overflow:hidden" ng-controller="BodyCtrl">
@@ -123,8 +124,8 @@ a {
 			
 			<div  class="nav nav-pills navbar-right-custom">
 			  <li>
-	        <div ng-controller="ViewModelCtrl" class="navbar-item-right-custom dropdown">
-	          <a data-toggle="dropdown" href="#"> Fly To <b class="caret"></b></a>
+	        <div ng-controller="FlyToCtrl" class="navbar-item-right-custom dropdown">
+	          <a data-toggle="dropdown" href="#" style="background-color:rgba(0,0,0,0)"> Fly To <b class="caret"></b></a>
 	          <ul class="dropdown-menu" role="menu" style="height:300px; overflow-y:auto">
 	            <li ng-repeat="country in data.locations.countries | orderBy:'country'">
 	              <a ng-click=selectCountry(country.country)>{{country.country}}</a>
@@ -134,7 +135,7 @@ a {
         </li>
         <li>	
 					<div ng-controller="ViewModelCtrl" class="navbar-item-right-custom dropdown">
-				    <a data-toggle="dropdown" href="#">{{ viewModel }} <b class="caret"></b></a>
+				    <a data-toggle="dropdown" href="#" style="background-color:rgba(0,0,0,0)">{{ viewModel }} <b class="caret"></b></a>
 				    <ul class="dropdown-menu" role="menu">
 				      <li ng-repeat="choice in data.viewModels">
 				        <a ng-click=selectViewModel(choice)>{{choice}}</a>
@@ -143,59 +144,29 @@ a {
 				  </div>	
         </li>
         <li>  			  
-	        <div ng-controller="BodyCtrl" class="navbar-item-right-custom dropdown">
-	          <a data-toggle="dropdown" href="#">{{ selectedDataset.label }} <b class="caret"></b></a>
+	        <div class="navbar-item-right-custom dropdown">
+	          <a data-toggle="dropdown" href="#" style="background-color:rgba(0,0,0,0)">{{ selectedDataset.label }} <b class="caret"></b></a>
 	          <ul class="dropdown-menu" role="menu">
-	            <li ng-repeat="dataset in ncWMSdata.datasets">
+	            <li ng-repeat="dataset in datasets">
 	              <a ng-click=selectDataset(dataset)>{{dataset.label}}</a>
 	            </li>
 	          </ul>
 	        </div>  
         </li>
         <li>  
-	        <div ng-controller="BodyCtrl" class="navbar-item-right-custom dropdown">
-	          <a data-toggle="dropdown" href="#"><canvas id='dropdown_canvas' style="width: 150px; height: 10px;"></canvas></a>
+	        <div class="navbar-item-right-custom dropdown">
+	          <a data-toggle="dropdown" href="#" style="background-color:rgba(0,0,0,0)"><canvas id="dropdown_canvas" style="width: 150px; height: 10px;"></canvas></a>
 	          <ul class="dropdown-menu" role="menu">
-	            <li ng-repeat="choice in ncWMSdata.paletteGraphics">	              
-	              <a ng-click=selectPalette(choice)>{{choice.html}}</a>
+	            <li ng-repeat="choice in ncWMSdata.palettes">	              
+	              <a ng-click=selectPalette(choice) class="legendMenuItem">
+	               <canvas i-am-legend style="width: 150px; height: 10px;">
+	               </canvas>
+	              </a>
 	            </li>
 	          </ul>
 	        </div>
         </li>
-      </div>
-			<!-- 
-		    
-		    <li class="dropdown"><a id="dropVariable" role="button" data-toggle="dropdown" href="#">Variable</a>
-          <ul id="menuVariable" class="dropdown-menu" role="menu" aria-labelledby="dropVariable">
-          </ul>
-        </li>
-        <li class="dropdown"><a id="dropPalette" role="button" data-toggle="dropdown" href="#">Pallette</a>
-					<ul id="menuPalette" class="dropdown-menu overflow-menu" role="menu" aria-labelledby="dropPalette"></ul>
-        </li>
-      </ul>
-				
-      -->
-			
-			<!--  
-				<ul class="nav nav-pills navbar-right-custom">
-					<li class="dropdown" is-open="status.isopen"><a id="dropView" role="button" data-toggle="dropdown" href="#">viewModel</a>
-						<ul id="menuView" class="dropdown-menu" role="menu" aria-labelledby="dropView">
-							<li role='presentation'><a role='menuitem' tabindex='-1' href='#' id='morphTo3DButton'>Globe View</a></li>
-							<li role='presentation'><a role='menuitem' tabindex='-1' href='#' id='morphTo2DButton'>Map View</a></li>
-							<li role='presentation'><a role='menuitem' tabindex='-1' href='#' id='morphToColumbusButton'>Columbus View</a></li>
-						</ul></li>
-					<li class="dropdown"><a id="dropVariable" role="button" data-toggle="dropdown" href="#">Variable</a>
-						<ul id="menuVariable" class="dropdown-menu" role="menu" aria-labelledby="dropVariable">
-						</ul></li>
-					<li class="dropdown"><a id="dropPalette" role="button" data-toggle="dropdown" href="#">Pallette</a>
-
-						<ul id="menuPalette" class="dropdown-menu overflow-menu" role="menu" aria-labelledby="dropPalette">
-						</ul></li>
-				</ul>
-				-->
-				<!-- /pills -->
-			<!-- </div> -->
-			<!--/.nav-collapse -->
+      </div>			
 		</div>
 		<!--/.container-fluid -->
 	</header>
