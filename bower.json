@@ -12,7 +12,9 @@
     "angular-animate": "1.2.16",
     "angular-touch": "1.2.16",
     "angular-route": "1.2.16",
-    "ui.bootstrap": "~0.11.0"
+    "ui.bootstrap": "~0.11.0",
+    "jqrangeslider" : "*",
+    "jquery-ui" : "*"
   },
   "devDependencies": {
     "angular-mocks": "1.2.16",

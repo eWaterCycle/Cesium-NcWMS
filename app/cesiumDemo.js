@@ -13,106 +13,241 @@ var viewer = new Cesium.CesiumWidget('cesiumContainer', {
 		url : '//dev.virtualearth.net',
 		key : 'AsP2TER1bj7tMZGuQtDkvWtX9vOezdG3zbeJp3tOv8d1Q4XrDLd6bEMz_nFsmcKi',
 		mapStyle : Cesium.BingMapsStyle.AERIAL
-	})
+	}),
+
+	clock : new Cesium.Clock({
+		multiplier : 5000.0
+	}),
+
+	creditContainer : "cesiumCredits"
 });
 
 var layers = viewer.scene.imageryLayers;
-
-var palettes = [];
-var paletteGraphics = [];
-
-var scaleMin = [];
-var scaleMax = [];
-
-var layerNames = [];
-var layerIDs = [];
-
-var firstLayerDescription;
-
-var selectedLayerName;
-var selectedPaletteName;
+// viewer.clock.animating = false;
 
 var colorMapLayer;
 
-angular.module('myApp', [ 'ui.bootstrap' ]).controller(
-		'BodyCtrl',
-		[
-				'$scope',
-				'$http',
-				function($scope, $http) {
-					$scope.ncWMSdata = {
-						"metadata" : {},
-						"palettes" : []
-					};
+// var palettes = [];
+// var paletteGraphics = [];
+//
+// var scaleMin = [];
+// var scaleMax = [];
+//
+// var layerNames = [];
+// var layerIDs = [];
+//
+// var firstLayerDescription;
+//
+// var selectedLayerName;
+// var selectedPaletteName;
+//
 
-					$scope.datasets = [];
+angular.module('myApp', [ 'ui.bootstrap' ]).controller('BodyCtrl', [ '$scope', '$http', '$q', function($scope, $http, $q) {
+	// These variables need to be predefined in the scope, because we all
+	// use them
+	// directly in the (aNGular) HTTP. Where we fill these datastructures
+	// or
+	// update them, we use the (--NG--) tag in the comments.
+	$scope.ncWMSdata = {
+		"metadata" : {},
+		"palettes" : []
+	};
+	$scope.datasets = [];
+	$scope.selectedDataset = "default";
+	$scope.selectedPalette = "default";
+	$scope.selectedTime = new Date(Date.UTC(1960, 0, 31, 0, 0, 0));
 
-					$scope.selectedDataset = "demo";
-					$scope.selectedPalette = "demo";
+	$scope.clock = viewer.clock;
+	$scope.clockViewModel = new Cesium.ClockViewModel($scope.clock);
+	$scope.animationViewModel = new Cesium.AnimationViewModel($scope.clockViewModel);
+	$scope.timelineWidget = new Cesium.Timeline('cesiumTimeline', $scope.clock);
 
-					// First load the available datasets
-					$http.get(ncWMSURL + 'item=menu&menu=&REQUEST=GetMetadata').then(
-							function(res) {
-								$scope.ncWMSdata.metadata = res.data.children;
+	$scope.loadData = function() {
+		// Ask the server to give us the data we need to get started, in
+		// this case
+		// an overview of the available datasets
+		$scope.getMenu().then(function success(resolvedPromise1) {
+			// Build an array containing our datasets (--NG--)
+			$scope.datasets = $scope.loadMenu(resolvedPromise1);
+			// Store the first dataset as our 'currently selected' dataset
+			// (--NG--)
+			$scope.selectedDataset = $scope.datasets[0];
 
-								// Then check in the first dataset which palettes we have
-								$http.get(ncWMSURL + 'item=layerDetails&layerName=' + $scope.ncWMSdata.metadata[0].children[0].id + '&REQUEST=GetMetadata').then(
-										function(res) {
-											// Get the first picture for the dropdown header
-											var imgURL = ncWMSURL + 'REQUEST=GetLegendGraphic&LAYER=' + $scope.ncWMSdata.metadata[0].children[0].id
-													+ '&COLORBARONLY=true&WIDTH=10&HEIGHT=150&NUMCOLORBANDS=250&PALETTE=' + res.data.palettes[0];
+			// Get the id of the first dataset we got from the server,
+			// because we can
+			// only get some information out of the server if we dig a
+			// little deeper,
+			// and we need an ID to do just that.
+			var firstDatasetID = resolvedPromise1.data.children[0].children[0].id;
 
-											$scope.selectedPalette = {
-												name : "dropdown_name",
-												graphic : imgURL
-											};
+			// To get the server to give us the available palette names,
+			// we use this
+			// first ID
+			$scope.getMetadata(firstDatasetID).then(function success(resolvedPromise2) {
+				// Store the palette names and image URL's. (--NG--)
+				$scope.ncWMSdata.palettes = $scope.loadPalettes(firstDatasetID, resolvedPromise2.data.palettes);
 
-											// Flip it (add an onload to it)
-											fliplegend(imgURL, "dropdown_canvas");
+				// Store the first pallette we receive as the currently
+				// selected
+				// palette. (--NG--)
+				$scope.selectedPalette = $scope.ncWMSdata.palettes[0];
+				$scope.setWatchers();
+			}, function error(msg) {
+				console.log("Error in getMetadata, " + msg);
+			});
 
-											// Then do all to fill the dropdown menu
-											res.data.palettes.forEach(function(paletteName) {
-												// Get the picture
-												var imgURL2 = ncWMSURL + 'REQUEST=GetLegendGraphic&LAYER=' + $scope.ncWMSdata.metadata[0].children[0].id
-														+ '&COLORBARONLY=true&WIDTH=10&HEIGHT=150&NUMCOLORBANDS=250&PALETTE=' + paletteName
+			// Define an array to store our waiting promises in
+			$scope.httpRequestPromises = [];
+			// Do a new metadata request for every loaded dataset
+			$scope.datasets.forEach(function(dataset) {
+				var promise = $scope.getMetadata(dataset.id).then(function success(resolvedPromise3) {
+					// Once the metadata request is resolved, store the
+					// datesWithData in
+					// the previously made datasets datastructure.
+					// $scope.datasets[$scope.datasets.indexOf(dataset)].datesWithData
+					// = resolvedPromise3.data.datesWithData;
 
-												// Fill the store
-												$scope.ncWMSdata.palettes.push({
-													name : paletteName,
-													graphic : imgURL2
-												});
-											});
-										});
+					var dates = [];
+					for ( var year in resolvedPromise3.data.datesWithData) {
+						var obj_month = resolvedPromise3.data.datesWithData[year];
+						for ( var month in obj_month) {
+							var day = obj_month[month];
+							dates.push(new Date(Date.UTC(year, month, day)));
+						}
+					}
+					$scope.datasets[$scope.datasets.indexOf(dataset)].datesWithData = dates;
 
-								// Go through the list of available datasets to construct the
-								// menu
-								res.data.children.forEach(function(dataset) {
-									$scope.datasets.push({
-										id : dataset.children[0].id,
-										label : dataset.label
-									});
-								});
+				}, function error(msg) {
+					console.log("Error in getMetadata, " + msg);
+				});
+				// Add this promise to the array of waiting promises.
+				$scope.httpRequestPromises.push(promise);
+			})
 
-								$scope.selectedDataset = $scope.datasets[0];
+			// The $q service lets us wait for an array of promises to be
+			// resolved
+			// before continuing. We wait here until all the promises for
+			// the metadata
+			// requests for each dataset are complete.
+			$q.all($scope.httpRequestPromises).then(function() {
+				var dates = $scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData;
 
-							});
+				var startDate = Cesium.JulianDate.fromDate(dates[0]);
+				var endDate = Cesium.JulianDate.fromDate(dates[$scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData.length - 1]);
 
-					$scope.$watch('selectedDataset', function(newValue, oldValue) {
-						repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name);
-					});
+				$scope.timelineWidget.zoomTo(startDate, endDate);
+			});
 
-					$scope.$watch('selectedPalette', function(newValue, oldValue) {
-						repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name);
-						fliplegend($scope.selectedPalette.graphic, "dropdown_canvas");
-					});
+		}, function error(msg) {
+			console.log("Error in getMenu, " + msg);
+		});
+	}
 
-					$scope.selectDataset = function(dataset) {
-						$scope.selectedDataset = dataset;
-					};
-					$scope.selectPalette = function(palette) {
-						$scope.selectedPalette = palette;
-					};
-				} ]).directive('iAmLegend', function() {
+	$scope.getMenu = function() {
+		return $http.get(ncWMSURL + 'item=menu&menu=&REQUEST=GetMetadata');
+	}
+
+	$scope.loadMenu = function(res) {
+		var result = [];
+
+		$scope.ncWMSdata.metadata = res.data.children;
+		$scope.ncWMSdata.metadata.forEach(function(dataset) {
+			result.push({
+				id : dataset.children[0].id,
+				label : dataset.label,
+				datesWithData : {}
+			});
+		});
+
+		return result;
+	}
+
+	$scope.getMetadata = function(id) {
+		return $http.get(ncWMSURL + 'item=layerDetails&layerName=' + id + '&REQUEST=GetMetadata');
+	}
+
+	$scope.loadPalettes = function(id, res) {
+		var result = [];
+
+		res.forEach(function(paletteName) {
+			var imgURL2 = ncWMSURL + 'REQUEST=GetLegendGraphic&LAYER=' + id + '&COLORBARONLY=true&WIDTH=10&HEIGHT=150&NUMCOLORBANDS=250&PALETTE=' + paletteName
+
+			result.push({
+				name : paletteName,
+				graphic : imgURL2
+			});
+		});
+
+		return result;
+	}
+
+	$scope.loadData();
+
+	$scope.setWatchers = function() {
+		// Set a watcher for a change on the selected dataset
+		// (asynchronously)
+		$scope.$watch('selectedDataset', function(newValue, oldValue) {
+			repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime);
+		});
+
+		// Set a watcher for a change on the selected palette
+		// (asynchronously)
+		$scope.$watch('selectedPalette', function(newValue, oldValue) {
+			repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime);
+			fliplegend($scope.selectedPalette.graphic, "dropdown_canvas");
+		});
+
+		$scope.timelineWidget.addEventListener('settime', $scope.onTimelineScrub, false);
+		$scope.clock.onTick.addEventListener($scope.onTimelineTick);
+	}
+
+	// Setter for the selected dataset
+	$scope.selectDataset = function(dataset) {
+		$scope.selectedDataset = dataset;
+	};
+
+	// Setter for the selected palette
+	$scope.selectPalette = function(palette) {
+		$scope.selectedPalette = palette;
+	};
+
+	// Setter for the time (event listener for clicking the time bar).
+	$scope.onTimelineScrub = function(e) {
+		$scope.clock.currentTime = e.timeJulian;
+		$scope.clock.shouldAnimate = true;
+
+		var selection = Cesium.JulianDate.toDate($scope.clock.currentTime);
+		var closest = $scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData[0];
+		$scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData.forEach(function(date) {
+			if (date < selection) {
+				closest = date;
+			}
+		});
+
+		$scope.selectedTime = closest;
+
+		repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime);
+	}
+
+	$scope.onTimelineTick = function(clock) {
+		var selection = Cesium.JulianDate.toDate($scope.clock.currentTime);
+		var closest = $scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData[0];
+		$scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData.forEach(function(date) {
+			if (date < selection) {
+				closest = date;
+			}
+		});
+
+		if (closest !== $scope.selectedTime) {
+			console.log("tick forward!");
+
+			$scope.selectedTime = closest;
+
+			repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime);
+		}
+	}
+
+} ]).directive('iAmLegend', function() {
 	return {
 		restrict : "A",
 		link : function(scope, element) {
@@ -148,10 +283,16 @@ function fliplegend(imgURL, elementID) {
 	}
 }
 
-function repaintColorMap(selectedlayerName, selectedPaletteName) {
+function repaintColorMap(selectedlayerName, selectedPaletteName, currentTime) {
 	if (colorMapLayer != null) {
 		layers.remove(colorMapLayer, false);
 	}
+	// var roundedTime = Cesium.JulianDate.toDate(currentTime);
+	// roundedTime.setHours(0);
+	// roundedTime.setMinutes(0);
+	// roundedTime.setSeconds(0);
+	// roundedTime.setMilliseconds(0);
+
 	colorMapLayer = layers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
 		url : ncWMSURL,
 		layers : selectedlayerName,
@@ -161,6 +302,7 @@ function repaintColorMap(selectedlayerName, selectedPaletteName) {
 			request : 'GetMap',
 			CRS : 'CRS:84',
 			TRANSPARENT : 'true',
+			TIME : currentTime.toISOString(),
 			// LOGSCALE : 'true',
 			// COLORSCALERANGE:'1,50950.03',
 			styles : 'boxfill/' + selectedPaletteName,
@@ -224,3 +366,24 @@ var FlyToCtrl = [
 				}
 			}
 		} ];
+
+var TimeCtrl = [ '$scope', '$http', function($scope, $http) {
+	// $("#slider").dateRangeSlider();
+	// $scope.currentTime = {};
+	//
+	// $scope.data = {
+	// dataset : {},
+	// timesAvailable : []
+	// };
+	//
+	// $scope.selectViewModel = function(item) {
+	// $scope.viewModel = item;
+	// if (item == 'Globe View') {
+	// viewer.scene.morphTo3D(2.0);
+	// } else if (item == 'Columbus View') {
+	// viewer.scene.morphToColumbusView(2.0);
+	// } else if (item == 'Map View') {
+	// viewer.scene.morphTo2D(2.0);
+	// }
+	// }
+} ];

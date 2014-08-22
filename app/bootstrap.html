@@ -8,10 +8,11 @@
 
 <title>eWaterCycle Dashboard</title>
 
-<!-- Latest compiled and minified CSS -->
+<!-- CSS -->
 <link type="text/css" rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css">
-<!-- Optional theme -->
 <link type="text/css" rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+<link type="text/css" rel="stylesheet" href="../bower_components/jqrangeslider/css/iThing.css">
+
 <!--[if lt IE 9]>
     	<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 		<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -73,15 +74,30 @@ a {
   background-color: rgba(255, 255, 255, 0);
 }
 
-.navbar-right-custom {
+.navbar-right-custom-top {
+  padding: 2px 0px;
+  float: right;
+}
+
+.navbar-right-custom-top-2 {
+  padding: 2px 0px;
+  float: right;
+}
+
+.navbar-right-custom-bottom {
   padding: 10px 0px;
   float: right !important;
 }
 
 .navbar-item-right-custom {
   pointer-events: all;
-  float: right;
+  /*float: right;*/
 }
+
+.navbar-clickable {
+  pointer-events: all;
+}
+
 
 .img-responsive-custom {
   display: block;
@@ -107,6 +123,10 @@ a {
 	max-width: 60%;
 }
 
+.cesium-credit-text {
+  white-space: normal; 
+}
+
 .legendMenuItem {
   padding: 0px 10px !important;
 }
@@ -122,7 +142,7 @@ a {
 				<a class="pull-left-custom" href="#"><img class="media-object img-responsive-custom" src="eWaterCycle_3.svg"></a>
 			</div>
 			
-			<div  class="nav nav-pills navbar-right-custom">
+			<ul class="nav navbar-nav nav-pills navbar-right-custom-top">
 			  <li>
 	        <div ng-controller="FlyToCtrl" class="navbar-item-right-custom dropdown">
 	          <a data-toggle="dropdown" href="#" style="background-color:rgba(0,0,0,0)"> Fly To <b class="caret"></b></a>
@@ -133,7 +153,7 @@ a {
 	          </ul>
 	        </div>
         </li>
-        <li>	
+        <li>
 					<div ng-controller="ViewModelCtrl" class="navbar-item-right-custom dropdown">
 				    <a data-toggle="dropdown" href="#" style="background-color:rgba(0,0,0,0)">{{ viewModel }} <b class="caret"></b></a>
 				    <ul class="dropdown-menu" role="menu">
@@ -143,7 +163,7 @@ a {
 				    </ul>
 				  </div>	
         </li>
-        <li>  			  
+        <li>	        	  
 	        <div class="navbar-item-right-custom dropdown">
 	          <a data-toggle="dropdown" href="#" style="background-color:rgba(0,0,0,0)">{{ selectedDataset.label }} <b class="caret"></b></a>
 	          <ul class="dropdown-menu" role="menu">
@@ -153,7 +173,7 @@ a {
 	          </ul>
 	        </div>  
         </li>
-        <li>  
+        <li>	        
 	        <div class="navbar-item-right-custom dropdown">
 	          <a data-toggle="dropdown" href="#" style="background-color:rgba(0,0,0,0)"><canvas id="dropdown_canvas" style="width: 150px; height: 10px;"></canvas></a>
 	          <ul class="dropdown-menu" role="menu">
@@ -164,21 +184,35 @@ a {
 	              </a>
 	            </li>
 	          </ul>
-	        </div>
+	        </div>		        
         </li>
-      </div>			
-		</div>
-		<!--/.container-fluid -->
+      </ul>	  
+      <!-- 
+      <ul class="nav navbar-nav nav-pills navbar-right-custom-top-2">
+        <li>
+			    <div id="slider" class="navbar-item-right-custom" >
+			        
+			    </div>
+		    </li>
+	    </ul>     
+	     -->  
+    </div>	<!--/.container-fluid -->	
 	</header>
 	<!--/.navbar -->
 	<header class="navbar navbar-custom navbar-fixed-bottom" role="navigation">
 		<div class="navbar-container-fluid">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		<div id="cesiumTimeline" class="navbar-clickable">
+    </div>
+    <!-- <div id="animationContainer"></div> -->
+		  <div id="cesiumCredits"></div>
+			<!-- <div class="navbar-header"> -->
+				<!-- <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 					<span class="sr-only">Toggle navigation</span>
 				</button>
-				<a class="pull-right-custom" href="http://www.esciencecenter.nl"><img class="media-object logo-custom navbar-right-custom img-responsive-logo" src="ESCIENCE_logo.png"></a>
-			</div>
+				 -->
+        <!-- <div ng-controller="TimeCtrl" id="slider" class="navbar-item-right-custom"></div>  -->
+		  <a class="pull-right-custom" href="http://www.esciencecenter.nl"><img class="media-object logo-custom navbar-right-custom-bottom img-responsive-logo" src="ESCIENCE_logo.png"></a>
+			<!-- </div> -->
 		</div>
 		<!--/.container-fluid -->
 	</header>
@@ -193,7 +227,8 @@ a {
 
   <!-- build:js(.) scripts/vendor.js -->
   <!-- bower:js -->
-  <script src="../bower_components/jquery/dist/jquery.js"></script>
+  <script src="../bower_components/jquery/dist/jquery.min.js"></script>  
+  <!-- <script src="../bower_components/jquery-ui/jquery-ui.min.js"></script> -->
   <script src="../bower_components/angular/angular.js"></script>
   <script src="../bower_components/json3/lib/json3.js"></script>
   <script src="../bower_components/angular-resource/angular-resource.js"></script>
@@ -204,6 +239,7 @@ a {
   <script src="../bower_components/angular-route/angular-route.js"></script>
   <!-- <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script> -->
   <script src="../bower_components/ui.bootstrap/dist/ui-bootstrap-0.11.0.js"></script>
+  <!-- <script src="../bower_components/jqrangeslider/dest/jQDateRangeSlider-min.js"></script> -->
   <!-- endbower -->
   <!-- endbuild -->
 
@@ -214,14 +250,15 @@ a {
   <!-- endbuild -->
 
 	<!-- Latest compiled and minified JavaScript -->
-	<script type="text/javascript" src="../bower_components/jquery/dist/jquery.min.js"></script>
 	<script type="text/javascript" src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="../bower_components/ui.bootstrap/dist/ui-bootstrap-tpls-0.11.0.js"></script>
 
 	<div id="cesiumContainer" class="fullSize">
-		<script src="Cesium-b30/Build/Cesium/Cesium.js"></script>
-		<script type="text/javascript" src="cesiumDemo.js">doCesiumJSON()</script>
 	</div>
+	
+	
+  <script src="Cesium-b30/Build/Cesium/Cesium.js"></script>
+  <script type="text/javascript" src="cesiumDemo.js">doCesiumJSON()</script>
 
 </body>
 </html>
