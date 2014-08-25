@@ -16,7 +16,9 @@ var viewer = new Cesium.CesiumWidget('cesiumContainer', {
 	}),
 
 	clock : new Cesium.Clock({
-		multiplier : 5000.0
+		multiplier : 500.0
+	// ,
+	// clockRange : Cesium.ClockRange.CLAMPED
 	}),
 
 	creditContainer : "cesiumCredits"
@@ -56,10 +58,12 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller('BodyCtrl', [ '$scope', '
 	$scope.selectedDataset = "default";
 	$scope.selectedPalette = "default";
 	$scope.selectedTime = new Date(Date.UTC(1960, 0, 31, 0, 0, 0));
+	$scope.logarithmic = false;
 
 	$scope.clock = viewer.clock;
 	$scope.clockViewModel = new Cesium.ClockViewModel($scope.clock);
 	$scope.animationViewModel = new Cesium.AnimationViewModel($scope.clockViewModel);
+	$scope.animationWidget = new Cesium.Animation('animationContainer', $scope.animationViewModel);
 	$scope.timelineWidget = new Cesium.Timeline('cesiumTimeline', $scope.clock);
 
 	$scope.loadData = function() {
@@ -87,8 +91,7 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller('BodyCtrl', [ '$scope', '
 				// Store the palette names and image URL's. (--NG--)
 				$scope.ncWMSdata.palettes = $scope.loadPalettes(firstDatasetID, resolvedPromise2.data.palettes);
 
-				// Store the first pallette we receive as the currently
-				// selected
+				// Store the first pallette we receive as the currently selected
 				// palette. (--NG--)
 				$scope.selectedPalette = $scope.ncWMSdata.palettes[0];
 				$scope.setWatchers();
@@ -101,11 +104,8 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller('BodyCtrl', [ '$scope', '
 			// Do a new metadata request for every loaded dataset
 			$scope.datasets.forEach(function(dataset) {
 				var promise = $scope.getMetadata(dataset.id).then(function success(resolvedPromise3) {
-					// Once the metadata request is resolved, store the
-					// datesWithData in
+					// Once the metadata request is resolved, store the dates with data in
 					// the previously made datasets datastructure.
-					// $scope.datasets[$scope.datasets.indexOf(dataset)].datesWithData
-					// = resolvedPromise3.data.datesWithData;
 
 					var dates = [];
 					for ( var year in resolvedPromise3.data.datesWithData) {
@@ -187,14 +187,20 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller('BodyCtrl', [ '$scope', '
 		// Set a watcher for a change on the selected dataset
 		// (asynchronously)
 		$scope.$watch('selectedDataset', function(newValue, oldValue) {
-			repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime);
+			repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic);
 		});
 
 		// Set a watcher for a change on the selected palette
 		// (asynchronously)
 		$scope.$watch('selectedPalette', function(newValue, oldValue) {
-			repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime);
+			repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic);
 			fliplegend($scope.selectedPalette.graphic, "dropdown_canvas");
+		});
+
+		// Set a watcher for a change on the selected palette
+		// (asynchronously)
+		$scope.$watch('logarithmic', function(newValue, oldValue) {
+			repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic);
 		});
 
 		$scope.timelineWidget.addEventListener('settime', $scope.onTimelineScrub, false);
@@ -214,7 +220,7 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller('BodyCtrl', [ '$scope', '
 	// Setter for the time (event listener for clicking the time bar).
 	$scope.onTimelineScrub = function(e) {
 		$scope.clock.currentTime = e.timeJulian;
-		$scope.clock.shouldAnimate = true;
+		$scope.clock.shouldAnimate = false;
 
 		var selection = Cesium.JulianDate.toDate($scope.clock.currentTime);
 		var closest = $scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData[0];
@@ -226,7 +232,7 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller('BodyCtrl', [ '$scope', '
 
 		$scope.selectedTime = closest;
 
-		repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime);
+		repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic);
 	}
 
 	$scope.onTimelineTick = function(clock) {
@@ -243,7 +249,7 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller('BodyCtrl', [ '$scope', '
 
 			$scope.selectedTime = closest;
 
-			repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime);
+			repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic);
 		}
 	}
 
@@ -283,15 +289,10 @@ function fliplegend(imgURL, elementID) {
 	}
 }
 
-function repaintColorMap(selectedlayerName, selectedPaletteName, currentTime) {
+function repaintColorMap(selectedlayerName, selectedPaletteName, selectedTime, logarithmic) {
 	if (colorMapLayer != null) {
 		layers.remove(colorMapLayer, false);
 	}
-	// var roundedTime = Cesium.JulianDate.toDate(currentTime);
-	// roundedTime.setHours(0);
-	// roundedTime.setMinutes(0);
-	// roundedTime.setSeconds(0);
-	// roundedTime.setMilliseconds(0);
 
 	colorMapLayer = layers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
 		url : ncWMSURL,
@@ -302,9 +303,9 @@ function repaintColorMap(selectedlayerName, selectedPaletteName, currentTime) {
 			request : 'GetMap',
 			CRS : 'CRS:84',
 			TRANSPARENT : 'true',
-			TIME : currentTime.toISOString(),
-			// LOGSCALE : 'true',
-			// COLORSCALERANGE:'1,50950.03',
+			TIME : selectedTime.toISOString(),
+			LOGSCALE : logarithmic,
+			COLORSCALERANGE : '1,50950.03',
 			styles : 'boxfill/' + selectedPaletteName,
 			format : 'image/png'
 		}

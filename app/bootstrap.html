@@ -20,6 +20,7 @@
 
 <style type="text/css">
 @import url(Cesium-b30/Build/Cesium/Widgets/widgets.css);
+@import url(Cesium-b30/Build/Cesium/Widgets/Animation/Animation.css);
 /*
 body {
 	padding-top: 50px;
@@ -109,27 +110,64 @@ a {
   display: block;
   max-width: 25%;
   height: auto;
+  padding: 0px;
+}
+
+
+
+.legendMenuItem {
+  padding: 0px 10px !important;
+}
+
+#cesiumTimeline {
+    position: absolute;
+    bottom: 0;
+    left: 169px;
+    right: 0px;
+    height: 27px;
+    padding: 0;
+    margin: 0;
+    border-bottom: none;
+    border-right: none;
+    overflow: hidden;
+    cursor: pointer;
+    height: 1.1em;
+    z-index: 10000;
+}
+
+#animationContainer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 0;
+    width: 169px;
+    height: 112px;
+    z-index: 10001;
+}
+
+#cesiumCredits {
+  position: absolute;
+  bottom: 18px;
+  left: 169px;
+  color: #ffffff;
+  font-size: 10px;
+  text-shadow: 0px 0px 2px #000000;
+  padding-right: 5px;
+  max-width: 60%;
 }
 
 .cesium-widget-credits {
-	display: block;
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	color: #ffffff;
-	font-size: 10px;
-	text-shadow: 0px 0px 2px #000000;
-	padding-right: 5px;
-	max-width: 60%;
+  position: relative;
+}
+
+.cesium-timeline-bar {
+	height: 1.1em;
 }
 
 .cesium-credit-text {
   white-space: normal; 
 }
 
-.legendMenuItem {
-  padding: 0px 10px !important;
-}
 </style>
 </head>
 <body style="overflow:hidden" ng-controller="BodyCtrl">
@@ -141,8 +179,8 @@ a {
 				</button>
 				<a class="pull-left-custom" href="#"><img class="media-object img-responsive-custom" src="eWaterCycle_3.svg"></a>
 			</div>
-			
-			<ul class="nav navbar-nav nav-pills navbar-right-custom-top">
+						
+			<ul class="nav navbar-nav nav-pills navbar-right-custom-top">				
 			  <li>
 	        <div ng-controller="FlyToCtrl" class="navbar-item-right-custom dropdown">
 	          <a data-toggle="dropdown" href="#" style="background-color:rgba(0,0,0,0)"> Fly To <b class="caret"></b></a>
@@ -186,36 +224,26 @@ a {
 	          </ul>
 	        </div>		        
         </li>
-      </ul>	  
-      <!-- 
-      <ul class="nav navbar-nav nav-pills navbar-right-custom-top-2">
         <li>
-			    <div id="slider" class="navbar-item-right-custom" >
-			        
-			    </div>
-		    </li>
-	    </ul>     
-	     -->  
+          <span style="color: #ffffff;">log? <input type="checkbox" ng-model="logarithmic" class="navbar-clickable"></span>
+        </li>
+      </ul> 
     </div>	<!--/.container-fluid -->	
 	</header>
+
+  <div id="cesiumContainer" class="fullSize">
+  </div>
+  
 	<!--/.navbar -->
-	<header class="navbar navbar-custom navbar-fixed-bottom" role="navigation">
-		<div class="navbar-container-fluid">
-		<div id="cesiumTimeline" class="navbar-clickable">
-    </div>
-    <!-- <div id="animationContainer"></div> -->
-		  <div id="cesiumCredits"></div>
-			<!-- <div class="navbar-header"> -->
-				<!-- <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-					<span class="sr-only">Toggle navigation</span>
-				</button>
-				 -->
-        <!-- <div ng-controller="TimeCtrl" id="slider" class="navbar-item-right-custom"></div>  -->
-		  <a class="pull-right-custom" href="http://www.esciencecenter.nl"><img class="media-object logo-custom navbar-right-custom-bottom img-responsive-logo" src="ESCIENCE_logo.png"></a>
-			<!-- </div> -->
+	<footer class="navbar navbar-custom navbar-fixed-bottom" role="navigation" style="max-height: 72px;">
+    <div id="cesiumCredits" class="navbar-clickable"></div>    
+    <div id="cesiumTimeline" class="navbar-clickable"></div>
+    <div id="animationContainer" class="navbar-clickable"></div>
+		<div class="navbar-container-fluid">		  
+		  <a class="pull-right-custom" href="http://www.esciencecenter.nl"><img class="media-object logo-custom navbar-right-custom-bottom img-responsive-logo" src="ESCIENCE_logo.png"></a>			
 		</div>
 		<!--/.container-fluid -->
-	</header>
+	</footer>
 	<!--/.navbar -->
 
   <!-- build:js(.) scripts/oldieshim.js -->
@@ -252,9 +280,6 @@ a {
 	<!-- Latest compiled and minified JavaScript -->
 	<script type="text/javascript" src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="../bower_components/ui.bootstrap/dist/ui-bootstrap-tpls-0.11.0.js"></script>
-
-	<div id="cesiumContainer" class="fullSize">
-	</div>
 	
 	
   <script src="Cesium-b30/Build/Cesium/Cesium.js"></script>
