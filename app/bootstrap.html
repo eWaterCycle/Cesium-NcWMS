@@ -54,15 +54,18 @@ body {
 
 .nav-pills>li>a {
   border-radius: 4px;
+  z-index: 10002;
 }
 .nav>li>a {
 	position: relative;
 	display: block;
 	padding: 10px 15px;
+  z-index: 10002;
 }
 
 .nav-pills>li+li {
   margin-left: 15px;
+  z-index: 10002;
 }
 
 a {
@@ -99,24 +102,24 @@ a {
   pointer-events: all;
 }
 
+.navbar-header {
+  max-width: 50%;
+}
 
 .img-responsive-custom {
   display: block;
-  max-width: 65%;
-  height: auto;
-}
-
-.img-responsive-logo {
-  display: block;
-  max-width: 25%;
+  max-height: 7%;
   height: auto;
   padding: 0px;
 }
 
-
+.img-responsive-logo {
+  max-width: 100%;
+}
 
 .legendMenuItem {
   padding: 0px 10px !important;
+  z-index: 10002;
 }
 
 #cesiumTimeline {
@@ -166,6 +169,20 @@ a {
 
 .cesium-credit-text {
   white-space: normal; 
+}
+
+#bigLegend {
+  display: block;
+  position: absolute;
+  right: 5%;
+  top: 50px;
+  max-width: 5%;
+  height: 75%;
+}
+
+.legendText-custom {
+  color: #ffffff;
+  font-size: 10px;
 }
 
 </style>
@@ -225,23 +242,51 @@ a {
 	        </div>		        
         </li>
         <li>
-          <span style="color: #ffffff;">log? <input type="checkbox" ng-model="logarithmic" class="navbar-clickable"></span>
+          <span style="color: #ffffff;">log <input type="checkbox" ng-model="logarithmic" class="navbar-clickable"></span>
         </li>
       </ul> 
     </div>	<!--/.container-fluid -->	
 	</header>
 
-  <div id="cesiumContainer" class="fullSize">
+  <div id="cesiumContainer" class="fullSize"></div>
+  <div id="bigLegend" class="container" >
+    <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+	    <div id="legendText" class="legendText-custom" style="height: 100%;">
+		    <div ng-repeat="text in legendText" style="height: 20%">{{text}}</div>
+	    </div>
+	  </div>
+    <div style="position:absolute; top:0px;left:65px; height:100%; margin-top:5px">
+       <canvas id="bigLegend_canvas" style="width: 20px; height: 100%;"></canvas>
+    </div> 
+	</div>
+	
+	<div id="logoBox" style="position:absolute; bottom:16px;right:0px; max-width:25%; max-height:15%">
+    <div>
+      <a class="navbar-clickable" href="http://www.uu.nl">
+        <img class="logo-custom img-responsive-logo" src="images/UU-logo2011_RGB_diap.png" style="max-width:60%">
+      </a>
+      <a class="navbar-clickable" href="http://www.tudelft.nl">
+        <img class="logo-custom img-responsive-logo" src="images/preTU_P5_white1409040577.gif" style="max-width:38%">
+      </a>
+    </div>
+    <div>
+      <a class="navbar-clickable" href="http://www.esciencecenter.nl">
+        <img class="logo-custom img-responsive-logo" src="images/ESCIENCE_logo.png">
+      </a>
+    </div>
   </div>
-  
+	  
 	<!--/.navbar -->
 	<footer class="navbar navbar-custom navbar-fixed-bottom" role="navigation" style="max-height: 72px;">
     <div id="cesiumCredits" class="navbar-clickable"></div>    
     <div id="cesiumTimeline" class="navbar-clickable"></div>
     <div id="animationContainer" class="navbar-clickable"></div>
-		<div class="navbar-container-fluid">		  
-		  <a class="pull-right-custom" href="http://www.esciencecenter.nl"><img class="media-object logo-custom navbar-right-custom-bottom img-responsive-logo" src="ESCIENCE_logo.png"></a>			
-		</div>
+    
+		<!-- <div class="navbar-container-fluid">		  
+		  
+		    
+		  </a>			
+		</div> -->
 		<!--/.container-fluid -->
 	</footer>
 	<!--/.navbar -->

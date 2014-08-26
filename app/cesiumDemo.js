@@ -44,216 +44,268 @@ var colorMapLayer;
 // var selectedPaletteName;
 //
 
-angular.module('myApp', [ 'ui.bootstrap' ]).controller('BodyCtrl', [ '$scope', '$http', '$q', function($scope, $http, $q) {
-	// These variables need to be predefined in the scope, because we all
-	// use them
-	// directly in the (aNGular) HTTP. Where we fill these datastructures
-	// or
-	// update them, we use the (--NG--) tag in the comments.
-	$scope.ncWMSdata = {
-		"metadata" : {},
-		"palettes" : []
-	};
-	$scope.datasets = [];
-	$scope.selectedDataset = "default";
-	$scope.selectedPalette = "default";
-	$scope.selectedTime = new Date(Date.UTC(1960, 0, 31, 0, 0, 0));
-	$scope.logarithmic = false;
+angular.module('myApp', [ 'ui.bootstrap' ]).controller(
+		'BodyCtrl',
+		[
+				'$scope',
+				'$http',
+				'$q',
+				function($scope, $http, $q) {
+					// These variables need to be predefined in the scope, because we all
+					// use them
+					// directly in the (aNGular) HTTP. Where we fill these datastructures
+					// or
+					// update them, we use the (--NG--) tag in the comments.
+					$scope.ncWMSdata = {
+						"metadata" : {},
+						"palettes" : []
+					};
+					$scope.datasets = [];
+					$scope.selectedDataset = "default";
+					$scope.selectedPalette = "default";
+					$scope.selectedTime = new Date(Date.UTC(1960, 0, 31, 0, 0, 0));
+					$scope.logarithmic = false;
+					$scope.legendText = [ 00, 10, 20, 30, 40, 50 ];
 
-	$scope.clock = viewer.clock;
-	$scope.clockViewModel = new Cesium.ClockViewModel($scope.clock);
-	$scope.animationViewModel = new Cesium.AnimationViewModel($scope.clockViewModel);
-	$scope.animationWidget = new Cesium.Animation('animationContainer', $scope.animationViewModel);
-	$scope.timelineWidget = new Cesium.Timeline('cesiumTimeline', $scope.clock);
+					$scope.clock = viewer.clock;
+					$scope.clockViewModel = new Cesium.ClockViewModel($scope.clock);
+					$scope.animationViewModel = new Cesium.AnimationViewModel($scope.clockViewModel);
+					$scope.animationWidget = new Cesium.Animation('animationContainer', $scope.animationViewModel);
+					$scope.timelineWidget = new Cesium.Timeline('cesiumTimeline', $scope.clock);
 
-	$scope.loadData = function() {
-		// Ask the server to give us the data we need to get started, in
-		// this case
-		// an overview of the available datasets
-		$scope.getMenu().then(function success(resolvedPromise1) {
-			// Build an array containing our datasets (--NG--)
-			$scope.datasets = $scope.loadMenu(resolvedPromise1);
-			// Store the first dataset as our 'currently selected' dataset
-			// (--NG--)
-			$scope.selectedDataset = $scope.datasets[0];
+					$scope.loadData = function() {
+						// Ask the server to give us the data we need to get started, in
+						// this case
+						// an overview of the available datasets
+						$scope.getMenu().then(function success(resolvedPromise1) {
+							// Build an array containing our datasets (--NG--)
+							$scope.datasets = $scope.loadMenu(resolvedPromise1);
+							// Store the first dataset as our 'currently selected' dataset
+							// (--NG--)
+							$scope.selectedDataset = $scope.datasets[0];
 
-			// Get the id of the first dataset we got from the server,
-			// because we can
-			// only get some information out of the server if we dig a
-			// little deeper,
-			// and we need an ID to do just that.
-			var firstDatasetID = resolvedPromise1.data.children[0].children[0].id;
+							// Get the id of the first dataset we got from the server,
+							// because we can
+							// only get some information out of the server if we dig a
+							// little deeper,
+							// and we need an ID to do just that.
+							var firstDatasetID = resolvedPromise1.data.children[0].children[0].id;
 
-			// To get the server to give us the available palette names,
-			// we use this
-			// first ID
-			$scope.getMetadata(firstDatasetID).then(function success(resolvedPromise2) {
-				// Store the palette names and image URL's. (--NG--)
-				$scope.ncWMSdata.palettes = $scope.loadPalettes(firstDatasetID, resolvedPromise2.data.palettes);
+							// To get the server to give us the available palette names,
+							// we use this
+							// first ID
+							$scope.getMetadata(firstDatasetID).then(function success(resolvedPromise2) {
+								// Store the palette names and image URL's. (--NG--)
+								$scope.ncWMSdata.palettes = $scope.loadPalettes(firstDatasetID, resolvedPromise2.data.palettes);
 
-				// Store the first pallette we receive as the currently selected
-				// palette. (--NG--)
-				$scope.selectedPalette = $scope.ncWMSdata.palettes[0];
-				$scope.setWatchers();
-			}, function error(msg) {
-				console.log("Error in getMetadata, " + msg);
-			});
+								// Store the first pallette we receive as the currently
+								// selected
+								// palette. (--NG--)
+								$scope.selectedPalette = $scope.ncWMSdata.palettes[0];
+								$scope.setWatchers();
+							}, function error(msg) {
+								console.log("Error in getMetadata, " + msg);
+							});
 
-			// Define an array to store our waiting promises in
-			$scope.httpRequestPromises = [];
-			// Do a new metadata request for every loaded dataset
-			$scope.datasets.forEach(function(dataset) {
-				var promise = $scope.getMetadata(dataset.id).then(function success(resolvedPromise3) {
-					// Once the metadata request is resolved, store the dates with data in
-					// the previously made datasets datastructure.
+							// Define an array to store our waiting promises in
+							$scope.httpRequestPromises = [];
+							// Do a new metadata request for every loaded dataset
+							$scope.datasets.forEach(function(dataset) {
+								var promise = $scope.getMetadata(dataset.id).then(function success(resolvedPromise3) {
+									// Once the metadata request is resolved, store the
+									// dates with
+									// data in
+									// the previously made datasets datastructure.
+									var dates = [];
+									for ( var year in resolvedPromise3.data.datesWithData) {
+										var obj_month = resolvedPromise3.data.datesWithData[year];
+										for ( var month in obj_month) {
+											var day = obj_month[month];
+											dates.push(new Date(Date.UTC(year, month, day)));
+										}
+									}
+									$scope.datasets[$scope.datasets.indexOf(dataset)].datesWithData = dates;
 
-					var dates = [];
-					for ( var year in resolvedPromise3.data.datesWithData) {
-						var obj_month = resolvedPromise3.data.datesWithData[year];
-						for ( var month in obj_month) {
-							var day = obj_month[month];
-							dates.push(new Date(Date.UTC(year, month, day)));
+									// Store the scale ranges
+									$scope.datasets[$scope.datasets.indexOf(dataset)].min = parseFloat(resolvedPromise3.data.scaleRange[0]);
+									$scope.datasets[$scope.datasets.indexOf(dataset)].max = parseFloat(resolvedPromise3.data.scaleRange[1]);
+								}, function error(msg) {
+									console.log("Error in getMetadata, " + msg);
+								});
+								// Add this promise to the array of waiting promises.
+								$scope.httpRequestPromises.push(promise);
+							})
+
+							// The $q service lets us wait for an array of promises to be
+							// resolved
+							// before continuing. We wait here until all the promises for
+							// the metadata
+							// requests for each dataset are complete.
+							$q.all($scope.httpRequestPromises).then(function() {
+								var dates = $scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData;
+
+								var startDate = Cesium.JulianDate.fromDate(dates[0]);
+								var endDate = Cesium.JulianDate.fromDate(dates[$scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData.length - 1]);
+
+								$scope.timelineWidget.zoomTo(startDate, endDate);
+
+								// Fill the array with legend texts
+								$scope.setLegendText($scope.selectedDataset.min, $scope.selectedDataset.max, $scope.logarithmic);
+							});
+
+						}, function error(msg) {
+							console.log("Error in getMenu, " + msg);
+						});
+					}
+
+					$scope.getMenu = function() {
+						return $http.get(ncWMSURL + 'item=menu&menu=&REQUEST=GetMetadata');
+					}
+
+					$scope.loadMenu = function(res) {
+						var result = [];
+
+						$scope.ncWMSdata.metadata = res.data.children;
+						$scope.ncWMSdata.metadata.forEach(function(dataset) {
+							result.push({
+								id : dataset.children[0].id,
+								label : dataset.label,
+								datesWithData : {},
+								min : 0.0,
+								max : 0.0
+							});
+						});
+
+						return result;
+					}
+
+					$scope.getMetadata = function(id) {
+						return $http.get(ncWMSURL + 'item=layerDetails&layerName=' + id + '&REQUEST=GetMetadata');
+					}
+
+					$scope.loadPalettes = function(id, res) {
+						var result = [];
+
+						res.forEach(function(paletteName) {
+							var imgURL2 = ncWMSURL + 'REQUEST=GetLegendGraphic&LAYER=' + id + '&COLORBARONLY=true&WIDTH=10&HEIGHT=150&NUMCOLORBANDS=250&PALETTE='
+									+ paletteName
+
+							result.push({
+								name : paletteName,
+								graphic : imgURL2
+							});
+						});
+
+						return result;
+					}
+
+					$scope.loadData();
+
+					$scope.setWatchers = function() {
+						// Set a watcher for a change on the selected dataset
+						// (asynchronously)
+						$scope.$watch('selectedDataset', function(newValue, oldValue) {
+							repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.selectedDataset.min,
+									$scope.selectedDataset.max);
+
+							// Fill the array with legend texts
+							$scope.setLegendText($scope.selectedDataset.min, $scope.selectedDataset.max, $scope.logarithmic);
+						});
+
+						// Set a watcher for a change on the selected palette
+						// (asynchronously)
+						$scope.$watch('selectedPalette', function(newValue, oldValue) {
+							repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.selectedDataset.min,
+									$scope.selectedDataset.max);
+							fliplegend($scope.selectedPalette.graphic, "dropdown_canvas");
+							bigLegend($scope.selectedPalette.graphic, "bigLegend_canvas");
+						});
+
+						// Set a watcher for a change on the logarithmic checkbox
+						$scope.$watch('logarithmic', function(newValue, oldValue) {
+							repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.selectedDataset.min,
+									$scope.selectedDataset.max);
+
+							$scope.setLegendText($scope.selectedDataset.min, $scope.selectedDataset.max, $scope.logarithmic);
+						});
+
+						$scope.timelineWidget.addEventListener('settime', $scope.onTimelineScrub, false);
+						$scope.clock.onTick.addEventListener($scope.onTimelineTick);
+					}
+
+					// Setter for the selected dataset
+					$scope.selectDataset = function(dataset) {
+						$scope.selectedDataset = dataset;
+					};
+
+					// Setter for the selected palette
+					$scope.selectPalette = function(palette) {
+						$scope.selectedPalette = palette;
+					};
+
+					// Setter for the time (event listener for clicking the time bar).
+					$scope.onTimelineScrub = function(e) {
+						$scope.clock.currentTime = e.timeJulian;
+						$scope.clock.shouldAnimate = false;
+
+						var selection = Cesium.JulianDate.toDate($scope.clock.currentTime);
+						var closest = $scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData[0];
+						$scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData.forEach(function(date) {
+							if (date < selection) {
+								closest = date;
+							}
+						});
+
+						$scope.selectedTime = closest;
+
+						repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.selectedDataset.min,
+								$scope.selectedDataset.max);
+					}
+
+					$scope.onTimelineTick = function(clock) {
+						var selection = Cesium.JulianDate.toDate($scope.clock.currentTime);
+						var closest = $scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData[0];
+						$scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData.forEach(function(date) {
+							if (date < selection) {
+								closest = date;
+							}
+						});
+
+						if (closest !== $scope.selectedTime) {
+							console.log("tick forward!");
+
+							$scope.selectedTime = closest;
+
+							repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.selectedDataset.min,
+									$scope.selectedDataset.max);
 						}
 					}
-					$scope.datasets[$scope.datasets.indexOf(dataset)].datesWithData = dates;
 
-				}, function error(msg) {
-					console.log("Error in getMetadata, " + msg);
-				});
-				// Add this promise to the array of waiting promises.
-				$scope.httpRequestPromises.push(promise);
-			})
+					$scope.setLegendText = function(min, max, log) {
+						var diff = max - min;
+						if (!log) {
+							var interval = 0.2 * diff;
 
-			// The $q service lets us wait for an array of promises to be
-			// resolved
-			// before continuing. We wait here until all the promises for
-			// the metadata
-			// requests for each dataset are complete.
-			$q.all($scope.httpRequestPromises).then(function() {
-				var dates = $scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData;
+							$scope.legendText[5] = Math.round10(min, -2);
+							$scope.legendText[4] = Math.round10(min + interval, -2);
+							$scope.legendText[3] = Math.round10(min + 2 * interval, -2);
+							$scope.legendText[2] = Math.round10(min + 3 * interval, -2);
+							$scope.legendText[1] = Math.round10(min + 4 * interval, -2);
+							$scope.legendText[0] = Math.round10(max, -2);
+						} else {
+							var logmin = Math.log(1);
+							var logmax = Math.log(max);
 
-				var startDate = Cesium.JulianDate.fromDate(dates[0]);
-				var endDate = Cesium.JulianDate.fromDate(dates[$scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData.length - 1]);
+							$scope.legendText[5] = (Math.pow(10, logmin)).toExponential(2);
+							$scope.legendText[4] = (Math.pow(10, .8 * logmin + 0.2 * logmax)).toExponential(2);
+							$scope.legendText[3] = (Math.pow(10, .6 * logmin + 0.4 * logmax)).toExponential(2);
+							$scope.legendText[2] = (Math.pow(10, .4 * logmin + 0.6 * logmax)).toExponential(2);
+							$scope.legendText[1] = (Math.pow(10, .2 * logmin + 0.8 * logmax)).toExponential(2);
+							$scope.legendText[0] = (Math.pow(10, logmax)).toExponential(2);
+						}
+					}
 
-				$scope.timelineWidget.zoomTo(startDate, endDate);
-			});
-
-		}, function error(msg) {
-			console.log("Error in getMenu, " + msg);
-		});
-	}
-
-	$scope.getMenu = function() {
-		return $http.get(ncWMSURL + 'item=menu&menu=&REQUEST=GetMetadata');
-	}
-
-	$scope.loadMenu = function(res) {
-		var result = [];
-
-		$scope.ncWMSdata.metadata = res.data.children;
-		$scope.ncWMSdata.metadata.forEach(function(dataset) {
-			result.push({
-				id : dataset.children[0].id,
-				label : dataset.label,
-				datesWithData : {}
-			});
-		});
-
-		return result;
-	}
-
-	$scope.getMetadata = function(id) {
-		return $http.get(ncWMSURL + 'item=layerDetails&layerName=' + id + '&REQUEST=GetMetadata');
-	}
-
-	$scope.loadPalettes = function(id, res) {
-		var result = [];
-
-		res.forEach(function(paletteName) {
-			var imgURL2 = ncWMSURL + 'REQUEST=GetLegendGraphic&LAYER=' + id + '&COLORBARONLY=true&WIDTH=10&HEIGHT=150&NUMCOLORBANDS=250&PALETTE=' + paletteName
-
-			result.push({
-				name : paletteName,
-				graphic : imgURL2
-			});
-		});
-
-		return result;
-	}
-
-	$scope.loadData();
-
-	$scope.setWatchers = function() {
-		// Set a watcher for a change on the selected dataset
-		// (asynchronously)
-		$scope.$watch('selectedDataset', function(newValue, oldValue) {
-			repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic);
-		});
-
-		// Set a watcher for a change on the selected palette
-		// (asynchronously)
-		$scope.$watch('selectedPalette', function(newValue, oldValue) {
-			repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic);
-			fliplegend($scope.selectedPalette.graphic, "dropdown_canvas");
-		});
-
-		// Set a watcher for a change on the selected palette
-		// (asynchronously)
-		$scope.$watch('logarithmic', function(newValue, oldValue) {
-			repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic);
-		});
-
-		$scope.timelineWidget.addEventListener('settime', $scope.onTimelineScrub, false);
-		$scope.clock.onTick.addEventListener($scope.onTimelineTick);
-	}
-
-	// Setter for the selected dataset
-	$scope.selectDataset = function(dataset) {
-		$scope.selectedDataset = dataset;
-	};
-
-	// Setter for the selected palette
-	$scope.selectPalette = function(palette) {
-		$scope.selectedPalette = palette;
-	};
-
-	// Setter for the time (event listener for clicking the time bar).
-	$scope.onTimelineScrub = function(e) {
-		$scope.clock.currentTime = e.timeJulian;
-		$scope.clock.shouldAnimate = false;
-
-		var selection = Cesium.JulianDate.toDate($scope.clock.currentTime);
-		var closest = $scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData[0];
-		$scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData.forEach(function(date) {
-			if (date < selection) {
-				closest = date;
-			}
-		});
-
-		$scope.selectedTime = closest;
-
-		repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic);
-	}
-
-	$scope.onTimelineTick = function(clock) {
-		var selection = Cesium.JulianDate.toDate($scope.clock.currentTime);
-		var closest = $scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData[0];
-		$scope.datasets[$scope.datasets.indexOf($scope.selectedDataset)].datesWithData.forEach(function(date) {
-			if (date < selection) {
-				closest = date;
-			}
-		});
-
-		if (closest !== $scope.selectedTime) {
-			console.log("tick forward!");
-
-			$scope.selectedTime = closest;
-
-			repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic);
-		}
-	}
-
-} ]).directive('iAmLegend', function() {
+				} ]).directive('iAmLegend', function() {
 	return {
 		restrict : "A",
 		link : function(scope, element) {
@@ -289,7 +341,20 @@ function fliplegend(imgURL, elementID) {
 	}
 }
 
-function repaintColorMap(selectedlayerName, selectedPaletteName, selectedTime, logarithmic) {
+function bigLegend(imgURL, elementID) {
+	var context = document.getElementById(elementID).getContext("2d");
+	var img = new Image();
+	img.src = imgURL;
+
+	img.onload = function() {
+		context.canvas.width = 10;
+		context.canvas.height = 150;
+
+		context.drawImage(img, 0, 0);
+	}
+}
+
+function repaintColorMap(selectedlayerName, selectedPaletteName, selectedTime, logarithmic, selectedMin, selectedMax) {
 	if (colorMapLayer != null) {
 		layers.remove(colorMapLayer, false);
 	}
@@ -305,7 +370,7 @@ function repaintColorMap(selectedlayerName, selectedPaletteName, selectedTime, l
 			TRANSPARENT : 'true',
 			TIME : selectedTime.toISOString(),
 			LOGSCALE : logarithmic,
-			COLORSCALERANGE : '1,50950.03',
+			COLORSCALERANGE : logarithmic ? (1 + "," + selectedMax) : (selectedMin + "," + selectedMax),
 			styles : 'boxfill/' + selectedPaletteName,
 			format : 'image/png'
 		}
@@ -388,3 +453,52 @@ var TimeCtrl = [ '$scope', '$http', function($scope, $http) {
 	// }
 	// }
 } ];
+
+/**
+ * Decimal adjustment of a number.
+ * 
+ * @param {String}
+ *          type The type of adjustment.
+ * @param {Number}
+ *          value The number.
+ * @param {Integer}
+ *          exp The exponent (the 10 logarithm of the adjustment base).
+ * @returns {Number} The adjusted value.
+ */
+function decimalAdjust(type, value, exp) {
+	// If the exp is undefined or zero...
+	if (typeof exp === 'undefined' || +exp === 0) {
+		return Math[type](value);
+	}
+	value = +value;
+	exp = +exp;
+	// If the value is not a number or the exp is not an integer...
+	if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
+		return NaN;
+	}
+	// Shift
+	value = value.toString().split('e');
+	value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+	// Shift back
+	value = value.toString().split('e');
+	return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+}
+
+// Decimal round
+if (!Math.round10) {
+	Math.round10 = function(value, exp) {
+		return decimalAdjust('round', value, exp);
+	};
+}
+// Decimal floor
+if (!Math.floor10) {
+	Math.floor10 = function(value, exp) {
+		return decimalAdjust('floor', value, exp);
+	};
+}
+// Decimal ceil
+if (!Math.ceil10) {
+	Math.ceil10 = function(value, exp) {
+		return decimalAdjust('ceil', value, exp);
+	};
+}
