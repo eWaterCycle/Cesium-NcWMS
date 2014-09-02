@@ -11,7 +11,6 @@
 <!-- CSS -->
 <link type="text/css" rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css">
 <link type="text/css" rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
-<link type="text/css" rel="stylesheet" href="../bower_components/jqrangeslider/css/iThing.css">
 
 <!--[if lt IE 9]>
     	<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -258,15 +257,18 @@ a {
     <div style="position:absolute; top:0px;left:65px; height:100%; margin-top:5px">
        <canvas id="bigLegend_canvas" style="width: 20px; height: 100%;"></canvas>
     </div> 
+    <div style="position:absolute; top:0px;left:65px; height:100%; margin-top:5px">
+    {{selectedUnits}}
+    </div>     
 	</div>
 	
-	<div id="logoBox" style="position:absolute; bottom:16px;right:0px; max-width:25%; max-height:15%">
+	<div id="logoBox" style="position:absolute; bottom:2%;right:0px; max-width:25%; max-height:15%">
     <div>
       <a class="navbar-clickable" href="http://www.uu.nl">
-        <img class="logo-custom img-responsive-logo" src="images/UU-logo2011_RGB_diap.png" style="max-width:60%">
+        <img class="logo-custom img-responsive-logo" src="images/UU-logo2011_RGB_diap.png" style="max-width:60%; max-height:70%">
       </a>
-      <a class="navbar-clickable" href="http://www.tudelft.nl">
-        <img class="logo-custom img-responsive-logo" src="images/preTU_P5_white1409040577.gif" style="max-width:38%">
+      <a class="navbar-clickable" href="http://wrm.tudelft.nl">
+        <img class="logo-custom img-responsive-logo" src="images/preTU_P5_white1409040577.gif" style="max-width:38%; max-height:70%">
       </a>
     </div>
     <div>
@@ -301,7 +303,6 @@ a {
   <!-- build:js(.) scripts/vendor.js -->
   <!-- bower:js -->
   <script src="../bower_components/jquery/dist/jquery.min.js"></script>  
-  <!-- <script src="../bower_components/jquery-ui/jquery-ui.min.js"></script> -->
   <script src="../bower_components/angular/angular.js"></script>
   <script src="../bower_components/json3/lib/json3.js"></script>
   <script src="../bower_components/angular-resource/angular-resource.js"></script>
@@ -310,9 +311,7 @@ a {
   <script src="../bower_components/angular-animate/angular-animate.js"></script>
   <script src="../bower_components/angular-touch/angular-touch.js"></script>
   <script src="../bower_components/angular-route/angular-route.js"></script>
-  <!-- <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script> -->
-  <script src="../bower_components/ui.bootstrap/dist/ui-bootstrap-0.11.0.js"></script>
-  <!-- <script src="../bower_components/jqrangeslider/dest/jQDateRangeSlider-min.js"></script> -->
+  <script src="../bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
   <!-- endbower -->
   <!-- endbuild -->
 
@@ -324,7 +323,7 @@ a {
 
 	<!-- Latest compiled and minified JavaScript -->
 	<script type="text/javascript" src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="../bower_components/ui.bootstrap/dist/ui-bootstrap-tpls-0.11.0.js"></script>
+  <script type="text/javascript" src="../bower_components/angular-bootstrap/ui-bootstrap-tlps.min.js"></script>
 	
 	
   <script src="Cesium-b30/Build/Cesium/Cesium.js"></script>

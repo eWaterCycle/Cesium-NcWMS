@@ -24,6 +24,38 @@ var viewer = new Cesium.CesiumWidget('cesiumContainer', {
 	creditContainer : "cesiumCredits"
 });
 
+function addPicking() {
+	var ellipsoid = viewer.scene.globe.ellipsoid;
+	var labels = new Cesium.LabelCollection();
+	label = labels.add();
+	viewer.scene.primitives.add(labels);
+
+	// Mouse over the globe to see the cartographic position
+	viewer.handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+	viewer.handler.setInputAction(function(doubleclick) {
+		var cartesian = viewer.scene.camera.pickEllipsoid(doubleclick.position, ellipsoid);
+		if (cartesian) {
+			var cartographic = ellipsoid.cartesianToCartographic(cartesian);
+			// debugger
+			viewer.scene.camera.flyTo({
+				destination : new Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude), 10000000)
+			});
+		}
+	}, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+
+	viewer.handler.setInputAction(function(movement) {
+		var cartesian = viewer.scene.camera.pickEllipsoid(movement.endPosition, ellipsoid);
+		if (cartesian) {
+			var cartographic = ellipsoid.cartesianToCartographic(cartesian);
+			label.show = true;
+			label.text = '(' + Cesium.Math.toDegrees(cartographic.longitude).toFixed(2) + ', ' + Cesium.Math.toDegrees(cartographic.latitude).toFixed(2) + ')';
+			label.position = cartesian;
+		}
+	}, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+};
+
+addPicking();
+
 var layers = viewer.scene.imageryLayers;
 // viewer.clock.animating = false;
 
@@ -66,6 +98,7 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 					$scope.selectedTime = new Date(Date.UTC(1960, 0, 31, 0, 0, 0));
 					$scope.logarithmic = false;
 					$scope.legendText = [ 00, 10, 20, 30, 40, 50 ];
+					$scope.selectedUnits = "";
 
 					$scope.clock = viewer.clock;
 					$scope.clockViewModel = new Cesium.ClockViewModel($scope.clock);
@@ -129,6 +162,9 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 									// Store the scale ranges
 									$scope.datasets[$scope.datasets.indexOf(dataset)].min = parseFloat(resolvedPromise3.data.scaleRange[0]);
 									$scope.datasets[$scope.datasets.indexOf(dataset)].max = parseFloat(resolvedPromise3.data.scaleRange[1]);
+
+									$scope.datasets[$scope.datasets.indexOf(dataset)].units = resolvedPromise3.data.units;
+
 								}, function error(msg) {
 									console.log("Error in getMetadata, " + msg);
 								});
@@ -151,6 +187,7 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 
 								// Fill the array with legend texts
 								$scope.setLegendText($scope.selectedDataset.min, $scope.selectedDataset.max, $scope.logarithmic);
+								$scope.selectedUnits = parseFloat($scope.selectedDataset.units);
 							});
 
 						}, function error(msg) {
@@ -172,7 +209,8 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 								label : dataset.label,
 								datesWithData : {},
 								min : 0.0,
-								max : 0.0
+								max : 0.0,
+								units : {}
 							});
 						});
 
@@ -210,6 +248,7 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 
 							// Fill the array with legend texts
 							$scope.setLegendText($scope.selectedDataset.min, $scope.selectedDataset.max, $scope.logarithmic);
+							$scope.selectedUnits = parseFloat($scope.selectedDataset.units);
 						});
 
 						// Set a watcher for a change on the selected palette
@@ -227,6 +266,7 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 									$scope.selectedDataset.max);
 
 							$scope.setLegendText($scope.selectedDataset.min, $scope.selectedDataset.max, $scope.logarithmic);
+							$scope.selectedUnits = parseFloat($scope.selectedDataset.units);
 						});
 
 						$scope.timelineWidget.addEventListener('settime', $scope.onTimelineScrub, false);
@@ -371,6 +411,8 @@ function repaintColorMap(selectedlayerName, selectedPaletteName, selectedTime, l
 			TIME : selectedTime.toISOString(),
 			LOGSCALE : logarithmic,
 			COLORSCALERANGE : logarithmic ? (1 + "," + selectedMax) : (selectedMin + "," + selectedMax),
+			ABOVEMAXCOLOR : 'extend',
+			BELOWMINCOLOR : 'extend',
 			styles : 'boxfill/' + selectedPaletteName,
 			format : 'image/png'
 		}
