@@ -1,4 +1,4 @@
-var ncWMSURL = 'http://localhost:8080/ncWMS/wms?';
+var ncWMSURL = 'http://localhost:8080/ncWMS-1.2/wms?';
 
 var viewer = new Cesium.CesiumWidget('cesiumContainer', {
 	// Start in Globe Viewer
