@@ -3,6 +3,9 @@ eWaterCycle-Demo
 
 Cesium (cesiumjs.org) based demo for eWaterCycle project.
 
+![logo](images/eWaterCycle.png "Screenshot 1")
+![logo](images/eWaterCycle2.png "Screenshot 2")
+
 Getting started (windows, from scratch)
 ---------------------------------------
 1. Install Git : 	http://git-scm.com/downloads
