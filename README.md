@@ -22,7 +22,8 @@ Getting started (windows, from scratch)
 10. Type: "bower install"
 11. Download and install ncWMS (http://www.resc.rdg.ac.uk/trac/ncWMS/)
 12. Serve some netcdf data with ncWMS via the admin interface.
-13. Open browser, go to "http://localhost:8080/eWaterCycle-Demo/app/bootstrap.html"
+13. Serve the /app directory in the eWaterCycle-Demo directory with your webserver solution (tomcat).
+14. Open browser, go to "http://localhost:8080/eWaterCycle-Demo/bootstrap.html"
 
 Getting started (Linux, Debian and Ubuntu based)
 -------------------------------------------------
@@ -35,7 +36,8 @@ Getting started (Linux, Debian and Ubuntu based)
 7. Setup with bower: "cd eWaterCycle-Demo ; bower install".
 8. Download and install ncWMS, find it here: (http://www.resc.rdg.ac.uk/trac/ncWMS/).
 9. Configure ncWMS, make sure to serve at least some netcdf data with your ncWMS setup.
-10. Access eWaterCycle-Demo with web browser, running app should be available at url: (http://localhost:8000/).
+10. Serve the /app directory in the eWaterCycle-Demo directory with your webserver solution (tomcat).
+11. Access eWaterCycle-Demo with web browser, running app should be available at url: (http://localhost:8000/bootstrap.html).
 
 Copyrights & Disclaimers
 ------------------------
