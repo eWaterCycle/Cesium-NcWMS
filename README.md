@@ -15,26 +15,25 @@ Getting started (windows, from scratch)
 5. Close Git bash
 6. Add C:\Users\{YOUR USERNAME HERE}\node_modules\bower\bin to your PATH
 7. Start Git bash
-8. Type: "git clone https://github.com/NLeSC/PattyVis"
+8. Type: "git clone https://github.com/NLeSC/eWaterCycle-Demo.git"
 9. Type: "cd PattyVis"
 10. Type: "bower install"
 11. Install Apache Tomcat (http://tomcat.apache.org/)
 12. Download and install ncWMS (http://www.resc.rdg.ac.uk/trac/ncWMS/)
 13. Serve some netcdf data with ncWMS via the admin interface.
-13. Open browser, go to "http://localhost:8080/eWaterCycle-Demo/app/bootstrap.html"
+14. Open browser, go to "http://localhost:8080/eWaterCycle-Demo/app/bootstrap.html"
 
 Getting started (Linux, Debian and Ubuntu based)
 -------------------------------------------------
-1. Install git: "sudo apt-get install git"
-2. Install nodejs, Follow instructions at joyents github website: (https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager#debian-and-ubuntu-based-linux-distributions)
-3.Install nodejs module bower globally: "sudo npm install -g bower"
-4. Fetch git repository: "git clone https://github.com/NLeSC/eWaterCycle-Demo"
-5. Setup with bower: "cd eWaterCycle-Demo ; bower install"
-6. Serve with your favourite webserver solution, we recommend Apache Tomcat, you can find it here: (http://tomcat.apache.org/)
-7. Download and install ncWMS, find it here: (http://www.resc.rdg.ac.uk/trac/ncWMS/)
+1. Install git: "sudo apt-get install git".
+2. Install nodejs, Follow instructions at joyents github website: (https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager#debian-and-ubuntu-based-linux-distributions).
+3. Install nodejs module bower globally: "sudo npm install -g bower".
+4. Fetch git repository: "git clone https://github.com/NLeSC/eWaterCycle-Demo".
+5. Setup with bower: "cd eWaterCycle-Demo ; bower install".
+6. Serve with your favourite webserver solution, we recommend Apache Tomcat, you can find it here: (http://tomcat.apache.org/).
+7. Download and install ncWMS, find it here: (http://www.resc.rdg.ac.uk/trac/ncWMS/).
 8. Configure ncWMS, make sure to serve at least some netcdf data with your ncWMS setup.
-9. Access eWaterCycle-Demo with web browser, running app should be available at url: (http://localhost:8000/)
-10. 
+9. Access eWaterCycle-Demo with web browser, running app should be available at url: (http://localhost:8000/).
 
 Copyrights & Disclaimers
 ------------------------
