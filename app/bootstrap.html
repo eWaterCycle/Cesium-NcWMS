@@ -13,8 +13,8 @@
 <link type="text/css" rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
 
 <style type="text/css">
-@import url(Cesium-b30/Build/Cesium/Widgets/widgets.css);
-@import url(Cesium-b30/Build/Cesium/Widgets/Animation/Animation.css);
+@import url(Cesium-1.3/Build/CesiumUnminified/Widgets/widgets.css);
+@import url(Cesium-1.3/Build/CesiumUnminified/Widgets/Animation/Animation.css);
 /*
 body {
 	padding-top: 50px;
@@ -168,7 +168,7 @@ a {
 #bigLegend {
   display: block;
   position: absolute;
-  right: 5%;
+  right: 2%;
   top: 50px;
   max-width: 5%;
   height: 75%;
@@ -236,7 +236,13 @@ a {
 	        </div>		        
         </li>
         <li>
-          <span style="color: #ffffff;">log <input type="checkbox" ng-model="logarithmic" class="navbar-clickable"></span>
+          <span style="color: #ffffff;">Logarithmic? <input type="checkbox" ng-model="logarithmic" class="navbar-clickable"></span>
+        </li>
+        <li>
+          <span style="color: #ffffff;">Terrain? <input type="checkbox" ng-model="terrain" class="navbar-clickable"></span>
+        </li>
+        <li>
+          <span style="color: #ffffff;">Uncertainty? <input type="checkbox" ng-model="uncertainty" class="navbar-clickable"></span>
         </li>
       </ul> 
     </div>	<!--/.container-fluid -->	
@@ -257,7 +263,7 @@ a {
     </div>     
 	</div>
 	
-	<div id="logoBox" style="position:absolute; bottom:2%;right:0px; max-width:25%; max-height:15%">
+	<div id="logoBox" style="position:absolute; bottom:4%;right:0px; max-width:25%; max-height:15%">
     <div>
       <a class="navbar-clickable" href="http://www.uu.nl">
         <img class="logo-custom img-responsive-logo" src="images/UU-logo2011_RGB_diap.png" style="max-width:60%; max-height:70%">
@@ -304,7 +310,7 @@ a {
   <script type="text/javascript" src="../bower_components/angular-bootstrap/ui-bootstrap-tlps.min.js"></script>
 	
 	
-  <script src="Cesium-b30/Build/Cesium/Cesium.js"></script>
+  <script src="Cesium-1.3/Build/CesiumUnminified/Cesium.js"></script>
   <script type="text/javascript" src="cesiumDemo.js">doCesiumJSON()</script>
 
 </body>

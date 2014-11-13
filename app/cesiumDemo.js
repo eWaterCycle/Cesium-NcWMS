@@ -97,6 +97,8 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 					$scope.selectedPalette = "default";
 					$scope.selectedTime = new Date(Date.UTC(1960, 0, 31, 0, 0, 0));
 					$scope.logarithmic = false;
+					$scope.terrain = true;
+					$scope.uncertainty = false;
 					$scope.legendText = [ 00, 10, 20, 30, 40, 50 ];
 					$scope.selectedUnits = "";
 
@@ -243,8 +245,8 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 						// Set a watcher for a change on the selected dataset
 						// (asynchronously)
 						$scope.$watch('selectedDataset', function(newValue, oldValue) {
-							repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.selectedDataset.min,
-									$scope.selectedDataset.max);
+							repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.terrain,
+									$scope.selectedDataset.min, $scope.selectedDataset.max);
 
 							// Fill the array with legend texts
 							$scope.setLegendText($scope.selectedDataset.min, $scope.selectedDataset.max, $scope.logarithmic);
@@ -254,16 +256,34 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 						// Set a watcher for a change on the selected palette
 						// (asynchronously)
 						$scope.$watch('selectedPalette', function(newValue, oldValue) {
-							repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.selectedDataset.min,
-									$scope.selectedDataset.max);
+							repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.terrain,
+									$scope.uncertainty, $scope.selectedDataset.min, $scope.selectedDataset.max);
 							fliplegend($scope.selectedPalette.graphic, "dropdown_canvas");
 							bigLegend($scope.selectedPalette.graphic, "bigLegend_canvas");
 						});
 
 						// Set a watcher for a change on the logarithmic checkbox
 						$scope.$watch('logarithmic', function(newValue, oldValue) {
-							repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.selectedDataset.min,
-									$scope.selectedDataset.max);
+							repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.terrain,
+									$scope.uncertainty, $scope.selectedDataset.min, $scope.selectedDataset.max);
+
+							$scope.setLegendText($scope.selectedDataset.min, $scope.selectedDataset.max, $scope.logarithmic);
+							$scope.selectedUnits = parseFloat($scope.selectedDataset.units);
+						});
+
+						// Set a watcher for a change on the uncertainty checkbox
+						$scope.$watch('terrain', function(newValue, oldValue) {
+							repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.terrain,
+									$scope.uncertainty, $scope.selectedDataset.min, $scope.selectedDataset.max);
+
+							$scope.setLegendText($scope.selectedDataset.min, $scope.selectedDataset.max, $scope.logarithmic);
+							$scope.selectedUnits = parseFloat($scope.selectedDataset.units);
+						});
+
+						// Set a watcher for a change on the uncertainty checkbox
+						$scope.$watch('uncertainty', function(newValue, oldValue) {
+							repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.terrain,
+									$scope.uncertainty, $scope.selectedDataset.min, $scope.selectedDataset.max);
 
 							$scope.setLegendText($scope.selectedDataset.min, $scope.selectedDataset.max, $scope.logarithmic);
 							$scope.selectedUnits = parseFloat($scope.selectedDataset.units);
@@ -298,8 +318,8 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 
 						$scope.selectedTime = closest;
 
-						repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.selectedDataset.min,
-								$scope.selectedDataset.max);
+						repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.terrain,
+								$scope.uncertainty, $scope.selectedDataset.min, $scope.selectedDataset.max);
 					}
 
 					$scope.onTimelineTick = function(clock) {
@@ -316,8 +336,8 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 
 							$scope.selectedTime = closest;
 
-							repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.selectedDataset.min,
-									$scope.selectedDataset.max);
+							repaintColorMap($scope.selectedDataset.id, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.terrain,
+									$scope.uncertainty, $scope.selectedDataset.min, $scope.selectedDataset.max);
 						}
 					}
 
@@ -394,32 +414,89 @@ function bigLegend(imgURL, elementID) {
 	}
 }
 
-function repaintColorMap(selectedlayerName, selectedPaletteName, selectedTime, logarithmic, selectedMin, selectedMax) {
+function repaintColorMap(selectedlayerName, selectedPaletteName, selectedTime, logarithmic, terrain, uncertainty, selectedMin, selectedMax) {
+	var oldColorMapLayer;
 	if (colorMapLayer != null) {
-		layers.remove(colorMapLayer, false);
+		oldColorMapLayer = colorMapLayer;
 	}
 
-	colorMapLayer = layers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
-		url : ncWMSURL,
-		layers : selectedlayerName,
-		parameters : {
-			service : 'WMS',
-			version : '1.3.0',
-			request : 'GetMap',
-			CRS : 'CRS:84',
-			TRANSPARENT : 'true',
-			TIME : selectedTime.toISOString(),
-			LOGSCALE : logarithmic,
-			COLORSCALERANGE : logarithmic ? (1 + "," + selectedMax) : (selectedMin + "," + selectedMax),
-			ABOVEMAXCOLOR : 'extend',
-			BELOWMINCOLOR : 'extend',
-			styles : 'boxfill/' + selectedPaletteName,
-			format : 'image/png'
-		}
-	}));
+	if (terrain) {
+		colorMapLayer = viewer.scene.imageryLayers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
+			url : ncWMSURL,
+			layers : selectedlayerName,
+			parameters : {
+				service : 'WMS',
+				version : '1.3.0',
+				request : 'GetMap',
+				CRS : 'CRS:84',
+				TRANSPARENT : 'true',
+				TIME : selectedTime.toISOString(),
+				LOGSCALE : logarithmic,
+				COLORSCALERANGE : logarithmic ? (1 + "," + selectedMax) : (selectedMin + "," + selectedMax),
+				ABOVEMAXCOLOR : 'extend',
+				BELOWMINCOLOR : 'extend',
+				styles : 'boxfill/' + selectedPaletteName,
+				format : 'image/png'
+			}
+		}));
 
-	colorMapLayer.alpha = 0.3;
-	colorMapLayer.brightness = 2.0;
+		colorMapLayer.alpha = 0.3;
+		colorMapLayer.brightness = 2.0;
+	} else {
+		if (uncertainty) {
+			colorMapLayer = viewer.scene.imageryLayers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
+				url : ncWMSURL,
+				layers : selectedlayerName + "Uncertainty",
+				parameters : {
+					service : 'WMS',
+					version : '1.3.0',
+					request : 'GetMap',
+					CRS : 'CRS:84',
+					TRANSPARENT : 'false',
+					TIME : selectedTime.toISOString(),
+					LOGSCALE : logarithmic,
+					COLORSCALERANGE : (0 + "," + 1),
+					BGCOLOR : '0x000011',
+					ABOVEMAXCOLOR : 'extend',
+					BELOWMINCOLOR : '0x000000',
+					styles : 'boxfill/' + selectedPaletteName,
+					format : 'image/png'
+				}
+			}));
+
+			colorMapLayer.alpha = 1.0;
+			colorMapLayer.brightness = 2.0;
+		} else {
+			colorMapLayer = viewer.scene.imageryLayers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
+				url : ncWMSURL,
+				layers : selectedlayerName,
+				parameters : {
+					service : 'WMS',
+					version : '1.3.0',
+					request : 'GetMap',
+					CRS : 'CRS:84',
+					TRANSPARENT : 'false',
+					TIME : selectedTime.toISOString(),
+					LOGSCALE : logarithmic,
+					COLORSCALERANGE : logarithmic ? (1 + "," + selectedMax) : (selectedMin + "," + selectedMax),
+					BGCOLOR : '0x000011',
+					ABOVEMAXCOLOR : 'extend',
+					BELOWMINCOLOR : '0x000000',
+					styles : 'boxfill/' + selectedPaletteName,
+					format : 'image/png'
+				}
+			}));
+
+			colorMapLayer.alpha = 1.0;
+			colorMapLayer.brightness = 2.0;
+		}
+	}
+
+	// viewer.scene.imageryLayers.addImageryProvider(provider);
+
+	if (oldColorMapLayer != null) {
+		layers.remove(oldColorMapLayer, true);
+	}
 }
 
 var ViewModelCtrl = [ '$scope', '$http', function($scope, $http) {
