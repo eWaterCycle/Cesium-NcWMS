@@ -1,10 +1,10 @@
 var ncWMSURL = 'http://localhost:8080/ncWMS-2.0-SNAPSHOT/wms?';
 
 var viewer;
+var mapLayer;
 var colorMapLayer;
 
-function initCesium(withTerrain) {
-
+function initCesium(withTerrain, $http) {
 	var proceed = true;
 	if (viewer) {
 		proceed = false;
@@ -14,22 +14,18 @@ function initCesium(withTerrain) {
 		}
 		proceed = true;
 	}
+
 	if (proceed) {
 		if (withTerrain) {
 			viewer = new Cesium.CesiumWidget('cesiumContainer', {
 				// Start in Globe Viewer
 				sceneMode : Cesium.SceneMode.SCENE3D,
 
+				imageryProvider : false,
+
 				// Use STK High res terrain
 				terrainProvider : new Cesium.CesiumTerrainProvider({
 					url : '//cesiumjs.org/stk-terrain/tilesets/world/tiles',
-				}),
-
-				// Use BingMaps for the base layer
-				imageryProvider : new Cesium.BingMapsImageryProvider({
-					url : '//dev.virtualearth.net',
-					key : 'AsP2TER1bj7tMZGuQtDkvWtX9vOezdG3zbeJp3tOv8d1Q4XrDLd6bEMz_nFsmcKi',
-					mapStyle : Cesium.BingMapsStyle.AERIAL
 				}),
 
 				clock : new Cesium.Clock({
@@ -39,17 +35,21 @@ function initCesium(withTerrain) {
 				creditContainer : "cesiumCredits"
 			});
 		} else {
-			viewer = new Cesium.CesiumWidget('cesiumContainer', {
+			viewer = new Cesium.Viewer('cesiumContainer', {
 				// Start in Globe Viewer
 				sceneMode : Cesium.SceneMode.SCENE3D,
 
-				// Use BingMaps for the base layer
-				// imageryProvider : new Cesium.BingMapsImageryProvider({
-				// url : '//dev.virtualearth.net',
-				// key :
-				// 'AsP2TER1bj7tMZGuQtDkvWtX9vOezdG3zbeJp3tOv8d1Q4XrDLd6bEMz_nFsmcKi',
-				// mapStyle : Cesium.BingMapsStyle.AERIAL
-				// }),
+				baseLayerPicker : false,
+				animation : false,
+				fullscreenButton : false,
+				geocoder : false,
+				homeButton : false,
+				infoBox : false,
+				sceneModePicker : false,
+				selectionIndicator : false,
+				timeline : false,
+				navigationHelpButton : false,
+				imageryProvider : false,
 
 				clock : new Cesium.Clock({
 					multiplier : 500.0
@@ -59,7 +59,16 @@ function initCesium(withTerrain) {
 			});
 		}
 
+		// Use BingMaps for the base layer
+		mapLayer = viewer.scene.imageryLayers.addImageryProvider(new Cesium.BingMapsImageryProvider({
+			url : '//dev.virtualearth.net',
+			key : 'AsP2TER1bj7tMZGuQtDkvWtX9vOezdG3zbeJp3tOv8d1Q4XrDLd6bEMz_nFsmcKi',
+			mapStyle : Cesium.BingMapsStyle.AERIAL
+		}));
+
 		addPicking();
+
+		// addCountries($http);
 	}
 
 	return viewer;
@@ -107,7 +116,31 @@ function addPicking() {
 	// }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 };
 
-angular.module('myApp', [ 'ui.bootstrap' ]).controller(
+function addCountries($http) {
+	$http.get('node_modules/world-countries/countries.json').then(function(res) {
+		res.data.forEach(function(country) {
+			// console.log(country.cca3.toLowerCase());
+
+			// Create a new GeoJSON data source and add it to the list.
+			var dataSource = new Cesium.GeoJsonDataSource();
+			viewer.dataSources.add(dataSource);
+			var interiorColor = new Cesium.Color(1.0, 1.0, 1.0, 0.0);
+			var outlineColor = new Cesium.Color(1.0, 1.0, 1.0, 1.0);
+			// Load the document into the data source and then set custom graphics
+			dataSource.loadUrl('node_modules/world-countries/data/' + country.cca3.toLowerCase() + '.geo.json').then(function() {
+				// debugger
+				// Get the array of entities
+				var entities = dataSource.entities.entities;
+				entities.forEach(function(entity) {
+					entity.polygon.material = Cesium.ColorMaterialProperty.fromColor(interiorColor);
+					entity.polygon.outlineColor = Cesium.ColorMaterialProperty.fromColor(outlineColor);
+				});
+			});
+		});
+	});
+}
+
+var myApp = angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 		'BodyCtrl',
 		[
 				'$scope',
@@ -120,7 +153,7 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 					// or
 					// update them, we use the (--NG--) tag in the comments.
 
-					viewer = initCesium(true);
+					viewer = initCesium(false, $http);
 
 					$scope.ncWMSdata = {
 						"metadata" : {},
@@ -131,7 +164,8 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 					$scope.selectedPalette = "default";
 					$scope.selectedTime = new Date(Date.UTC(1960, 0, 31, 0, 0, 0));
 					$scope.logarithmic = false;
-					$scope.terrain = true;
+					$scope.baseMap = true;
+					$scope.outlines = false;
 					$scope.uncertainty = false;
 					$scope.legendMin = 0;
 					$scope.legendMax = 50;
@@ -169,11 +203,10 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 								// Store the palette names and image URL's. (--NG--)
 								$scope.ncWMSdata.palettes = $scope.loadPalettes(firstDatasetID, resolvedPromise2.data.palettes);
 
-								// Store the first pallette we receive as the currently
+								// Store the first palette we receive as the currently
 								// selected
 								// palette. (--NG--)
 								$scope.selectedPalette = $scope.ncWMSdata.palettes[0];
-								$scope.setWatchers();
 							}, function error(msg) {
 								console.log("Error in getMetadata, " + msg);
 							});
@@ -232,6 +265,10 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 								// Fill the array with legend texts
 								$scope.setLegendText($scope.selectedDataset.min, $scope.selectedDataset.max, $scope.logarithmic);
 								$scope.selectedUnits = $scope.selectedDataset.units;
+
+								// Now that everything is loaded, start watching for changes in
+								// the settings
+								$scope.setWatchers();
 							});
 
 						}, function error(msg) {
@@ -294,18 +331,18 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 						$scope.$watch('selectedDataset', function(newValue, oldValue) {
 							$scope.legendMin = $scope.selectedDataset.min;
 							$scope.legendMax = $scope.selectedDataset.max;
-							repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.terrain, $scope.uncertainty,
+							repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.baseMap, $scope.uncertainty,
 									$scope.legendMin, $scope.legendMax);
 
 							// Fill the array with legend texts
-							$scope.setLegendText($scope.selectedDataset.min, $scope.selectedDataset.max, $scope.logarithmic);
+							$scope.setLegendText($scope.legendMin, $scope.legendMax, $scope.logarithmic);
 							$scope.selectedUnits = $scope.selectedDataset.units;
 						});
 
 						// Set a watcher for a change on the selected palette
 						// (asynchronously)
 						$scope.$watch('selectedPalette', function(newValue, oldValue) {
-							repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.terrain, $scope.uncertainty,
+							repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.baseMap, $scope.uncertainty,
 									$scope.legendMin, $scope.legendMax);
 							fliplegend($scope.selectedPalette.graphic, "dropdown_canvas");
 							bigLegend($scope.selectedPalette.graphic, "bigLegend_canvas");
@@ -313,34 +350,39 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 
 						// Set a watcher for a change on the logarithmic checkbox
 						$scope.$watch('logarithmic', function(newValue, oldValue) {
-							$scope.legendMin = $scope.selectedDataset.min;
+							$scope.legendMin = 1.0;
 							$scope.legendMax = $scope.selectedDataset.max;
 
-							repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.terrain, $scope.uncertainty,
+							repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.baseMap, $scope.uncertainty,
 									$scope.legendMin, $scope.legendMax);
 
-							$scope.setLegendText($scope.selectedDataset.min, $scope.selectedDataset.max, $scope.logarithmic);
+							$scope.setLegendText($scope.legendMin, $scope.legendMax, $scope.logarithmic);
 							$scope.selectedUnits = $scope.selectedDataset.units;
 						});
 
 						// Set a watcher for a change on the uncertainty checkbox
-						$scope.$watch('terrain', function(newValue, oldValue) {
-							repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.terrain, $scope.uncertainty,
+						$scope.$watch('baseMap', function(newValue, oldValue) {
+							repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.baseMap, $scope.uncertainty,
 									$scope.legendMin, $scope.legendMax);
 						});
 
 						// Set a watcher for a change on the uncertainty checkbox
 						$scope.$watch('uncertainty', function(newValue, oldValue) {
-							repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.terrain, $scope.uncertainty,
+							repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.baseMap, $scope.uncertainty,
 									$scope.legendMin, $scope.legendMax);
 
-							$scope.setLegendText(0, 1, false);
-							$scope.selectedUnits = "%";
+							if (newValue == true) {
+								$scope.setLegendText(0, 1, false);
+								$scope.selectedUnits = "%";
+							} else {
+								$scope.legendMin = $scope.selectedDataset.min;
+								$scope.legendMax = $scope.selectedDataset.max;
+							}
 						});
 
 						// // Set a watcher for a change on the uncertainty checkbox
 						$scope.$watch('legendMin', function(newValue, oldValue) {
-							repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.terrain, $scope.uncertainty,
+							repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.baseMap, $scope.uncertainty,
 									$scope.legendMin, $scope.legendMax);
 
 							$scope.setLegendText($scope.legendMin, $scope.legendMax, $scope.logarithmic);
@@ -348,7 +390,7 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 
 						// // Set a watcher for a change on the uncertainty checkbox
 						$scope.$watch('legendMax', function(newValue, oldValue) {
-							repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.terrain, $scope.uncertainty,
+							repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.baseMap, $scope.uncertainty,
 									$scope.legendMin, $scope.legendMax);
 
 							$scope.setLegendText($scope.legendMin, $scope.legendMax, $scope.logarithmic);
@@ -383,7 +425,7 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 
 						$scope.selectedTime = closest;
 
-						repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.terrain, $scope.uncertainty,
+						repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.baseMap, $scope.uncertainty,
 								$scope.legendMin, $scope.legendMax);
 					}
 
@@ -401,51 +443,66 @@ angular.module('myApp', [ 'ui.bootstrap' ]).controller(
 
 							$scope.selectedTime = closest;
 
-							repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.terrain, $scope.uncertainty,
+							repaintColorMap($scope.selectedDataset, $scope.selectedPalette.name, $scope.selectedTime, $scope.logarithmic, $scope.baseMap, $scope.uncertainty,
 									$scope.legendMin, $scope.legendMax);
 						}
 					}
 
 					$scope.setLegendText = function(min, max, log) {
 						var diff = max - min;
+						var interval = 0.2 * diff;
+
+						$scope.legendMin = min;
+						$scope.legendMax = max;
+
 						if (!log) {
-							var interval = 0.2 * diff;
-
-							if (diff < 10) {
-								// $scope.legendText[5] = (min).toExponential(4);
-								$scope.legendMin = (min).toExponential(4);
-								$scope.legendText[3] = (min + interval).toExponential(4);
-								$scope.legendText[2] = (min + 2 * interval).toExponential(4);
-								$scope.legendText[1] = (min + 3 * interval).toExponential(4);
-								$scope.legendText[0] = (min + 4 * interval).toExponential(4);
-								// $scope.legendText[0] = (max).toExponential(4);
-								$scope.legendMax = (max).toExponential(4);
-
-							} else {
-								// $scope.legendText[5] = Math.round10(min, -2);
-								$scope.legendMin = Math.round10(min, -2);
-								$scope.legendText[3] = Math.round10(min + interval, -2);
-								$scope.legendText[2] = Math.round10(min + 2 * interval, -2);
-								$scope.legendText[1] = Math.round10(min + 3 * interval, -2);
-								$scope.legendText[0] = Math.round10(min + 4 * interval, -2);
-								// $scope.legendText[0] = Math.round10(max, -2);
-								$scope.legendMax = Math.round10(max, -2);
-							}
+							$scope.legendText[3] = Math.round10((min + interval), -2);
+							$scope.legendText[2] = Math.round10((min + 2 * interval), -2);
+							$scope.legendText[1] = Math.round10((min + 3 * interval), -2);
+							$scope.legendText[0] = Math.round10((min + 4 * interval), -2);
 						} else {
-							var logmin = Math.log(1);
-							var logmax = Math.log(max);
+							var logmin = Math.log10(1);
+							var logmax = Math.log10(max);
 
-							// $scope.legendText[5] = (Math.pow(10, logmin)).toExponential(4);
-							$scope.legendMin = (Math.pow(10, logmin)).toExponential(4);
-							$scope.legendText[3] = (Math.pow(10, .8 * logmin + 0.2 * logmax)).toExponential(4);
-							$scope.legendText[2] = (Math.pow(10, .6 * logmin + 0.4 * logmax)).toExponential(4);
-							$scope.legendText[1] = (Math.pow(10, .4 * logmin + 0.6 * logmax)).toExponential(4);
-							$scope.legendText[0] = (Math.pow(10, .2 * logmin + 0.8 * logmax)).toExponential(4);
-							// $scope.legendText[0] = (Math.pow(10, logmax)).toExponential(4);
-							$scope.legendMax = (Math.pow(10, logmax)).toExponential(4);
+							$scope.legendText[3] = Math.round10((Math.pow(10, .8 * logmin + 0.2 * logmax)), -2);
+							$scope.legendText[2] = Math.round10((Math.pow(10, .6 * logmin + 0.4 * logmax)), -2);
+							$scope.legendText[1] = Math.round10((Math.pow(10, .4 * logmin + 0.6 * logmax)), -2);
+							$scope.legendText[0] = Math.round10((Math.pow(10, .2 * logmin + 0.8 * logmax)), -2);
 						}
-					}
 
+						/*
+						 * if (!log) { var interval = 0.2 * diff;
+						 * 
+						 * if (diff < 10) { // $scope.legendText[5] =
+						 * (min).toExponential(4); $scope.legendMin =
+						 * (min).toExponential(4); $scope.legendText[3] = (min +
+						 * interval).toExponential(4); $scope.legendText[2] = (min + 2 *
+						 * interval).toExponential(4); $scope.legendText[1] = (min + 3 *
+						 * interval).toExponential(4); $scope.legendText[0] = (min + 4 *
+						 * interval).toExponential(4); // $scope.legendText[0] =
+						 * (max).toExponential(4); $scope.legendMax =
+						 * (max).toExponential(4); } else { // $scope.legendText[5] =
+						 * Math.round10(min, -2); $scope.legendMin = Math.round10(min, -2);
+						 * $scope.legendText[3] = Math.round10(min + interval, -2);
+						 * $scope.legendText[2] = Math.round10(min + 2 * interval, -2);
+						 * $scope.legendText[1] = Math.round10(min + 3 * interval, -2);
+						 * $scope.legendText[0] = Math.round10(min + 4 * interval, -2); //
+						 * $scope.legendText[0] = Math.round10(max, -2); $scope.legendMax =
+						 * Math.round10(max, -2); } } else { var logmin = Math.log(1); var
+						 * logmax = Math.log(max); // $scope.legendText[5] = (Math.pow(10,
+						 * logmin)).toExponential(4); $scope.legendMin = (Math.pow(10,
+						 * logmin)).toExponential(4); $scope.legendText[3] = (Math.pow(10,
+						 * .8 * logmin + 0.2 * logmax)).toExponential(4);
+						 * $scope.legendText[2] = (Math.pow(10, .6 * logmin + 0.4 *
+						 * logmax)).toExponential(4); $scope.legendText[1] = (Math.pow(10,
+						 * .4 * logmin + 0.6 * logmax)).toExponential(4);
+						 * $scope.legendText[0] = (Math.pow(10, .2 * logmin + 0.8 *
+						 * logmax)).toExponential(4); // $scope.legendText[0] =
+						 * (Math.pow(10, logmax)).toExponential(4); $scope.legendMax =
+						 * (Math.pow(10, logmax)).toExponential(4); }
+						 */
+
+					}
 				} ]).directive('iAmLegend', function() {
 	return {
 		restrict : "A",
@@ -574,7 +631,7 @@ function repaintColorMap(selectedDataset, selectedPaletteName, selectedTime, log
 	}
 }
 
-var ViewModelCtrl = [ '$scope', '$http', function($scope, $http) {
+myApp.controller('ViewModelCtrl', [ '$scope', '$http', function($scope, $http) {
 	$scope.viewModel = "Globe View";
 
 	$scope.data = {
@@ -591,9 +648,9 @@ var ViewModelCtrl = [ '$scope', '$http', function($scope, $http) {
 			viewer.scene.morphTo2D(2.0);
 		}
 	}
-} ];
+} ]);
 
-var FlyToCtrl = [
+myApp.controller('FlyToCtrl', [
 		'$scope',
 		'$http',
 		function($scope, $http) {
@@ -604,7 +661,7 @@ var FlyToCtrl = [
 			};
 
 			// load JSON data
-			$http.get('countries.json').then(function(res) {
+			$http.get('data/countries.json').then(function(res) {
 				$scope.data.locations.countries = res.data;
 				$scope.flyToCountry($scope.selectedCountry, true);
 			});
@@ -625,9 +682,9 @@ var FlyToCtrl = [
 					}
 				}
 			}
-		} ];
+		} ]);
 
-var TimeCtrl = [ '$scope', '$http', function($scope, $http) {
+myApp.controller('TimeCtrl', [ '$scope', '$http', function($scope, $http) {
 	// $("#slider").dateRangeSlider();
 	// $scope.currentTime = {};
 	//
@@ -646,7 +703,59 @@ var TimeCtrl = [ '$scope', '$http', function($scope, $http) {
 	// viewer.scene.morphTo2D(2.0);
 	// }
 	// }
-} ];
+} ]);
+
+myApp.controller('OutlineCtrl', [ '$scope', '$http', function($scope, $http) {
+
+	$scope.dataSources = [];
+	$scope.entities = [];
+	$scope.dataSourcesLoaded = false;
+	// $scope.$watch('outlines', function($scope, $http) {
+	//
+	// });
+
+	$http.get('node_modules/world-countries/countries.json').then(function(res) {
+		res.data.forEach(function(country) {
+			// Create a new GeoJSON data source and add it to the list.
+			var dataSource = new Cesium.GeoJsonDataSource();
+			$scope.dataSources.push(dataSource);
+
+			var interiorColor = new Cesium.Color(1.0, 1.0, 1.0, 0.0);
+			var outlineColor = new Cesium.Color(1.0, 1.0, 1.0, 1.0);
+			// Load the document into the data source and then set custom graphics
+			dataSource.loadUrl('node_modules/world-countries/data/' + country.cca3.toLowerCase() + '.geo.json').then(function() {
+				// Get the array of entities
+				var entities = dataSource.entities.entities;
+				entities.forEach(function(entity) {
+					entity.polygon.material = Cesium.ColorMaterialProperty.fromColor(interiorColor);
+					entity.polygon.outlineColor = Cesium.ColorMaterialProperty.fromColor(outlineColor);
+
+					$scope.entities.push(entity);
+				});
+			});
+		});
+	});
+
+	$scope.$watch('outlines', function(newValue, oldValue) {
+		if (!oldValue && newValue) {
+			if ($scope.dataSourcesLoaded == false) {
+				$scope.dataSources.forEach(function(dataSource) {
+					viewer.dataSources.add(dataSource);
+				});
+				$scope.dataSourcesLoaded = true;
+			}
+
+			$scope.entities.forEach(function(entity) {
+				entity.polygon.show = new Cesium.ConstantProperty(true);
+			});
+		} else {
+			// debugger
+			$scope.entities.forEach(function(entity) {
+				entity.polygon.show = new Cesium.ConstantProperty(false);
+			});
+		}
+	});
+} ]);
 
 /**
  * Decimal adjustment of a number.
