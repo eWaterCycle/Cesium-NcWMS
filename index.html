@@ -233,20 +233,28 @@ a {
 	          <a data-toggle="dropdown" href="#" style="background-color:rgba(0,0,0,0)"><canvas id="dropdown_canvas" style="width: 150px; height: 10px;"></canvas></a>
 	          <ul class="dropdown-menu" role="menu" style="height:400px; min-width: 275px; overflow-x:hidden; overflow-y:auto">
 	            <li ng-repeat="choice in ncWMSdata.palettes">	              
-	              <a ng-click=selectPalette(choice) class="legendMenuItem">	               
-	               <canvas i-am-legend style="width: 150px; height: 10px;">	               
+	              <a ng-click=selectPalette(choice) class="legendMenuItem">
+	               <canvas i-am-legend style="width: 150px; height: 10px;">
 	               </canvas>
 	               {{choice.name}}
 	              </a>
 	            </li>
 	          </ul>
-	        </div>		        
+	        </div>
         </li>
         <li>
-          <span style="color: #ffffff;">Logarithmic? <input type="checkbox" ng-model="logarithmic" class="navbar-clickable"></span>
+          <span style="color: #ffffff;">
+          <div  >
+            Logarithmic? 
+            <input type="checkbox" ng-model="logarithmic" class="navbar-clickable">
+          </span>
+          </div>
         </li>
         <li>
-          <span style="color: #ffffff;">Base Map? <input type="checkbox" ng-model="baseMap" class="navbar-clickable"></span>
+          <span style="color: #ffffff;">
+            Base Map? 
+            <input type="checkbox" ng-model="baseMap" class="navbar-clickable">
+            </span>
         </li>
         <li>
           <span ng-controller="OutlineCtrl" style="color: #ffffff;">
@@ -255,10 +263,19 @@ a {
           </span>
         </li>
         <li>
-          <span style="color: #ffffff;">Uncertainty? <input type="checkbox" ng-model="uncertainty" class="navbar-clickable"></span>
+          <span ng-controller="AnnotationCtrl" style="color: #ffffff;">
+            Annotations?
+            <input type="checkbox" ng-model="annotations" class="navbar-clickable" >
+          </span>
+        </li>
+        <li>
+          <span style="color: #ffffff;">
+	          Uncertainty? 
+	          <input type="checkbox" ng-model="uncertainty" class="navbar-clickable">
+          </span>
         </li>
       </ul> 
-    </div>	<!--/.container-fluid -->	
+    </div>
 	</header>
 
   <div id="cesiumContainer" class="fullSize"></div>
