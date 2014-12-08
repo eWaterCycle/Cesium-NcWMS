@@ -354,60 +354,6 @@ var myApp = angular.module('myApp', [ 'ui.bootstrap' ]).controller('BodyCtrl', [
 			bigLegend($scope.selectedPalette.graphic, "bigLegend_canvas");
 		});
 
-		// Set a watcher for a change on the logarithmic checkbox
-		$scope.$watch('logarithmic', function(newValue, oldValue) {
-
-			if (newValue) {
-				$scope.legendMin = 1.0;
-				$scope.legendMax = $scope.selectedDataset.max;
-			} else {
-				$scope.legendMin = $scope.selectedDataset.min;
-				$scope.legendMax = $scope.selectedDataset.max;
-			}
-
-			repaintColorMap($scope);
-
-			// Fill the array with legend texts
-			setLegendText($scope);
-			$scope.selectedUnits = $scope.selectedDataset.units;
-		});
-
-		// Set a watcher for a change on the uncertainty checkbox
-		$scope.$watch('baseMap', function(newValue, oldValue) {
-			repaintColorMap($scope);
-		});
-
-		// Set a watcher for a change on the uncertainty checkbox
-		$scope.$watch('uncertainty', function(newValue, oldValue) {
-			repaintColorMap($scope);
-
-			if (newValue == true) {
-				$scope.setLegendText(0, 1, false);
-				$scope.selectedUnits = "%";
-			} else {
-				$scope.legendMin = $scope.selectedDataset.min;
-				$scope.legendMax = $scope.selectedDataset.max;
-			}
-		});
-
-		// Set a watcher for a change on the uncertainty checkbox
-		$scope.$watch('legendMin', function(newValue, oldValue) {
-			repaintColorMap($scope);
-
-			// Fill the array with legend texts
-			setLegendText($scope);
-			$scope.selectedUnits = $scope.selectedDataset.units;
-		});
-
-		// Set a watcher for a change on the uncertainty checkbox
-		$scope.$watch('legendMax', function(newValue, oldValue) {
-			repaintColorMap($scope);
-
-			// Fill the array with legend texts
-			setLegendText($scope);
-			$scope.selectedUnits = $scope.selectedDataset.units;
-		});
-
 		$scope.timelineWidget.addEventListener('settime', $scope.onTimelineScrub, false);
 		$scope.clock.onTick.addEventListener($scope.onTimelineTick);
 	}
@@ -820,43 +766,97 @@ myApp.controller('AnnotationCtrl', [ '$scope', '$http', function($scope, $http) 
 	});
 } ]);
 
-// myApp.controller('LogarithmicCtrl', [ '$scope', function($scope) {
-// // Set a watcher for a change on the logarithmic checkbox
-// $scope.$watch('logarithmic', function(newValue, oldValue) {
-// if (!oldValue && newValue) {
-// $scope.$parent.legendMin = 1.0;
-// $scope.$parent.legendMax = $scope.selectedDataset.max;
-// } else if (!newValue && oldValue) {
-// $scope.$parent.legendMin = $scope.selectedDataset.min;
-// $scope.$parent.legendMax = $scope.selectedDataset.max;
-// }
-//
-// if (oldValue !== newValue) {
-// setLegendText($scope.$parent);
-// repaintColorMap($scope.$parent);
-// }
-// });
-// } ]);
+myApp.controller('LogarithmicCtrl', [ '$scope', function($scope) {
+	// Set a watcher for a change on the logarithmic checkbox
+	$scope.$watch('logarithmic', function(newValue, oldValue) {
+		toggleLogarithmic($scope, newValue, oldValue);
+	});
+} ]);
 
-// myApp.controller('BaseMapCtrl', [ '$scope', function($scope) {
-// // Set a watcher for a change on the uncertainty checkbox
-// $scope.$watch('baseMap', function(newValue, oldValue) {
-// if (oldValue !== newValue) {
-// repaintColorMap($scope.$parent);
-// }
-// });
-// } ]);
-//
-// myApp.controller('UncertaintyCtrl', [ '$scope', function($scope) {
-// // Set a watcher for a change on the uncertainty checkbox
-// $scope.$watch('uncertainty', function(newValue, oldValue) {
-//
-// if (oldValue !== newValue) {
-// setLegendText($scope.$parent);
-// repaintColorMap($scope.$parent);
-// }
-// });
-// } ]);
+myApp.controller('BaseMapCtrl', [ '$scope', function($scope) {
+	// Set a watcher for a change on the uncertainty checkbox
+	$scope.$watch('baseMap', function(newValue, oldValue) {
+		toggleBaseMap($scope, newValue, oldValue);
+	});
+} ]);
+
+myApp.controller('UncertaintyCtrl', [ '$scope', function($scope) {
+	// Set a watcher for a change on the uncertainty checkbox
+	$scope.$watch('uncertainty', function(newValue, oldValue) {
+		toggleUncertainty($scope, newValue, oldValue);
+	});
+} ]);
+
+myApp.controller('LegendCtrl', [ '$scope', function($scope) {
+	// Set a watcher for a change on the uncertainty checkbox
+	$scope.$watch('legendMax', function(newValue, oldValue) {
+		setLegendMax($scope, newValue, oldValue);
+	});
+	$scope.$watch('legendMin', function(newValue, oldValue) {
+		setLegendMin($scope, newValue, oldValue);
+	});
+} ]);
+
+function toggleLogarithmic($scope, newValue, oldValue) {
+	$scope.$parent.logarithmic = newValue;
+
+	if (newValue === true) {
+		$scope.$parent.legendMin = 1.0;
+		$scope.$parent.legendMax = $scope.$parent.selectedDataset.max;
+	} else {
+		$scope.$parent.legendMin = $scope.selectedDataset.min;
+		$scope.$parent.legendMax = $scope.$parent.selectedDataset.max;
+	}
+
+	if (oldValue !== newValue) {
+		setLegendText($scope.$parent);
+		repaintColorMap($scope.$parent);
+	}
+}
+
+function toggleBaseMap($scope, newValue, oldValue) {
+	$scope.$parent.baseMap = newValue;
+
+	if (oldValue !== newValue) {
+		setLegendText($scope.$parent);
+		repaintColorMap($scope.$parent);
+	}
+}
+
+function toggleUncertainty($scope, newValue, oldValue) {
+	$scope.$parent.uncertainty = newValue;
+
+	if (newValue === true) {
+		$scope.$parent.setLegendText(0, 1, false);
+		$scope.$parent.selectedUnits = "%";
+	} else {
+		$scope.$parent.legendMin = $scope.$parent.selectedDataset.min;
+		$scope.$parent.legendMax = $scope.$parent.selectedDataset.max;
+	}
+
+	if (oldValue !== newValue) {
+		setLegendText($scope.$parent);
+		repaintColorMap($scope.$parent);
+	}
+}
+
+function setLegendMax($scope, newValue, oldValue) {
+	$scope.$parent.legendMax = newValue;
+
+	if (oldValue !== newValue) {
+		setLegendText($scope.$parent);
+		repaintColorMap($scope.$parent);
+	}
+}
+
+function setLegendMin($scope, newValue, oldValue) {
+	$scope.$parent.legendMin = newValue;
+
+	if (oldValue !== newValue) {
+		setLegendText($scope.$parent);
+		repaintColorMap($scope.$parent);
+	}
+}
 
 /**
  * Decimal adjustment of a number.

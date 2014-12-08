@@ -13,8 +13,8 @@
 <link type="text/css" rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
 
 <style type="text/css">
-@import url(app/Cesium-1.3/Build/CesiumUnminified/Widgets/widgets.css);
-@import url(app/Cesium-1.3/Build/CesiumUnminified/Widgets/Animation/Animation.css);
+@import url(app/Cesium-1.4/Build/CesiumUnminified/Widgets/widgets.css);
+@import url(app/Cesium-1.4/Build/CesiumUnminified/Widgets/Animation/Animation.css);
 /*
 body {
 	padding-top: 50px;
@@ -25,15 +25,7 @@ body {
 	text-align: center;
 }
 
-.fullSize {
-	display: block;
-	position: absolute;
-	top: 0;
-	left: 0;
-	border: none;
-	width: 100%;
-	height: 100%; 
-}
+
 
 .logo-custom {
   max-width: 20%;
@@ -45,6 +37,15 @@ body {
 }
 */
 
+.fullSize {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: none;
+  width: 100%;
+  height: 100%; 
+}
 
 .nav-pills>li>a {
   border-radius: 4px;
@@ -75,6 +76,7 @@ a {
 .navbar-right-custom-top {
   padding: 2px 0px;
   float: right;
+  max-width: 75%;
 }
 
 .navbar-right-custom-top-2 {
@@ -97,14 +99,11 @@ a {
 }
 
 .navbar-header {
-  max-width: 50%;
+  max-width: 25%;
 }
 
 .img-responsive-custom {
-  display: block;
-  max-height: 7%;
-  height: auto;
-  padding: 0px;
+  max-width: 100%;
 }
 
 .img-responsive-logo {
@@ -150,7 +149,7 @@ a {
   font-size: 10px;
   text-shadow: 0px 0px 2px #000000;
   padding-right: 5px;
-  max-width: 60%;
+  max-width: 50%;
 }
 
 .cesium-widget-credits {
@@ -167,11 +166,12 @@ a {
 
 #bigLegend {
   display: block;
-  position: absolute;
-  right: 2%;
-  top: 50px;
-  max-width: 5%;
-  height: 75%;
+	position: absolute;
+	right: 0%;
+	margin-right: 53px;
+	top: 50px;
+	max-width: 5%;
+	height: 75%;
 }
 
 .legendText-custom {
@@ -185,15 +185,32 @@ a {
   color: #000000;
 }
 
+.legendForm {
+  right: 10%;
+}
+
+.bigLegendImg {
+  position:absolute; 
+  top:0px;
+  left:70px; 
+  height:100%; 
+  margin-top:5px;
+}
+
+.bigLegendCanvas {
+  position:absolute; 
+  top:0px;
+  left:70px; 
+  height:100%; 
+  margin-top:5px;
+}
+
 </style>
 </head>
-<body style="overflow:hidden" ng-controller="BodyCtrl">
+<body style="overflow:hidden; background-color: black;" ng-controller="BodyCtrl">
 	<header class="navbar navbar-custom navbar-fixed-top" role="navigation">
 		<div class="container-fluid">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-					<span class="sr-only">Toggle navigation</span>
-				</button>
+			<div class="navbar-header">				
 				<a class="pull-left-custom" href="#"><img class="media-object img-responsive-custom" src="images/eWaterCycle_3.svg"></a>
 			</div>
 						
@@ -243,15 +260,13 @@ a {
 	        </div>
         </li>
         <li>
-          <span style="color: #ffffff;">
-          <div  >
+          <span ng-controller="LogarithmicCtrl" style="color: #ffffff;">
             Logarithmic? 
             <input type="checkbox" ng-model="logarithmic" class="navbar-clickable">
           </span>
-          </div>
         </li>
         <li>
-          <span style="color: #ffffff;">
+          <span ng-controller="BaseMapCtrl"  style="color: #ffffff;">
             Base Map? 
             <input type="checkbox" ng-model="baseMap" class="navbar-clickable">
             </span>
@@ -269,7 +284,7 @@ a {
           </span>
         </li>
         <li>
-          <span style="color: #ffffff;">
+          <span ng-controller="UncertaintyCtrl" style="color: #ffffff;">
 	          Uncertainty? 
 	          <input type="checkbox" ng-model="uncertainty" class="navbar-clickable">
           </span>
@@ -280,22 +295,22 @@ a {
 
   <div id="cesiumContainer" class="fullSize"></div>
   <div id="bigLegend" class="container" >    
-    <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+    <div ng-controller="LegendCtrl" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
 	    <div id="legendText" class="legendText-custom" style="height: 98%">
 	      <div id="legendMax" style="height: 20%">
-	        <form novalidate>
+	        <form novalidate class="legendForm">
 	          <input ng-model="legendMax" type="number" class="legendInput" ng-model-options="{ updateOn: 'default', debounce: { default: 1000 } }" />
 	        </form>
 	      </div>
 		    <div ng-repeat="text in legendText track by $index" style="height: 20%">
 		      {{text}}
 		    </div>
-		      <form novalidate>
+		      <form novalidate class="legendForm">
             <input ng-model="legendMin" type="number" class="legendInput" ng-model-options="{ updateOn: 'default', debounce: { default: 1000 } }" />
           </form>
 	    </div>
 	  </div>
-    <div style="position:absolute; top:0px;left:65px; height:100%; margin-top:5px">
+    <div class="bigLegendImg">
        <canvas id="bigLegend_canvas" style="width: 20px; height: 100%;"></canvas>
     </div> 
     <div style="position:absolute; top:0px;left:65px; height:100%; margin-top:5px">
@@ -348,7 +363,7 @@ a {
 	<script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
 		
-  <script src="app/Cesium-1.3/Build/CesiumUnminified/Cesium.js"></script>
+  <script src="app/Cesium-1.4/Build/CesiumUnminified/Cesium.js"></script>
   <script type="text/javascript" src="app/cesiumDemo.js">doCesiumJSON()</script>
 
 </body>
