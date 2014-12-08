@@ -12,7 +12,7 @@ Getting started (windows, from scratch)
 2. Install Node.js : 	http://nodejs.org/
 3. Install Apache Tomcat (http://tomcat.apache.org/)
 4. Start Git bash
-5. Type: "npm install bower connect serve-static"
+5. Type: "npm install bower connect serve-static world-countries"
 6. Close Git bash
 7. Add C:\Users\{YOUR USERNAME HERE}\node_modules\bower\bin to your PATH
 8. Start Git bash
@@ -20,10 +20,10 @@ Getting started (windows, from scratch)
 8. Type: "git clone https://github.com/NLeSC/eWaterCycle-Demo.git"
 9. Type: "cd eWaterCycle-Demo"
 10. Type: "bower install"
-11. Download and install ncWMS (http://www.resc.rdg.ac.uk/trac/ncWMS/)
+11. Download and compile ncWMS 2.0 SNAPSHOT from https://github.com/Reading-eScience-Centre/edal-java
 12. Serve some netcdf data with ncWMS via the admin interface.
-13. Serve the /app directory in the eWaterCycle-Demo directory with your webserver solution (tomcat).
-14. Open browser, go to "http://localhost:8080/eWaterCycle-Demo/bootstrap.html"
+13. Serve the eWaterCycle-Demo directory with your webserver solution (tomcat).
+14. Open browser, go to "http://localhost:8080/eWaterCycle-Demo"
 
 Getting started (Linux, Debian and Ubuntu based)
 -------------------------------------------------
@@ -33,11 +33,11 @@ Getting started (Linux, Debian and Ubuntu based)
 4. Install/use your favourite webserver solution, we recommend Apache Tomcat, you can find it here: (http://tomcat.apache.org/).
 5. Change directory to your "apache tomcat installation directory"/webapps/ROOT
 6. Fetch git repository: "git clone https://github.com/NLeSC/eWaterCycle-Demo".
-7. Setup with bower: "cd eWaterCycle-Demo ; bower install".
-8. Download and install ncWMS, find it here: (http://www.resc.rdg.ac.uk/trac/ncWMS/).
+7. Setup with bower: "cd eWaterCycle-Demo ; bower install"; npm install world-countries.
+8. Download and compile ncWMS 2.0 SNAPSHOT from https://github.com/Reading-eScience-Centre/edal-java
 9. Configure ncWMS, make sure to serve at least some netcdf data with your ncWMS setup.
-10. Serve the /app directory in the eWaterCycle-Demo directory with your webserver solution (tomcat).
-11. Access eWaterCycle-Demo with web browser, running app should be available at url: (http://localhost:8000/bootstrap.html).
+10. Serve the eWaterCycle-Demo directory with your webserver solution (tomcat).
+11. Access eWaterCycle-Demo with web browser, running app should be available at url: (http://localhost:8000).
 
 Copyrights & Disclaimers
 ------------------------
