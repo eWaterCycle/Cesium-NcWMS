@@ -1,0 +1,29 @@
+{
+  "name": "eWaterCycle-Demo",
+  "version": "0.0.1",
+  "description": "eWaterCycle-Demo\r ================",
+  "main": "index.html",
+  "dependencies": {    
+    "world-countries": "^1.6.0"
+  },
+  "devDependencies": {
+    "jasmine-core": "^2.1.3",
+    "karma": "^0.12.28",
+    "karma-chrome-launcher": "^0.1.7",
+    "karma-jasmine": "^0.3.2",    
+    "karma-coverage": "^0.2.7"
+  },
+  "scripts": {
+    "test": "karma run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NLeSC/eWaterCycle-Demo.git"
+  },
+  "author": "Maarten van Meersbergen",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/NLeSC/eWaterCycle-Demo/issues"
+  },
+  "homepage": "https://github.com/NLeSC/eWaterCycle-Demo"
+}
