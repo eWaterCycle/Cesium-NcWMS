@@ -164,6 +164,18 @@ a {
   white-space: normal; 
 }
 
+#infoBox {
+  display: block;
+  position: absolute;
+  left: 0%;
+  margin-left: 15px;
+  top: 12%;
+  max-width: 5%;
+  height: 75%;
+  color: #ffffff;
+  font-size: 10px;
+}
+
 #bigLegend {
   display: block;
 	position: absolute;
@@ -294,6 +306,15 @@ a {
 	</header>
 
   <div id="cesiumContainer" class="fullSize"></div>
+  
+  <div id="infoBox" class="container">
+    <div ng-controller="InfoBoxCtrl">
+      coords: {{lastClicked.longitude}} , {{lastClicked.latitude}} </br>
+      mean:   {{lastClicked.value_mean}} </br>
+      error:  {{lastClicked.value_error}} </br>
+    </div>
+  </div>
+  
   <div id="bigLegend" class="container" >    
     <div ng-controller="LegendCtrl" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
 	    <div id="legendText" class="legendText-custom" style="height: 98%">

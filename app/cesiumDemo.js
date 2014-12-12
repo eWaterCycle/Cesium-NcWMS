@@ -4,7 +4,7 @@ var viewer;
 var mapLayer;
 var colorMapLayer;
 
-function initCesium(withTerrain, $http) {
+function initCesium(withTerrain) {
 	var proceed = true;
 	if (viewer) {
 		proceed = false;
@@ -65,10 +65,6 @@ function initCesium(withTerrain, $http) {
 			key : 'AsP2TER1bj7tMZGuQtDkvWtX9vOezdG3zbeJp3tOv8d1Q4XrDLd6bEMz_nFsmcKi',
 			mapStyle : Cesium.BingMapsStyle.AERIAL
 		}));
-
-		addPicking();
-
-		// addCountries($http);
 	}
 
 	return viewer;
@@ -83,7 +79,7 @@ function sleep(milliseconds) {
 	}
 }
 
-function addPicking() {
+function addPicking($scope, $http) {
 	var ellipsoid = viewer.scene.globe.ellipsoid;
 	var labels = new Cesium.LabelCollection();
 	label = labels.add();
@@ -113,6 +109,77 @@ function addPicking() {
 	// label.position = cartesian;
 	// }
 	// }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+	$scope.getFeatureInfo = function($scope, leftTopX, leftTopY, rightBottomX, rightBottomY) {
+		return $http.get(ncWMSURL + 'SERVICE=WMS' + '&VERSION=1.1.1' + '&REQUEST=GetFeatureInfo' + '&LAYERS=' + $scope.selectedDataset.id + '&QUERY_LAYERS='
+				+ $scope.selectedDataset.id + '&STYLES=' + $scope.selectedDataset.metaData.supportedStyles[0] + "/" + $scope.selectedPalette.name + '&BBOX='
+				+ leftTopX.toFixed(6) + ',' + leftTopY.toFixed(6) + ',' + rightBottomX.toFixed(6) + ',' + rightBottomY.toFixed(6) + '&FEATURE_COUNT=5' + '&HEIGHT=100'
+				+ '&WIDTH=100' + '&FORMAT=image/png' + '&INFO_FORMAT=text/xml' + '&SRS=EPSG:4326' + '&X=50' + '&Y=50' + '&TIME=' + $scope.selectedTime.toISOString());
+	}
+
+	viewer.handler.setInputAction(function(singleclick) {
+		var cartesian = viewer.scene.camera.pickEllipsoid(singleclick.position, ellipsoid);
+		if (cartesian) {
+			var cartographic = ellipsoid.cartesianToCartographic(cartesian);
+			var leftTopLon = Cesium.Math.toDegrees(cartographic.longitude) - 1;
+			var leftTopLat = Cesium.Math.toDegrees(cartographic.latitude) - 1;
+			var rightBottomLon = Cesium.Math.toDegrees(cartographic.longitude) + 1;
+			var rightBottomLat = Cesium.Math.toDegrees(cartographic.latitude) + 1;
+
+			console.log("click: " + cartographic.latitude + " / " + cartographic.longitude);
+			console.log("lt: " + leftTopLat + " / " + leftTopLon);
+			console.log("rb: " + rightBottomLat + " / " + rightBottomLon);
+
+			$scope.getFeatureInfo($scope, leftTopLon, leftTopLat, rightBottomLon, rightBottomLat).then(function success(res) {
+				var parseXml;
+
+				if (typeof window.DOMParser != "undefined") {
+					parseXml = function(xmlStr) {
+						return (new window.DOMParser()).parseFromString(xmlStr, "text/xml");
+					};
+				} else if (typeof window.ActiveXObject != "undefined" && new window.ActiveXObject("Microsoft.XMLDOM")) {
+					parseXml = function(xmlStr) {
+						var xmlDoc = new window.ActiveXObject("Microsoft.XMLDOM");
+						xmlDoc.async = "false";
+						xmlDoc.loadXML(xmlStr);
+						return xmlDoc;
+					};
+				} else {
+					throw new Error("No XML parser found");
+				}
+
+				var xml = parseXml(res.data);
+
+				var latitude = xml.getElementsByTagName("latitude")[0].innerHTML;
+				var longitude = xml.getElementsByTagName("longitude")[0].innerHTML;
+
+				console.log(latitude);
+				console.log(longitude);
+
+				$scope.lastClicked.latitude = latitude;
+				$scope.lastClicked.longitude = longitude;
+
+				var ids = xml.getElementsByTagName("id");
+				var values = xml.getElementsByTagName("value");
+
+				for (var i = 0; i < ids.length; i++) {
+					console.log(ids[i].innerHTML);
+					console.log(values[i].innerHTML);
+				}
+
+				$scope.lastClicked.value_mean = values[0].innerHTML;
+
+				if (values[1] != null) {
+					$scope.lastClicked.value_error = values[1].innerHTML;
+				} else {
+					$scope.lastClicked.value_error = "";
+				}
+
+			}), function error(msg) {
+				console.log("Error in getFeatureInfo, " + msg);
+			}
+		}
+	}, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 };
 
 function addCountries($http) {
@@ -138,15 +205,7 @@ function addCountries($http) {
 	});
 }
 
-var myApp = angular.module('myApp', [ 'ui.bootstrap' ]).controller('BodyCtrl', [ '$scope', '$http', '$q', function($scope, $http, $q) {
-	// These variables need to be predefined in the scope, because we all
-	// use them
-	// directly in the (aNGular) HTTP. Where we fill these datastructures
-	// or
-	// update them, we use the (--NG--) tag in the comments.
-
-	viewer = initCesium(false, $http);
-
+function initScope($scope) {
 	$scope.ncWMSdata = {
 		"metadata" : {},
 		"palettes" : []
@@ -164,6 +223,26 @@ var myApp = angular.module('myApp', [ 'ui.bootstrap' ]).controller('BodyCtrl', [
 	$scope.legendMax = 50;
 	$scope.legendText = [ 10, 20, 30, 40 ];
 	$scope.selectedUnits = "";
+
+	$scope.lastClicked = {
+		"latitude" : "",
+		"longitude" : "",
+		"value_mean" : "",
+		"value_error" : ""
+	};
+
+}
+
+var myApp = angular.module('myApp', [ 'ui.bootstrap' ]).controller('BodyCtrl', [ '$scope', '$http', '$q', function($scope, $http, $q) {
+	// These variables need to be predefined in the scope, because we all
+	// use them
+	// directly in the (aNGular) HTTP. Where we fill these datastructures
+	// or
+	// update them, we use the (--NG--) tag in the comments.
+
+	viewer = initCesium(false);
+
+	initScope($scope);
 
 	$scope.clock = viewer.clock;
 	$scope.clockViewModel = new Cesium.ClockViewModel($scope.clock);
@@ -288,17 +367,32 @@ var myApp = angular.module('myApp', [ 'ui.bootstrap' ]).controller('BodyCtrl', [
 		var result = [];
 
 		$scope.ncWMSdata.metadata = res.data.children;
-		$scope.ncWMSdata.metadata.forEach(function(dataset) {
+		res.data.children.forEach(function(dataset) {
+			var dataSetLabel = dataset.label;
 			dataset.children.forEach(function(child) {
 				if (child.plottable) {
 					result.push({
 						id : child.id,
-						label : child.label,
+						label : dataSetLabel + "/" + child.label,
 						datesWithData : {},
 						min : 0.0,
 						max : 0.0,
 						units : {}
 					});
+					if (child.children != null) {
+						child.children.forEach(function(grandChild) {
+							if (grandChild.plottable) {
+								result.push({
+									id : grandChild.id,
+									label : dataSetLabel + "/" + grandChild.label,
+									datesWithData : {},
+									min : 0.0,
+									max : 0.0,
+									units : {}
+								});
+							}
+						});
+					}
 				}
 			});
 		});
@@ -328,6 +422,9 @@ var myApp = angular.module('myApp', [ 'ui.bootstrap' ]).controller('BodyCtrl', [
 	$scope.loadData();
 
 	$scope.setWatchers = function() {
+
+		addPicking($scope, $http);
+
 		// Set a watcher for a change on the selected dataset
 		// (asynchronously)
 		$scope.$watch('selectedDataset', function(newValue, oldValue) {
@@ -554,14 +651,14 @@ function repaintColorMap($scope) {
 		} else {
 			if (uncertainty) {
 				parameters.TRANSPARENT = 'false';
-				parameters.COLORSCALERANGE = (0 + "," + 1);
+				parameters.COLORSCALERANGE = logarithmic ? (1 + "," + selectedMax) : (selectedMin + "," + selectedMax);
 				parameters.BGCOLOR = '0x000011';
-				parameters.ABOVEMAXCOLOR = 'extend';
+				parameters.ABOVEMAXCOLOR = '0x000000';
 				parameters.BELOWMINCOLOR = '0x000000';
 
 				colorMapLayer = viewer.scene.imageryLayers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
 					url : ncWMSURL,
-					layers : selectedlayerName + "Uncertainty",
+					layers : selectedlayerName,
 					parameters : parameters
 				}));
 
@@ -797,6 +894,10 @@ myApp.controller('LegendCtrl', [ '$scope', function($scope) {
 	});
 } ]);
 
+myApp.controller('InfoBoxCtrl', [ '$scope', function($scope) {
+
+} ]);
+
 function toggleLogarithmic($scope, newValue, oldValue) {
 	$scope.$parent.logarithmic = newValue;
 
@@ -827,7 +928,8 @@ function toggleUncertainty($scope, newValue, oldValue) {
 	$scope.$parent.uncertainty = newValue;
 
 	if (newValue === true) {
-		$scope.$parent.setLegendText(0, 1, false);
+		$scope.$parent.legendMin = 0;
+		$scope.$parent.legendMax = 100;
 		$scope.$parent.selectedUnits = "%";
 	} else {
 		$scope.$parent.legendMin = $scope.$parent.selectedDataset.min;
