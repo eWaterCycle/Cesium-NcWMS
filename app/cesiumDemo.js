@@ -126,9 +126,10 @@ function addPicking($scope, $http) {
 			var rightBottomLon = Cesium.Math.toDegrees(cartographic.longitude) + 1;
 			var rightBottomLat = Cesium.Math.toDegrees(cartographic.latitude) + 1;
 
-			console.log("click: " + cartographic.latitude + " / " + cartographic.longitude);
-			console.log("lt: " + leftTopLat + " / " + leftTopLon);
-			console.log("rb: " + rightBottomLat + " / " + rightBottomLon);
+			// console.log("click: " + cartographic.latitude + " / " +
+			// cartographic.longitude);
+			// console.log("lt: " + leftTopLat + " / " + leftTopLon);
+			// console.log("rb: " + rightBottomLat + " / " + rightBottomLon);
 
 			$scope.getFeatureInfo($scope, leftTopLon, leftTopLat, rightBottomLon, rightBottomLat).then(function success(res) {
 				var parseXml;
@@ -153,21 +154,17 @@ function addPicking($scope, $http) {
 				var latitude = xml.getElementsByTagName("latitude")[0].innerHTML;
 				var longitude = xml.getElementsByTagName("longitude")[0].innerHTML;
 
-				console.log(latitude);
-				console.log(longitude);
-
 				$scope.lastClicked.latitude = latitude;
 				$scope.lastClicked.longitude = longitude;
 
 				var ids = xml.getElementsByTagName("id");
 				var values = xml.getElementsByTagName("value");
 
-				for (var i = 0; i < ids.length; i++) {
-					console.log(ids[i].innerHTML);
-					console.log(values[i].innerHTML);
+				if (values[0] != null) {
+					$scope.lastClicked.value_mean = values[0].innerHTML;
+				} else {
+					$scope.lastClicked.value_mean = "";
 				}
-
-				$scope.lastClicked.value_mean = values[0].innerHTML;
 
 				if (values[1] != null) {
 					$scope.lastClicked.value_error = values[1].innerHTML;

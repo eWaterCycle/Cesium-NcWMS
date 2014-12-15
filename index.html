@@ -5,6 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
 <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=yes">
+<link rel="shortcut icon" href="images/favicon.ico">
 
 <title>eWaterCycle Dashboard</title>
 
@@ -170,7 +171,7 @@ a {
   left: 0%;
   margin-left: 15px;
   top: 12%;
-  max-width: 5%;
+  max-width: 20%;
   height: 75%;
   color: #ffffff;
   font-size: 10px;
@@ -295,12 +296,14 @@ a {
             <input type="checkbox" ng-model="annotations" class="navbar-clickable" >
           </span>
         </li>
+        <!-- 
         <li>
           <span ng-controller="UncertaintyCtrl" style="color: #ffffff;">
 	          Uncertainty? 
 	          <input type="checkbox" ng-model="uncertainty" class="navbar-clickable">
           </span>
         </li>
+         -->
       </ul> 
     </div>
 	</header>
@@ -308,10 +311,10 @@ a {
   <div id="cesiumContainer" class="fullSize"></div>
   
   <div id="infoBox" class="container">
-    <div ng-controller="InfoBoxCtrl">
-      coords: {{lastClicked.longitude}} , {{lastClicked.latitude}} </br>
-      mean:   {{lastClicked.value_mean}} </br>
-      error:  {{lastClicked.value_error}} </br>
+    <div ng-controller="InfoBoxCtrl" ng-show="lastClicked.longitude != ''">
+      <div>coords: {{lastClicked.longitude}} , {{lastClicked.latitude}}</div>
+      <div>mean:   {{lastClicked.value_mean}}</div>
+      <div>error:  {{lastClicked.value_error}}</div>
     </div>
   </div>
   
