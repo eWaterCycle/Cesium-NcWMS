@@ -298,7 +298,7 @@ var myApp = angular.module('myApp', [ 'ui.bootstrap' ]).controller('BodyCtrl', [
 							for ( var month in obj_month) {
 								var obj_day = obj_month[month];
 								for ( var day in obj_day) {
-									dates.push(new Date(Date.UTC(year, month, day, 0, 0, 0)));
+									dates.push(new Date(Date.UTC(year, month, obj_day[day], 0, 0, 0)));
 								}
 							}
 						}
