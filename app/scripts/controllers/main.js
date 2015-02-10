@@ -2,12 +2,12 @@
 
 /**
  * @ngdoc function
- * @name pattyVis2App.controller:MainCtrl
+ * @name myYoEwaterCycleDemoApp.controller:MainCtrl
  * @description
  * # MainCtrl
- * Controller of the pattyVis2App
+ * Controller of the myYoEwaterCycleDemoApp
  */
-angular.module('pattyVis2App')
+angular.module('myYoEwaterCycleDemoApp')
   .controller('MainCtrl', function ($scope) {
     $scope.awesomeThings = [
       'HTML5 Boilerplate',
