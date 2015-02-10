@@ -1,6 +1,11 @@
 {
-  "name": "my-yo-ewater-cycle-demo",
+   "name": "eWaterCycle-Demo",
   "version": "0.0.0",
+  "homepage": "https://github.com/NLeSC/eWaterCycle-Demo",
+  "authors": [
+    "maartenvm <m.vanmeersbergen@esciencecenter.nl>"
+  ],
+  "license": "Apache 2.0",
   "dependencies": {
     "angular": "^1.3.0",
     "bootstrap": "^3.2.0",
