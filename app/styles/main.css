@@ -1,3 +1,4 @@
+
 .browsehappy {
   margin: 0.2em 0;
   background: #ccc;
@@ -7,4 +8,233 @@
 
 body {
   padding: 0;
+  overflow: hidden;
 }
+
+a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.cesium-viewer {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: none;
+  width: 100%;
+  height: 100%; 
+}
+
+#cesiumCreditsContainer {
+  position: absolute;
+  bottom: 18px;
+  left: 169px;
+  max-width: 50%;
+}
+
+#cesiumTimelineContainer {
+    position: absolute;
+    bottom: 0;
+    left: 169px;
+    right: 0px;
+    height: 1.1em;
+}
+
+#animationContainer {
+    position: absolute;
+    bottom: 0;
+    width: 169px;
+    height: 100px;
+}
+
+.interface-visible {
+  z-index: 1;
+}
+
+.interface-clickable {  
+  pointer-events: all;
+}
+
+.interface-clickthrough {  
+  pointer-events: none;
+}
+
+.logo-custom-resc {
+  max-width:20%; 
+  max-height:10%; 
+  margin-bottom: 5px;
+}
+
+.logo-custom-uu {
+  max-width:60%; 
+}
+
+.logo-custom-tud {
+  max-width:38%; 
+}
+
+.logo-custom-nlesc {
+  max-width:100%; 
+}
+
+.logo-custom-ewatercycle {
+  max-width:100%; 
+}
+
+.ewa-dropdown {
+  color: #ffffff;
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+}
+
+.dropdown-menu {
+  max-height:400px; 
+  overflow-y:auto;
+}
+
+.ewa-checkbox {
+  color: #ffffff;
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+}
+
+.ewa-projectlogobox {
+    position:absolute; 
+    top:1%;
+    left:1%; 
+    max-width:25%; 
+}
+
+.ewa-logobox {
+    position:absolute; 
+    bottom:4%;
+    right:2%; 
+    max-width:25%; 
+    max-height:15%
+}
+
+.ewa-logobox-top {
+    position:relative; 
+}
+
+.ewa-logobox-bottom {
+    position:relative; 
+    margin-top: -5%;
+}
+
+.nav-pills>li>a {
+  border-radius: 4px;
+  z-index: 2;
+}
+
+.navbar-right-custom-top {
+  padding: 2px 0px;
+  float: right;
+  max-width: 75%;
+}
+
+.bigLegendContainer {
+  display: block;
+  position: absolute;
+  right: 2%;
+  top: 7%;
+  width: 10%;
+  height: 75%;
+}
+
+.bigLegendFlexContainer {  
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between; 
+  align-items: flex-start;
+  height: 90%;
+  width: 35%
+}
+
+.bigLegendFlexSection {
+  flex: 1 1 20%;  
+}
+
+.bigLegendFormTextField {  
+  width: 50px;  
+  font-size: 10px;
+  color: #000000;
+  align-self: flex-start;
+}
+
+.bigLegendFlexText {    
+  font-size: 10px;
+  color: #ffffff;
+  align-self: flex-end;
+}
+
+.bigLegendImg {
+  position:absolute; 
+  top:0px;
+  right: 0%; 
+  height:90%; 
+  width: 50%;
+}
+
+.bigLegendCanvas {
+  position:absolute; 
+  top:0px;
+  left:70px; 
+  height:90%; 
+  margin-top:5px;
+}
+
+.bigLegendUnits {
+  position: relative; 
+  float: right;
+  color: #ffffff;
+  margin-top:5%;  
+}
+
+
+
+
+
+
+
+.legendMenuItem {
+  padding: 0px 10px !important;
+  z-index: 10002;
+}
+
+.cesium-widget-credits {
+  position: relative;
+}
+
+.cesium-timeline-bar {
+	height: 1.1em;
+}
+
+.cesium-credit-text {
+  white-space: normal; 
+}
+
+#infoBox {
+  display: block;
+  position: absolute;
+  left: 0%;
+  margin-left: 15px;
+  top: 12%;
+  max-width: 20%;
+  height: 75%;
+  color: #ffffff;
+  font-size: 10px;
+}
+
+.legendText-custom {
+  color: #ffffff;
+  font-size: 10px;
+}
+
+.legendForm {
+  right: 10%;
+}
+
