@@ -39,13 +39,27 @@
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <script src="scripts/app.module.js"></script>
+    <script src="scripts/util/decimaladjust.service.js"></script>
+    <script src="scripts/util/messagebus.service.js"></script>
+    <script src="scripts/ncwmsservice/ncwms.service.js"></script>    
     <script src="scripts/cesiumviewer/cesium-viewer.service.js"></script>
     <script src="scripts/cesiumviewer/cesium-viewer.controller.js"></script>
     <script src="scripts/cesiumviewer/cesium-viewer.directive.js"></script>
+    <script src="scripts/cesiumncwmslayer/cesium.ncwms.layer.controller.js"></script>
+    <script src="scripts/cesiumncwmslayer/cesium.ncwms.layer.directive.js"></script>
+    <script src="scripts/dataset/dataset.controller.js"></script>
+    <script src="scripts/dataset/dataset.directive.js"></script>
+    <script src="scripts/palette/palette.controller.js"></script>
+    <script src="scripts/palette/palette.directive.js"></script>
+    <script src="scripts/palette/palette.iamlegend.directive.js"></script>
     <script src="scripts/viewmodel/viewmodel.controller.js"></script>
     <script src="scripts/viewmodel/viewmodel.directive.js"></script>
     <script src="scripts/flyto/flyto.controller.js"></script>
     <script src="scripts/flyto/flyto.directive.js"></script>
+    <script src="scripts/terrain/terrain.controller.js"></script>
+    <script src="scripts/terrain/terrain.directive.js"></script>
+    <script src="scripts/logarithmic/logarithmic.controller.js"></script>
+    <script src="scripts/logarithmic/logarithmic.directive.js"></script>
     <script src="scripts/outlines/outlines.controller.js"></script>
     <script src="scripts/outlines/outlines.directive.js"></script>
     <script src="scripts/biglegend/biglegend.controller.js"></script>
@@ -60,12 +74,17 @@
     <ul class="nav-pills navbar-right-custom-top">
         <li><cesium-fly-to-dropdown-directive></cesium-fly-to-dropdown-directive></li>
         <li><cesium-viewmodel-dropdown-directive></cesium-viewmodel-dropdown-directive></li>
-        <li><outlines-toggle-directive></outlines-toggle-directive></li>
+        <li><dataset-directive></dataset-directive></li>
+        <li><palette-dropdown-directive></palette-dropdown-directive></li>
+        <li><logarithmic-toggle-directive></logarithmic-toggle-directive></li>
+        <li><terrain-toggle-directive></terrain-toggle-directive></li>
+        <li><outlines-toggle-directive></outlines-toggle-directive></li>        
     </ul>
     
     <big-legend-directive></big-legend-directive>    
     <logo-box-directive></logo-box-directive>
     <cesium-viewer-directive id="cesiumContainer" ></cesium-viewer-directive>  
+    <cesium-ncwms-layer-directive></cesium-ncwms-layer-directive>
     
 </body>
 </html>

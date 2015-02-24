@@ -48,6 +48,30 @@ a {
     height: 100px;
 }
 
+#bigLegendCanvas {
+  position:absolute; 
+  top:0px;
+  right:0px; 
+  width:70%;
+  height:100%; 
+}
+
+.paletteDropdownMenuCanvas {
+  width:150px;
+  height:10px; 
+}
+
+.paletteDropdownMenu {
+    height:400px; 
+    min-width: 275px; 
+    overflow-x:hidden; 
+    overflow-y:auto
+}
+
+.paletteMenuItem {
+  padding: 0px 10px !important;
+}
+
 .interface-visible {
   z-index: 1;
 }
@@ -92,6 +116,7 @@ a {
 .dropdown-menu {
   max-height:400px; 
   overflow-y:auto;
+  z-index: 1;
 }
 
 .ewa-checkbox {
@@ -141,7 +166,8 @@ a {
   position: absolute;
   right: 2%;
   top: 7%;
-  width: 10%;
+  min-width: 75px;
+  width: 6%;
   height: 75%;
 }
 
@@ -159,7 +185,8 @@ a {
 }
 
 .bigLegendFormTextField {  
-  width: 50px;  
+  width: 100%;  
+  min-width: 50px;
   font-size: 10px;
   color: #000000;
   align-self: flex-start;
@@ -179,14 +206,6 @@ a {
   width: 50%;
 }
 
-.bigLegendCanvas {
-  position:absolute; 
-  top:0px;
-  left:70px; 
-  height:90%; 
-  margin-top:5px;
-}
-
 .bigLegendUnits {
   position: relative; 
   float: right;
@@ -199,11 +218,6 @@ a {
 
 
 
-
-.legendMenuItem {
-  padding: 0px 10px !important;
-  z-index: 10002;
-}
 
 .cesium-widget-credits {
   position: relative;
@@ -227,14 +241,5 @@ a {
   height: 75%;
   color: #ffffff;
   font-size: 10px;
-}
-
-.legendText-custom {
-  color: #ffffff;
-  font-size: 10px;
-}
-
-.legendForm {
-  right: 10%;
 }
 

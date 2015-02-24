@@ -1,12 +1,12 @@
 (function() {
   'use strict';
 
-  function FlyToController($http, Cesium, cesiumViewerService) {
+  function FlyToController($http, Cesium, CesiumViewerService) {
         var me = this;
         this.selectedCountry = {};
 
         this.data = {
-            "locations" : {}
+            'locations' : {}
         };
 
         // load JSON data
@@ -17,13 +17,13 @@
         this.selectCountry = function(item) {
             this.selectedCountry = item;
             this.flyToCountry(item, false);
-        }
+        };
 
         this.flyToCountry = function(countryToFlyTo, defaultHeight) {
-            cesiumViewerService.viewer.scene.camera.flyTo({
+            CesiumViewerService.viewer.scene.camera.flyTo({
                 destination : Cesium.Cartesian3.fromDegrees(countryToFlyTo.latlng[1], countryToFlyTo.latlng[0], defaultHeight ? 10000000 : Math.max(countryToFlyTo.area / Math.PI, 1000000))
             });
-        }
+        };
     }
 
   angular.module('eWaterCycleApp.flyTo').controller('FlyToController', FlyToController);

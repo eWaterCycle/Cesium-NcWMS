@@ -1,9 +1,9 @@
 (function() {
   'use strict';
 
-  function cesiumViewerService(Cesium) {
-      return {
-          init: function(element) {      
+    function CesiumViewerService(Cesium) {
+        return {
+            init: function(element) {      
                 this.clock = new Cesium.Clock({
                     multiplier : 500.0
                 });
@@ -45,9 +45,9 @@
                     key : 'AsP2TER1bj7tMZGuQtDkvWtX9vOezdG3zbeJp3tOv8d1Q4XrDLd6bEMz_nFsmcKi',
                     mapStyle : Cesium.BingMapsStyle.AERIAL
                 }));
-          }
-      };
-  }
+            }
+        };    
+    }
 
-  angular.module('eWaterCycleApp.cesiumViewer').factory('cesiumViewerService', cesiumViewerService);
+  angular.module('eWaterCycleApp.cesiumViewer').service('CesiumViewerService', CesiumViewerService);
 })();

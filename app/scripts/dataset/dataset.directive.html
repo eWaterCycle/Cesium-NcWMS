@@ -1,0 +1,8 @@
+<div class="interface-visible interface-clickable ewa-dropdown">
+    <a data-toggle="dropdown" href="#">{{ ds.selectedDataset.label }} <b class="caret"></b></a>
+    <ul class="dropdown-menu" role="menu">
+        <li ng-repeat="dataset in ds.getDatasets()">
+            <a ng-click=ds.selectDataset(dataset)>{{dataset.label}}</a>
+        </li>
+    </ul>
+</div>  
