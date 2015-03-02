@@ -1,12 +1,15 @@
 (function() {
     'use strict';
 
-    function NcwmsService($q, $http, Messagebus) {  
-        this.ncWMSURL = 'http://localhost:8080/ncWMS-2.0-rc1-maartenvm/wms?';
-                
-        this.initialized = false;
+    function WmsService($q, $http, Messagebus) {  
+        //this.wmsURL = 'https://simcity.amsterdam-complexity.nl/geoserver/wms?';
+        this.wmsURL = 'http://localhost:9001/geoserver/wms?';
+        
+        this.initialized = true;
+        Messagebus.publish('wmsLoadingComplete', true);
       
-        this.ncWMSdata = {
+      /*
+        this.wmsData = {
             'metadata' : {},
             'palettes' : []
         };
@@ -23,7 +26,7 @@
                 // Store the first dataset as our 'currently selected' dataset
                 // (--NG--)
                 this.selectedDataset = this.datasets[0];
-                Messagebus.publish('ncwmsDatasetSelected', this.datasets[0]);
+                Messagebus.publish('wmsDatasetSelected', this.datasets[0]);
 
                 // Get the id of the first dataset we got from the server,
                 // because we can
@@ -35,12 +38,12 @@
                 // we use this first ID
                 this.getMetadata(firstDatasetID).then(function success(firstDatasetMetaDataPromise) {
                     // Store the palette names and image URL's. (--NG--)
-                    this.ncWMSdata.palettes = this.loadPalettes(firstDatasetID, firstDatasetMetaDataPromise.data.palettes);
+                    this.wmsData.palettes = this.loadPalettes(firstDatasetID, firstDatasetMetaDataPromise.data.palettes);
 
                     // Store the first palette we receive as the currently
                     // selected palette. (--NG--)
                     //me.selectedPalette = this.ncWMSdata.palettes[0];
-                    Messagebus.publish('ncwmsPaletteSelected', this.ncWMSdata.palettes[0]);
+                    Messagebus.publish('wmsPaletteSelected', this.wmsData.palettes[0]);
                 }.bind(this), function error(msg) {
                     console.log('Error in getMetadata, ' + msg);
                 });
@@ -97,9 +100,9 @@
                         start : startDate,
                         stop : endDate
                     });
-                    Messagebus.publish('ncwmsTimeSelected', startDate);
+                    Messagebus.publish('wmsTimeSelected', startDate);
                     
-                    Messagebus.publish('ncwmsUnitsChange', this.selectedDataset.units);
+                    Messagebus.publish('wmsUnitsChange', this.selectedDataset.units);
                     Messagebus.publish('legendMinChange', this.selectedDataset.min);
                     Messagebus.publish('legendMaxChange', this.selectedDataset.max);
                     
@@ -125,7 +128,7 @@
                     //setWatchers();
                                        
                     this.initialized = true;
-                    Messagebus.publish('ncwmsLoadingComplete', true);
+                    Messagebus.publish('wmsLoadingComplete', true);
                 }.bind(this));
 
             }.bind(this), function error(msg) {
@@ -134,13 +137,13 @@
         };
     
         this.getMenu = function() {
-            return $http.get(this.ncWMSURL + 'item=menu&menu=&REQUEST=GetMetadata');
+            return $http.get(this.wmsURL + 'item=menu&menu=&REQUEST=GetMetadata');
         };
         
         this.loadMenu = function(menuPromiseResolve) {
             var result = [];
 
-            this.ncWMSdata.metadata = menuPromiseResolve.data.children;
+            this.wmsData.metadata = menuPromiseResolve.data.children;
             menuPromiseResolve.data.children.forEach(function(dataset) {
                 var dataSetLabel = dataset.label;
                 dataset.children.forEach(function(child) {
@@ -175,14 +178,14 @@
         };
         
         this.getMetadata = function(id) {
-            return $http.get(this.ncWMSURL + 'item=layerDetails&layerName=' + id + '&REQUEST=GetMetadata');
+            return $http.get(this.wmsURL + 'item=layerDetails&layerName=' + id + '&REQUEST=GetMetadata');
         };
 
         this.loadPalettes = function(id, res) {
             var result = [];
 
             res.forEach(function(paletteName) {
-                var imgURL2 = this.ncWMSURL + 'REQUEST=GetLegendGraphic&LAYER=' + id + '&COLORBARONLY=true&WIDTH=10&HEIGHT=150&NUMCOLORBANDS=250&PALETTE=' + paletteName;
+                var imgURL2 = this.wmsURL + 'REQUEST=GetLegendGraphic&LAYER=' + id + '&COLORBARONLY=true&WIDTH=10&HEIGHT=150&NUMCOLORBANDS=250&PALETTE=' + paletteName;
 
                 result.push({
                     name : paletteName,
@@ -193,8 +196,9 @@
             return result;
         };
         
-        this.init();       
+        this.init();   
+    */    
     }
 
-    angular.module('eWaterCycleApp.ncwms').service('NcwmsService', NcwmsService);
+    angular.module('eWaterCycleApp.wms').service('WmsService', WmsService);
 })();

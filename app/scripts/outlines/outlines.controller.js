@@ -3,7 +3,7 @@
 
     function OutlinesController($scope, $http, Cesium, CesiumViewerService, Messagebus) {        
         this.outlines = false;   
-        this.entities = [];
+        this.values = [];
                     
         // Set watcher for change
         $scope.$watch('ol.outlines', function(newValue, oldValue) {
@@ -14,8 +14,8 @@
             }
         });
         Messagebus.subscribe('outlinesChange', function(event, value) {   
-            this.entities.forEach(function(entity) {
-                entity.polygon.show = new Cesium.ConstantProperty(value);
+            this.values.forEach(function(entityValue) {
+                entityValue.polygon.show = new Cesium.ConstantProperty(value);
             });
             
             if (value !== this.outlines) {    
@@ -37,13 +37,13 @@
                     // Load the document into the data source and then set custom graphics
                     dataSource.loadUrl('bower_components/countries/data/' + country.cca3.toLowerCase() + '.geo.json').then(function() {
                         // Get the array of entities
-                        var entities = dataSource.entities.entities;
-                        entities.forEach(function(entity) {
-                            entity.polygon.material = Cesium.ColorMaterialProperty.fromColor(interiorColor);
-                            entity.polygon.outlineColor = Cesium.ColorMaterialProperty.fromColor(outlineColor);
-                            entity.polygon.show = new Cesium.ConstantProperty(false);
+                        var values = dataSource.entities.values;
+                        values.forEach(function(value) {
+                            value.polygon.material = new Cesium.ColorMaterialProperty(interiorColor);
+                            value.polygon.outlineColor = new Cesium.ColorMaterialProperty(outlineColor);
+                            value.polygon.show = new Cesium.ConstantProperty(false);
                             
-                            this.entities.push(entity);
+                            this.values.push(value);
                         }.bind(this));
                     }.bind(this));
                 }.bind(this));

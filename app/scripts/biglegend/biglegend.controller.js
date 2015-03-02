@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    function BigLegendController($scope, CesiumViewerService, DecimalAdjust, Messagebus) {                
+    function BigLegendController($scope, DecimalAdjust, Messagebus) {                
         this.logarithmic = false;
         Messagebus.subscribe('logarithmicChange', function(event, value) {
             this.logarithmic = value;

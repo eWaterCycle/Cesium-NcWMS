@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  function FlyToController($http, Cesium, CesiumViewerService) {
+  function FlyToController($http, Messagebus) {
         var me = this;
         this.selectedCountry = {};
 
@@ -20,9 +20,10 @@
         };
 
         this.flyToCountry = function(countryToFlyTo, defaultHeight) {
-            CesiumViewerService.viewer.scene.camera.flyTo({
-                destination : Cesium.Cartesian3.fromDegrees(countryToFlyTo.latlng[1], countryToFlyTo.latlng[0], defaultHeight ? 10000000 : Math.max(countryToFlyTo.area / Math.PI, 1000000))
-            });
+            Messagebus.publish('cesiumFlyToCountry', {
+                country:countryToFlyTo, 
+                height:defaultHeight}
+            );
         };
     }
 

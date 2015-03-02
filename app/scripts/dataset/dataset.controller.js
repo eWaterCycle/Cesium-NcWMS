@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-    function DatasetController(CesiumViewerService, NcwmsService, Messagebus) {        
+    function DatasetController(NcwmsService, Messagebus) {        
         this.getDatasets = function() { 
             return NcwmsService.datasets; 
         };    
