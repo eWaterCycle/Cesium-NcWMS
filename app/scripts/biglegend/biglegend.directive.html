@@ -1,0 +1,25 @@
+<div class="interface-visible bigLegendContainer interface-clickthrough" >  
+    <div class="bigLegendFlexContainer"><!-- Positioned in css as: left column -->    
+        <div class="bigLegendFlexSection"><!-- Positioned in css as: left column elements equidistantly spaced vertically by flex -->
+            <form novalidate>
+                <input ng-model="blc.legendMax" type="number" class="bigLegendFormTextField interface-clickable" ng-model-options="{ updateOn: 'default', debounce: { default: 1000 } }" />
+            </form>
+        </div>
+        <div ng-repeat="text in blc.legendText track by $index"  class="bigLegendFlexSection bigLegendFlexText">
+            {{text}}
+        </div>
+        
+        <!-- This final element should be on the bottom of the legend, and is therefore not flexed (no div with css class) -->
+        <form novalidate>
+            <input ng-model="blc.legendMin" type="number" class="bigLegendFormTextField interface-clickable" ng-model-options="{ updateOn: 'default', debounce: { default: 1000 } }" />
+        </form>
+    </div>   
+    
+    <div class="bigLegendImg"><!-- Positioned in css as: right column -->
+        <canvas id="bigLegendCanvas"></canvas>
+    </div> 
+    
+    <div class="bigLegendUnits"><!-- Positioned in css as: beneath both columns -->
+        {{blc.selectedUnits}}
+    </div>     
+</div>

@@ -1,23 +1,26 @@
 {
   "name": "eWaterCycle-Demo",
   "version": "0.0.0",
+  "homepage": "https://github.com/NLeSC/eWaterCycle-Demo",
+  "authors": [
+    "maartenvm <m.vanmeersbergen@esciencecenter.nl>"
+  ],
+  "license": "Apache 2.0",
   "dependencies": {
-    "angular": ">=1",
-    "json3": "~3.3.1",
-    "es5-shim": "~3.1.0",
-    "bootstrap": "~3.2.0",
-    "angular-resource": "1.3.4",
-    "angular-cookies": "1.3.4",
-    "angular-sanitize": "1.3.4",
-    "angular-animate": "1.3.4",
-    "angular-touch": "1.3.4",
-    "angular-route": "1.3.4",
-    "angular-bootstrap": "0.11.0",
-    "cesiumjs": "http://cesiumjs.org/releases/Cesium-1.4.zip",
-    "angular-mocks": "1.3.4"
+    "angular": "^1.3.0",
+    "bootstrap": "^3.2.0",
+    "angular-animate": "^1.3.0",
+    "angular-cookies": "^1.3.0",
+    "angular-resource": "^1.3.0",
+    "angular-route": "^1.3.0",
+    "angular-sanitize": "^1.3.0",
+    "angular-touch": "^1.3.0",
+    "cesiumjs": "~1.6.0",
+    "countries": "https://github.com/mledoze/countries.git",
+    "angular-bootstrap": "~0.12.0"
   },
   "devDependencies": {
-    "angular-mocks": "1.3.4",
-    "angular-scenario": "1.3.4"
-  }
+    "angular-mocks": "^1.3.0"
+  },
+  "appPath": "app"
 }

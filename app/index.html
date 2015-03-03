@@ -1,87 +1,98 @@
 <!doctype html>
 <html class="no-js">
-<head>
-<meta charset="utf-8">
-<title></title>
-<meta name="description" content="">
-<meta name="viewport" content="width=device-width">
-<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-<!-- build:css(.) styles/vendor.css -->
-<!-- bower:css -->
-<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-<!-- endbower -->
-<!-- endbuild -->
-<!-- build:css(.tmp) styles/main.css -->
-<link rel="stylesheet" href="styles/main.css">
-<!-- endbuild -->
-</head>
-<body ng-app="pattyVis2App">
-	<!--[if lt IE 7]>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/cesiumjs/Cesium/Widgets/widgets.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+  </head>
+  <body ng-app="eWaterCycleApp">
+    <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-	<!-- Add your site or application content here -->
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-md-6">
-				<h1>Input</h1>
-				<form class="form-inline" role="form">
-					<div class="form-group">
-						<label for="form.coordinates.latitude" class="control-label">latitude</label> <input id="form.coordinates.latitude" class="form-control" type="text"
-							ng-model="coordinates.latitude"
-						> <label for="form.coordinates.longitude" class="control-label">longitude</label> <input id="form.coordinates.longitude" class="form-control" type="text"
-							ng-model="coordinates.longitude" 
-						>
-						<button type="button" class="btn btn-primary">Primary</button>
-					</div>
-				</form>
-			</div>
-		</div>
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <script src="bower_components/cesiumjs/Cesium/Cesium.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
 
-		<div class="row">
-			<div class="col-md-6">
-				<h1>Input 2</h1>
-				<form class="form-inline" role="form">
-					<div class="form-group">
-						<label for="form2.coordinates.latitude" class="control-label">latitude</label> <input id="form2.coordinates.latitude" class="form-control" type="text"
-							ng-model="coordinates.latitude"
-						> <label for="form2.coordinates.longitude" class="control-label">longitude</label> <input id="form2.coordinates.longitude" class="form-control" type="text"
-							ng-model="coordinates.longitude"
-						>
-						<button type="button" class="btn btn-primary">Primary</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
+    <!-- build:js({.tmp,app}) scripts/scripts.js -->
+    <script src="scripts/app.module.js"></script>
+    <script src="scripts/util/decimaladjust.service.js"></script>
+    <script src="scripts/util/messagebus.service.js"></script>
+    <script src="scripts/ncwmsservice/ncwms.service.js"></script>    
+    <script src="scripts/cesiumviewer/cesium-viewer.service.js"></script>
+    <script src="scripts/cesiumviewer/cesium-viewer.controller.js"></script>
+    <script src="scripts/cesiumviewer/cesium-viewer.directive.js"></script>
+    <script src="scripts/cesiumncwmslayer/cesium.ncwms.layer.controller.js"></script>
+    <script src="scripts/cesiumncwmslayer/cesium.ncwms.layer.directive.js"></script>
+    <script src="scripts/dataset/dataset.controller.js"></script>
+    <script src="scripts/dataset/dataset.directive.js"></script>
+    <script src="scripts/palette/palette.controller.js"></script>
+    <script src="scripts/palette/palette.directive.js"></script>
+    <script src="scripts/palette/palette.iamlegend.directive.js"></script>
+    <script src="scripts/viewmodel/viewmodel.controller.js"></script>
+    <script src="scripts/viewmodel/viewmodel.directive.js"></script>
+    <script src="scripts/flyto/flyto.controller.js"></script>
+    <script src="scripts/flyto/flyto.directive.js"></script>
+    <script src="scripts/terrain/terrain.controller.js"></script>
+    <script src="scripts/terrain/terrain.directive.js"></script>
+    <script src="scripts/logarithmic/logarithmic.controller.js"></script>
+    <script src="scripts/logarithmic/logarithmic.directive.js"></script>
+    <script src="scripts/outlines/outlines.controller.js"></script>
+    <script src="scripts/outlines/outlines.directive.js"></script>
+    <script src="scripts/biglegend/biglegend.controller.js"></script>
+    <script src="scripts/biglegend/biglegend.directive.js"></script>
+    <script src="scripts/logos/logos.directive.js"></script>
+    <script src="scripts/projectlogo/projectlogo.directive.js"></script>
+    
+    <!-- 
+    <script src="scripts/wmsservice/wms.service.js"></script>  
+    <script src="scripts/cesiumwmslayer/cesium.wms.layer.controller.js"></script>
+    <script src="scripts/cesiumwmslayer/cesium.wms.layer.directive.js"></script>    
+    -->
+    
+    <!-- endbuild -->
 
-
-	<!-- build:js(.) scripts/oldieshim.js -->
-	<!--[if lt IE 9]>
-    <script src="bower_components/es5-shim/es5-shim.js"></script>
-    <script src="bower_components/json3/lib/json3.min.js"></script>
-    <![endif]-->
-	<!-- endbuild -->
-
-	<!-- build:js(.) scripts/vendor.js -->
-	<!-- bower:js -->
-	<script src="bower_components/jquery/dist/jquery.js"></script>
-	<script src="bower_components/angular/angular.js"></script>
-	<script src="bower_components/json3/lib/json3.js"></script>
-	<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-	<script src="bower_components/angular-resource/angular-resource.js"></script>
-	<script src="bower_components/angular-cookies/angular-cookies.js"></script>
-	<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-	<script src="bower_components/angular-animate/angular-animate.js"></script>
-	<script src="bower_components/angular-touch/angular-touch.js"></script>
-	<script src="bower_components/angular-route/angular-route.js"></script>
-	<!-- endbower -->
-	<!-- endbuild -->
-
-	<!-- build:js({.tmp,app}) scripts/scripts.js -->
-	<script src="scripts/app.js"></script>
-	<script src="scripts/controllers/main.js"></script>
-	<script src="scripts/controllers/about.js"></script>
-	<!-- endbuild -->
+    <!-- Add your site or application content here -->
+    <project-logo-box-directive></project-logo-box-directive>
+    
+    <ul class="nav-pills navbar-right-custom-top">
+        <li><cesium-fly-to-dropdown-directive></cesium-fly-to-dropdown-directive></li>
+        <li><cesium-viewmodel-dropdown-directive></cesium-viewmodel-dropdown-directive></li>
+        <li><dataset-directive></dataset-directive></li>
+        <li><palette-dropdown-directive></palette-dropdown-directive></li>
+        <li><logarithmic-toggle-directive></logarithmic-toggle-directive></li>
+        <li><terrain-toggle-directive></terrain-toggle-directive></li>
+        <li><outlines-toggle-directive></outlines-toggle-directive></li>        
+    </ul>
+    
+    <big-legend-directive></big-legend-directive>    
+    <logo-box-directive></logo-box-directive>
+    <cesium-viewer-directive id="cesiumContainer" ></cesium-viewer-directive>  
+    <cesium-ncwms-layer-directive></cesium-ncwms-layer-directive>
+    <!-- <cesium-wms-layer-directive></cesium-wms-layer-directive> -->
+    
 </body>
 </html>

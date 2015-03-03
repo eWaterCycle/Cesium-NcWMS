@@ -1,0 +1,13 @@
+<div class="interface-visible interface-clickable ewa-dropdown">
+    <a data-toggle="dropdown" href="#"><canvas id="paletteDropdownHeaderCanvas" class="paletteDropdownMenuCanvas"></canvas></a>
+    
+    <ul class="dropdown-menu" role="menu">
+        <li ng-repeat="choice in pal.getNcWMSdata().palettes">	              
+            <a ng-click=pal.selectPalette(choice) class="paletteMenuItem">
+                <canvas i-am-legend class="paletteDropdownMenuCanvas">
+                </canvas>
+                {{choice.name}}
+            </a>
+        </li>
+    </ul>
+</div>

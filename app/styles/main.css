@@ -1,79 +1,245 @@
-/* Space out content a bit */
+
+.browsehappy {
+  margin: 0.2em 0;
+  background: #ccc;
+  color: #000;
+  padding: 0.2em 0;
+}
+
 body {
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding: 0;
+  overflow: hidden;
 }
 
-/* Everything but the jumbotron gets side spacing for mobile first views */
-.header,
-.marketing,
-.footer {
-  padding-left: 15px;
-  padding-right: 15px;
+a {
+  color: #fff;
+  text-decoration: none;
 }
 
-/* Custom page header */
-.header {
-  border-bottom: 1px solid #e5e5e5;
-}
-/* Make the masthead heading the same height as the navigation */
-.header h3 {
-  margin-top: 0;
-  margin-bottom: 0;
-  line-height: 40px;
-  padding-bottom: 19px;
+.cesium-viewer {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: none;
+  width: 100%;
+  height: 100%; 
 }
 
-/* Custom page footer */
-.footer {
-  padding-top: 19px;
-  color: #777;
-  border-top: 1px solid #e5e5e5;
+#cesiumCreditsContainer {
+  position: absolute;
+  bottom: 18px;
+  left: 169px;
+  max-width: 50%;
 }
 
-/* Customize container */
-@media (min-width: 768px) {
-  .container {
-    max-width: 730px;
-  }
-}
-.container-narrow > hr {
-  margin: 30px 0;
+#cesiumTimelineContainer {
+    position: absolute;
+    bottom: 0;
+    left: 169px;
+    right: 0px;
+    height: 1.1em;
 }
 
-/* Main marketing message and sign up button */
-.jumbotron {
-  text-align: center;
-  border-bottom: 1px solid #e5e5e5;
-}
-.jumbotron .btn {
-  font-size: 21px;
-  padding: 14px 24px;
+#animationContainer {
+    position: absolute;
+    bottom: 0;
+    width: 169px;
+    height: 100px;
 }
 
-/* Supporting marketing content */
-.marketing {
-  margin: 40px 0;
-}
-.marketing p + h4 {
-  margin-top: 28px;
+#bigLegendCanvas {
+  position:absolute; 
+  top:0px;
+  right:0px; 
+  width:70%;
+  height:100%; 
 }
 
-/* Responsive: Portrait tablets and up */
-@media screen and (min-width: 768px) {
-  /* Remove the padding we set earlier */
-  .header,
-  .marketing,
-  .footer {
-    padding-left: 0;
-    padding-right: 0;
-  }
-  /* Space out the masthead */
-  .header {
-    margin-bottom: 30px;
-  }
-  /* Remove the bottom border on the jumbotron for visual effect */
-  .jumbotron {
-    border-bottom: 0;
-  }
+.paletteDropdownMenuCanvas {
+  width:150px;
+  height:10px; 
 }
+
+.paletteDropdownMenu {
+    height:400px; 
+    min-width: 275px; 
+    overflow-x:hidden; 
+    overflow-y:auto
+}
+
+.paletteMenuItem {
+  padding: 0px 10px !important;
+}
+
+.interface-visible {
+  z-index: 1;
+}
+
+.interface-clickable {  
+  pointer-events: all;
+}
+
+.interface-clickthrough {  
+  pointer-events: none;
+}
+
+.logo-custom-resc {
+  max-width:20%; 
+  max-height:10%; 
+  margin-bottom: 5px;
+}
+
+.logo-custom-uu {
+  max-width:60%; 
+}
+
+.logo-custom-tud {
+  max-width:38%; 
+}
+
+.logo-custom-nlesc {
+  max-width:100%; 
+}
+
+.logo-custom-ewatercycle {
+  max-width:100%; 
+}
+
+.ewa-dropdown {
+  color: #ffffff;
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+}
+
+.dropdown-menu {
+  max-height:400px; 
+  overflow-y:auto;
+  z-index: 1;
+}
+
+.ewa-checkbox {
+  color: #ffffff;
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+}
+
+.ewa-projectlogobox {
+    position:absolute; 
+    top:1%;
+    left:1%; 
+    max-width:25%; 
+}
+
+.ewa-logobox {
+    position:absolute; 
+    bottom:4%;
+    right:2%; 
+    max-width:25%; 
+    max-height:15%
+}
+
+.ewa-logobox-top {
+    position:relative; 
+}
+
+.ewa-logobox-bottom {
+    position:relative; 
+    margin-top: -5%;
+}
+
+.nav-pills>li>a {
+  border-radius: 4px;
+  z-index: 2;
+}
+
+.navbar-right-custom-top {
+  padding: 2px 0px;
+  float: right;
+  max-width: 75%;
+}
+
+.bigLegendContainer {
+  display: block;
+  position: absolute;
+  right: 2%;
+  top: 7%;
+  min-width: 75px;
+  width: 6%;
+  height: 75%;
+}
+
+.bigLegendFlexContainer {  
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between; 
+  align-items: flex-start;
+  height: 90%;
+  width: 35%
+}
+
+.bigLegendFlexSection {
+  flex: 1 1 20%;  
+}
+
+.bigLegendFormTextField {  
+  width: 100%;  
+  min-width: 50px;
+  font-size: 10px;
+  color: #000000;
+  align-self: flex-start;
+}
+
+.bigLegendFlexText {    
+  font-size: 10px;
+  color: #ffffff;
+  align-self: flex-end;
+}
+
+.bigLegendImg {
+  position:absolute; 
+  top:0px;
+  right: 0%; 
+  height:90%; 
+  width: 50%;
+}
+
+.bigLegendUnits {
+  position: relative; 
+  float: right;
+  color: #ffffff;
+  margin-top:5%;  
+}
+
+
+
+
+
+
+
+.cesium-widget-credits {
+  position: relative;
+}
+
+.cesium-timeline-bar {
+	height: 1.1em;
+}
+
+.cesium-credit-text {
+  white-space: normal; 
+}
+
+#infoBox {
+  display: block;
+  position: absolute;
+  left: 0%;
+  margin-left: 15px;
+  top: 12%;
+  max-width: 20%;
+  height: 75%;
+  color: #ffffff;
+  font-size: 10px;
+}
+
