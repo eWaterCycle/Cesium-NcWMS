@@ -6,7 +6,7 @@
         Messagebus.subscribe('ncwmsTimeSelected', function(event, value) {
             if (this.selectedTime !== value) {
                 this.selectedTime = value;
-                this.repaintColorMap();               
+                this.repaintColorMap();
             }
         }.bind(this));
 
@@ -27,7 +27,7 @@
         }.bind(this));
 
         this.selectedDataset = 'default';
-        Messagebus.subscribe('ncwmsDatasetSelected', function(event, value) {            
+        Messagebus.subscribe('ncwmsDatasetSelected', function(event, value) {
             if (this.selectedDataset !== value) {
                 this.selectedDataset = value;
                 this.repaintColorMap();
@@ -35,7 +35,7 @@
         }.bind(this));
 
         this.selectedPalette = 'default';
-        Messagebus.subscribe('ncwmsPaletteSelected', function(event, value) {            
+        Messagebus.subscribe('ncwmsPaletteSelected', function(event, value) {
             if (this.selectedPalette !== value) {
                 this.selectedPalette = value;
                 this.repaintColorMap();
@@ -48,7 +48,7 @@
                 this.legendMin = value;
                 this.repaintColorMap();
             }
-        }.bind(this));     
+        }.bind(this));
 
         this.legendMax = 50;
         Messagebus.subscribe('legendMaxChange', function(event, value) {
@@ -56,18 +56,19 @@
                 this.legendMax = value;
                 this.repaintColorMap();
             }
-        }.bind(this));   
+        }.bind(this));
 
         Messagebus.subscribe('ncwmsLoadingComplete', function(event, value) {
-            if (value === true) {                
+            if (value === true) {
                 this.repaintColorMap();
             }
-        }.bind(this));  
-        
-        //Translate Cesium selected times to something ncwms can understand (closest available time) and propagate via Messagebus.       
+        }.bind(this));
+
+        //Translate Cesium selected times to something ncwms can understand (closest available time) and propagate via Messagebus.
         Messagebus.subscribe('cesiumTimeSelected', function(event, value) {
+          if (NcwmsService.initialized && NcwmsService.datasets.length > 0) {
             var closest = NcwmsService.datasets[NcwmsService.datasets.indexOf(this.selectedDataset)].datesWithData[0];
-            
+
             NcwmsService.datasets[NcwmsService.datasets.indexOf(this.selectedDataset)].datesWithData.forEach(function(date) {
                 if (date < value) {
                     closest = date;
@@ -75,15 +76,16 @@
             });
 
             Messagebus.publish('ncwmsTimeSelected', closest);
+          }            
         }.bind(this));
 
         var colorMapLayer;
-        
+
         this.repaintColorMap = function() {
             if (!NcwmsService.initialized) {
                 return;
             }
-            
+
             var oldColorMapLayer;
             if (colorMapLayer !== null) {
                 oldColorMapLayer = colorMapLayer;
@@ -143,6 +145,6 @@
             }
         };
     }
-    
+
     angular.module('eWaterCycleApp.cesiumNcwmsLayer').controller('CesiumNcwmsLayerController', CesiumNcwmsLayerController);
 })();
