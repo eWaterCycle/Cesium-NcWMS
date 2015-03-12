@@ -50,6 +50,13 @@
                 return decimalAdjust('ceil', value, exp);
             };
         }
+        
+        //Decimal log
+        if (!Math.log10) {
+            Math.log10 = Math.log10 || function(x) {
+                return Math.log(x) / Math.LN10;
+            };
+        }
     }
     
     angular.module('eWaterCycleApp.utils').service('DecimalAdjust', DecimalAdjust);

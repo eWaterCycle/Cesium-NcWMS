@@ -88,7 +88,7 @@ module.exports = function (grunt) {
       },
       test: {
         options: {
-          port: 9001,
+          port: 9002,
           middleware: function (connect) {
             return [
               connect.static('.tmp'),
@@ -314,6 +314,17 @@ module.exports = function (grunt) {
       }
     },
 
+    ngtemplates: {
+      eWaterCycleApp: {
+        cwd: 'app/',
+        src: 'scripts/*/*.html',
+        dest: '.tmp/template.js',
+        options: {
+          usemin: '<%= yeoman.dist %>/scripts/scripts.js' // <~~ This came from the <!-- build:js --> block
+        }
+      }
+    },
+
     // Copies remaining files to places other tasks can use
     copy: {
       dist: {
@@ -399,6 +410,8 @@ module.exports = function (grunt) {
     'clean:server',
     'wiredep:test',
     'concurrent:test',
+    'useminPrepare',
+    'ngtemplates',
     'autoprefixer',
     'connect:test',
     'karma'
@@ -408,6 +421,7 @@ module.exports = function (grunt) {
     'clean:dist',
     'wiredep',
     'useminPrepare',
+    'ngtemplates',
     'concurrent:dist',
     'autoprefixer',
     'concat',

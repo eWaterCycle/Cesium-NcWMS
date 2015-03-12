@@ -68,13 +68,15 @@
         Messagebus.subscribe('cesiumTimeSelected', function(event, value) {
             var closest = NcwmsService.datasets[NcwmsService.datasets.indexOf(this.selectedDataset)].datesWithData[0];
             
-            NcwmsService.datasets[NcwmsService.datasets.indexOf(this.selectedDataset)].datesWithData.forEach(function(date) {
-                if (date < value) {
-                    closest = date;
-                }
-            });
-
-            Messagebus.publish('ncwmsTimeSelected', closest);
+            if (NcwmsService.initialized === true) {
+                NcwmsService.datasets[NcwmsService.datasets.indexOf(this.selectedDataset)].datesWithData.forEach(function(date) {
+                    if (date < value) {
+                        closest = date;
+                    }
+                });
+                
+                Messagebus.publish('ncwmsTimeSelected', closest);
+            }
         }.bind(this));
 
         var colorMapLayer;

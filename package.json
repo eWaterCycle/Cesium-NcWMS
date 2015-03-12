@@ -9,7 +9,8 @@
     "url": "https://github.com/NLeSC/eWaterCycle-Demo.git"
   },
   "devDependencies": {
-    "grunt": "^0.4.5",
+    "grunt": "^0.4.5",    
+    "grunt-angular-templates": "^0.5.7",
     "grunt-autoprefixer": "^2.0.0",
     "grunt-concurrent": "^1.0.0",
     "grunt-contrib-clean": "^0.6.0",
@@ -33,9 +34,12 @@
     "jasmine-core": "^2.2.0",
     "jshint-stylish": "^1.0.0",
     "karma": "^0.12.31",
+    "karma-coverage": "^0.2.7",
     "karma-jasmine": "^0.3.5",
+    "karma-junit-reporter": "^0.2.2",
     "karma-phantomjs-launcher": "^0.1.4",
     "load-grunt-tasks": "^1.0.0",
+    "protractor-html-screenshot-reporter": "0.0.19",
     "time-grunt": "^1.0.0"
   },
   "engines": {
@@ -43,5 +47,7 @@
   },
   "scripts": {
     "test": "grunt test"
+  },
+  "dependencies": {
   }
 }

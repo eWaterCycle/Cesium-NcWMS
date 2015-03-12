@@ -8,11 +8,14 @@
         this.data = {
             'locations' : {}
         };
-
-        // load JSON data
-        $http.get('../bower_components/countries/countries.json').then(function(res) {
-            me.data.locations.countries = res.data;
-        });
+        
+        this.init = function() {
+            // load JSON data
+            $http.get('bower_components/countries/countries.json').then(function(res) {
+                me.data.locations.countries = res.data;
+            });
+        }
+        this.init();
 
         this.selectCountry = function(item) {
             this.selectedCountry = item;
@@ -22,9 +25,9 @@
         this.flyToCountry = function(countryToFlyTo, defaultHeight) {
             Messagebus.publish('cesiumFlyToCountry', {
                 country:countryToFlyTo, 
-                height:defaultHeight}
-            );
-        };
+                height: defaultHeight ? 10000000 : 10000000
+            });
+        };        
     }
 
   angular.module('eWaterCycleApp.flyTo').controller('FlyToController', FlyToController);

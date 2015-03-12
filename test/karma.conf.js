@@ -21,7 +21,6 @@ module.exports = function(config) {
       // bower:js
       'bower_components/jquery/dist/jquery.js',
       'bower_components/angular/angular.js',
-      'bower_components/bootstrap/dist/js/bootstrap.js',
       'bower_components/angular-animate/angular-animate.js',
       'bower_components/angular-cookies/angular-cookies.js',
       'bower_components/angular-resource/angular-resource.js',
@@ -30,19 +29,22 @@ module.exports = function(config) {
       'bower_components/angular-touch/angular-touch.js',
       'bower_components/cesiumjs/Cesium/Cesium.js',
       'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+      'bower_components/bootstrap/dist/js/bootstrap.js',
       'bower_components/angular-mocks/angular-mocks.js',
-      // endbower
+      // endbower      
+      'app/scripts/app.module.js',      
+      '.tmp/template.js',
       'app/scripts/**/*.js',
       'test/mock/**/*.js',
-      'test/spec/**/*.js'
+      'test/spec/**/*spec.js'
     ],
 
     // list of files / patterns to exclude
-    exclude: [
+    exclude: [    
     ],
 
     // web server port
-    port: 8080,
+    port: 8081,
 
     // Start these browsers, currently available:
     // - Chrome
@@ -59,8 +61,27 @@ module.exports = function(config) {
     // Which plugins to enable
     plugins: [
       'karma-phantomjs-launcher',
-      'karma-jasmine'
+      'karma-jasmine',
+      'karma-coverage',
+      'karma-junit-reporter'
     ],
+    
+    // coverage reporter generates the coverage
+    reporters: ['progress', 'coverage'],
+
+    preprocessors: {
+      // source files, that you wanna generate coverage for
+      // do not include tests or libraries
+      // (these files will be instrumented by Istanbul)
+      //'app/scripts/*.js': ['coverage'],
+      'app/scripts/**/*.js': ['coverage']
+    },
+
+    // optionally, configure the reporter
+    coverageReporter: {
+      type : 'html',
+      dir : 'coverage/'
+    },
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit

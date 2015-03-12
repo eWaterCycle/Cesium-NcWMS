@@ -2,10 +2,6 @@
     'use strict';
       
     //Utility modules
-    angular.module('math', [])
-      .factory('Math', function($window) {
-        return $window.Math;
-      });    
     angular.module('eWaterCycleApp.utils', []);   
     
     //Modules dependent on ncwms
@@ -35,7 +31,7 @@
     angular.module('eWaterCycleApp.flyTo', [ 'eWaterCycleApp.utils' ]);
     angular.module('eWaterCycleApp.logarithmic', [ 'eWaterCycleApp.utils' ]);
     angular.module('eWaterCycleApp.terrain', [ 'eWaterCycleApp.utils' ]);
-    angular.module('eWaterCycleApp.biglegend', [ 'math', 'eWaterCycleApp.utils' ]);
+    angular.module('eWaterCycleApp.biglegend', [ 'eWaterCycleApp.utils' ]);
     
     //Project logos etc.
     angular.module('eWaterCycleApp.logos', []);

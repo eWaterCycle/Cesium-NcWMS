@@ -71,7 +71,7 @@
                 this.legendText[0] = Math.round10((Math.pow(10, 0.2 * logmin + 0.8 * logmax)), -2);
             }
         }.bind(this);
-        
+
         this.setOnload = function(imgURL) {
             var context = document.getElementById('bigLegendCanvas').getContext('2d');
             var img = new Image();
