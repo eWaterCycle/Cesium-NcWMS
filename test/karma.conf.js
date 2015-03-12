@@ -30,6 +30,7 @@ module.exports = function(config) {
       'bower_components/cesiumjs/Cesium/Cesium.js',
       'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
       'bower_components/bootstrap/dist/js/bootstrap.js',
+      'bower_components/d3/d3.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower      
       'app/scripts/app.module.js',      
