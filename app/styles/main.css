@@ -237,18 +237,19 @@ a {
   font-size: 10px;
 }
 
-.bargraphContainer {
-  display: block;
-  position:absolute;
-  top: 15%;
-  max-width:20%;
-}
-
 .linegraphContainer {
   display: block;
   position:absolute;
   top: 15%;
   max-width:50%;
+  min-width:500px;
+}
+
+.bargraphContainer {
+  display: block;
+  position:absolute;
+  top: 35%;
+  max-width:20%;
 }
 
 @import url(//fonts.googleapis.com/css?family=Open+Sans:400,700);
@@ -269,7 +270,7 @@ svg {
 }
 
 .axis .tick line {
-  stroke: rgba(1, 1, 1, 0.1);
+  stroke: rgba(255, 255, 255, 0.2);
 }
 
 .area {
