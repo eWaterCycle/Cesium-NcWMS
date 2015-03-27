@@ -61,6 +61,9 @@
     Messagebus.subscribe('ncwmsLoadingComplete', function(event, value) {
       if (value === true) {
         this.repaintColorMap();
+
+        var julianDate = Cesium.JulianDate.fromIso8601(NcwmsService.startDate.toISOString());
+        CesiumViewerService.clock.currentTime = julianDate;
       }
     }.bind(this));
 
@@ -81,121 +84,16 @@
       }
     }.bind(this));
 
-    this.getSupportedTimesInISOFormat = function() {
-      var times = [];
-      NcwmsService.datasets[NcwmsService.datasets.indexOf(this.selectedDataset)].datesWithData.forEach(function(date) {
-        times.push(date.toISOString());
-      });
-
-      return times;
-    };
-
     Messagebus.subscribe('cesiumCoordinatesClicked', function(event, value) {
-      if (!NcwmsService.initialized || NcwmsService.datasets.length === 0) {
-        return;
-      }
-
-      var lat = value.latitude;
-      var lon = value.longitude;
-      var ltlo = value.leftTopLon;
-      var ltla = value.leftTopLat;
-      var rblo = value.rightBottomLon;
-      var rbla = value.rightBottomLat;
-
-      // Define an array to store our waiting promises in
-      var httpRequestPromises = [];
-
-      var times = this.getSupportedTimesInISOFormat();
-
-      times.forEach(function(time) {
-        var promise = $http.get(NcwmsService.ncWMSURL +
-          'SERVICE=WMS' +
-          '&VERSION=1.3.0' +
-          '&REQUEST=GetFeatureInfo' +
-          '&LAYERS=' + this.selectedDataset.id +
-          '&QUERY_LAYERS=' + this.selectedDataset.id +
-          '&STYLES=' + this.selectedDataset.metaData.supportedStyles[0] +
-          '/' + this.selectedPalette.name +
-          '&BBOX=' + ltlo.toFixed(6) + ',' + ltla.toFixed(6) + ',' + rblo.toFixed(6) + ',' + rbla.toFixed(6) +
-          '&FEATURE_COUNT=5' +
-          '&HEIGHT=100' +
-          '&WIDTH=100' +
-          '&FORMAT=image/png' +
-          '&INFO_FORMAT=text/xml' +
-          '&CRS=CRS:84' +
-          '&I=50' +
-          '&J=50' +
-          '&TIME=' + time);
-        httpRequestPromises.push(promise);
-      }.bind(this));
-
-      var parseXml;
-
-      if (typeof window.DOMParser !== 'undefined') {
-        parseXml = function(xmlStr) {
-          return (new window.DOMParser()).parseFromString(xmlStr, 'text/xml');
+      if (NcwmsService.initialized) {
+        var boundingRect = {
+          'leftTopLon' : value.leftTopLon,
+          'leftTopLat' : value.leftTopLat,
+          'rightBottomLon' : value.rightBottomLon,
+          'rightBottomLat' : value.rightBottomLat
         };
-      } else if (typeof window.ActiveXObject !== 'undefined' && new window.ActiveXObject('Microsoft.XMLDOM')) {
-        parseXml = function(xmlStr) {
-          var xmlDoc = new window.ActiveXObject('Microsoft.XMLDOM');
-          xmlDoc.async = 'false';
-          xmlDoc.loadXML(xmlStr);
-          return xmlDoc;
-        };
-      } else {
-        throw new Error('No XML parser found');
+        NcwmsService.getFeatureInfoSeries(this.selectedDataset, this.selectedPalette, boundingRect);
       }
-
-      $q.all(httpRequestPromises).then(function(res) {
-        var graphInfo = [];
-
-        res.forEach(function(individualResolve) {
-          var xml = parseXml(individualResolve.data);
-
-          var timeHTML = xml.getElementsByTagName('time')[0];
-          var time;
-          if (timeHTML !== undefined) {
-            time = timeHTML.innerHTML;
-          }
-          var valueHTML = xml.getElementsByTagName('value')[0];
-          var value;
-          if (valueHTML !== undefined) {
-            value =  valueHTML.innerHTML;
-          }
-          var errorHTML = xml.getElementsByTagName('value')[1];
-          var error;
-          if (errorHTML !== undefined) {
-            error = errorHTML.innerHTML;
-          } else {
-            error = 0;
-          }
-
-          var resLatHTML = xml.getElementsByTagName('latitude')[0];
-          var resLat;
-          if (resLatHTML !== undefined) {
-            resLat = resLatHTML.innerHTML;
-          }
-          var resLonHTML = xml.getElementsByTagName('longitude')[0];
-          var resLon;
-          if (resLonHTML !== undefined) {
-            resLon = resLonHTML.innerHTML;
-          }
-
-          if (time !== undefined && value !== undefined && error !== undefined && resLat !== undefined && resLon !== undefined) {
-            graphInfo.push({
-              'time' : time.replace('+01:00', '+0100'),
-              'latitude' : resLat,
-              'longitude' : resLon,
-              'value' : parseFloat(value),
-              'error' : parseFloat(error)
-            });
-          }
-        });
-        if (graphInfo.length > 0) {
-          Messagebus.publish('graphUpdateEvent', graphInfo);
-        }
-
-      });
     }.bind(this));
 
     var colorMapLayer;

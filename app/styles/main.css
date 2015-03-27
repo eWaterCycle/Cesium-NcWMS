@@ -7,6 +7,8 @@
 }
 
 body {
+  font: 10px sans-serif;
+  margin: 0;
   padding: 0;
   overflow: hidden;
 }
@@ -241,6 +243,7 @@ a {
   display: block;
   position:absolute;
   top: 15%;
+  left: 3%;
   max-width:50%;
   min-width:500px;
 }
@@ -291,4 +294,19 @@ svg {
   fill: none;
   stroke: #fff;
   stroke-width: 2;
+}
+
+.hover-line {
+  fill: none;
+	stroke: rgba(255, 0, 0, 1);
+}
+.time-indicator-line {
+  fill: none;
+	stroke: rgba(255, 0, 0, 0.5);
+}
+
+.overlay {
+  fill: rgba(0, 0, 0, 0);
+  stroke: none;
+  pointer-events: all;
 }

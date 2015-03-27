@@ -4,7 +4,10 @@
   function linegraphDirective() {
     return {
       restrict: 'EA',
-      scope: {},
+      scope: {
+        data: '=',
+        onClick: '&'  // parent execution binding
+      },
       templateUrl: 'scripts/linegraph/linegraph.directive.html',
       controller: 'LineGraphController',
       controllerAs: 'linegraph',

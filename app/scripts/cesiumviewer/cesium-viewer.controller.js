@@ -1,13 +1,15 @@
 (function() {
   'use strict';
 
-  function CesiumViewerController($scope, $http, Cesium, CesiumViewerService, Messagebus, NcwmsService) {
+  function CesiumViewerController($scope, $http, Cesium, CesiumViewerService, Messagebus) {
     this.lastClicked = {
       'latitude': '',
       'longitude': '',
       'meanValue': '',
       'errorValue': ''
     };
+
+    this.marker = {};
 
     this.init = function(element) {
       CesiumViewerService.init(element);
@@ -64,6 +66,16 @@
       Messagebus.publish('cesiumTimeSelected', selection);
     };
 
+    Messagebus.subscribe('d3TimeSelected', function(event, value) {
+      var julianDate = Cesium.JulianDate.fromIso8601(value.toISOString());
+      CesiumViewerService.clock.currentTime = julianDate;
+      CesiumViewerService.clock.shouldAnimate = false;
+
+      var selection = Cesium.JulianDate.toDate(CesiumViewerService.clock.currentTime);
+
+      Messagebus.publish('cesiumTimeSelected', selection);
+    });
+
     this.addPicking = function() {
       var ellipsoid = CesiumViewerService.viewer.scene.globe.ellipsoid;
       var labels = new Cesium.LabelCollection();
@@ -104,6 +116,18 @@
           var leftTopLat = Cesium.Math.toDegrees(cartographic.latitude) - 1;
           var rightBottomLon = Cesium.Math.toDegrees(cartographic.longitude) + 1;
           var rightBottomLat = Cesium.Math.toDegrees(cartographic.latitude) + 1;
+
+          CesiumViewerService.viewer.entities.remove(this.marker);
+          this.marker = CesiumViewerService.viewer.entities.add({
+            position: cartesian,
+            billboard : {
+                image : 'images/magnifying-glass.png',
+                width : 64,
+                height : 64
+            }
+          });
+
+          //console.log(Cesium.SceneTransforms.wgs84ToWindowCoordinates(CesiumViewerService.viewer.scene, cartesian));
 
           Messagebus.publish('cesiumCoordinatesClicked', {
             'latitude': cartographic.latitude,
