@@ -302,7 +302,7 @@ svg {
 }
 .time-indicator-line {
   fill: none;
-	stroke: rgba(255, 0, 0, 0.5);
+	stroke: rgba(255, 0, 0, 1);
 }
 
 .overlay {

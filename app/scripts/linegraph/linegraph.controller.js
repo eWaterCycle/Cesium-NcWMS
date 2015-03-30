@@ -6,6 +6,8 @@
 
   function LineGraphController($scope, $window, $timeout, $http, d3Service, Messagebus) {
     this.init = function(element, attrs) {
+      this.dragging = false;
+
       var container = element.children[0];
       var hoverContainer, hoverLine, hoverLineXOffset, hoverLineYOffset, hoverLineGroup,
       timeIndicatorLine, timeIndicatorLineXOffset, timeIndicatorLineYOffset, timeIndicatorLineGroup;
@@ -258,23 +260,42 @@
             /**
              * Called when a user mouses over the graph.
              */
-            this.handleMouseOverGraph = function(event, chartWidth, chartHeight) {
+            this.handleMouseOverGraph = function(event, chartWidth, chartHeight, xAxis) {
               var mouseX = event.pageX - hoverLineXOffset;
               var mouseY = event.pageY - hoverLineYOffset;
 
               //debug('MouseOver graph [' + containerId + '] => x: ' + mouseX + ' y: ' + mouseY + '  height: ' + h + ' event.clientY: ' + event.clientY + ' offsetY: ' + event.offsetY + ' pageY: ' + event.pageY + ' hoverLineYOffset: ' + hoverLineYOffset)
               if (mouseX >= 0 && mouseX <= chartWidth && mouseY >= 0 && mouseY <= chartHeight) {
-                // show the hover line
-                hoverLine.classed('hide', false);
+                if (this.dragging) {
+                  // show the hover line
+                  hoverLine.classed('hide', false);
 
-                // set position of hoverLine
-                hoverLine.attr('x1', mouseX).attr('x2', mouseX);
+                  // set position of hoverLine
+                  hoverLine.attr('x1', mouseX).attr('x2', mouseX);
 
-                //displayValueLabelsForPositionX(mouseX)
+                  var value = xAxis.invert(mouseX);
 
-                // user is interacting
-                userCurrentlyInteracting = true;
-                currentUserPositionX = mouseX;
+                  Messagebus.publish('d3TimeSelected', value);
+
+                  //displayValueLabelsForPositionX(mouseX)
+
+                  // user is interacting
+                  userCurrentlyInteracting = true;
+                  currentUserPositionX = mouseX;
+
+                } else {
+                  // show the hover line
+                  hoverLine.classed('hide', false);
+
+                  // set position of hoverLine
+                  hoverLine.attr('x1', mouseX).attr('x2', mouseX);
+
+                  //displayValueLabelsForPositionX(mouseX)
+
+                  // user is interacting
+                  userCurrentlyInteracting = true;
+                  currentUserPositionX = mouseX;
+                }
               } else {
                 // proactively act as if we've left the area since we're out of the bounds we want
                 this.handleMouseOutGraph(event);
@@ -385,12 +406,20 @@
                 this.handleMouseClick(event, chartWidth, x);
               }.bind(this));
 
+              overlay.on('mousedown', function() {
+                this.dragging = true;
+              }.bind(this));
+
+              overlay.on('mouseup', function() {
+                this.dragging = false;
+              }.bind(this));
+
               overlay.on('mouseleave', function() {
                 this.handleMouseOutGraph();
               }.bind(this));
 
               overlay.on('mousemove', function() {
-                this.handleMouseOverGraph(event, chartWidth, chartHeight);
+                this.handleMouseOverGraph(event, chartWidth, chartHeight, x);
               }.bind(this));
 
               Messagebus.subscribe('cesiumTimeSelected', function(event, value) {

@@ -287,27 +287,6 @@
         httpRequestPromises.push(promise);
       }.bind(this));
 
-      /*
-                var promise = $http.get(this.ncWMSURL +
-                  'SERVICE=WMS' +
-                  '&VERSION=1.3.0' +
-                  '&REQUEST=GetFeatureInfo' +
-                  '&LAYERS=' + selectedDataset.id +
-                  '&QUERY_LAYERS=' + selectedDataset.id +
-                  '&STYLES=' + selectedDataset.metaData.supportedStyles[0] +
-                  '/' + selectedPalette.name +
-                  '&BBOX=' + ltlo.toFixed(6) + ',' + ltla.toFixed(6) + ',' + rblo.toFixed(6) + ',' + rbla.toFixed(6) +
-                  '&FEATURE_COUNT=' + times.length +
-                  '&HEIGHT=100' +
-                  '&WIDTH=100' +
-                  '&FORMAT=image/png' +
-                  '&INFO_FORMAT=text/xml' +
-                  '&CRS=CRS:84' +
-                  '&I=50' +
-                  '&J=50' +
-                  '&TIME=' + times[0] +'/'+ times[times.length-1]);
-                httpRequestPromises.push(promise);
-      */
       var parseXml;
 
       if (typeof window.DOMParser !== 'undefined') {
