@@ -14,6 +14,8 @@
     Messagebus.subscribe('logarithmicChange', function(event, value) {
       if (this.logarithmic !== value) {
         this.logarithmic = value;
+        this.legendMin = 1;
+        Messagebus.publish('legendMinChange', 1);
         this.repaintColorMap();
       }
     }.bind(this));

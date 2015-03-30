@@ -1,9 +1,15 @@
 (function() {
   'use strict';
 
-    function TerrainController($scope, Messagebus) {        
+    function TerrainController($scope, Messagebus) {
         this.terrain = true;
 
+        this.toggleTerrain = function() {
+          this.terrain = !this.terrain;
+          Messagebus.publish('terrainChange', this.terrain);
+        };
+
+/*
         // Set watcher for change
         $scope.$watch('tr.terrain', function(newValue, oldValue) {
             if (newValue === oldValue) {
@@ -13,9 +19,9 @@
                 Messagebus.publish('terrainChange', newValue);
             }
         });
-        
-        Messagebus.subscribe('terrainChange', function(event, value) {              
-            if (value !== this.terrain) {    
+*/    
+        Messagebus.subscribe('terrainChange', function(event, value) {
+            if (value !== this.terrain) {
                 this.terrain = value;
             }
         }.bind(this));

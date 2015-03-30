@@ -125,7 +125,6 @@ a {
   color: #ffffff;
   position: relative;
   display: block;
-  padding: 10px 15px;
 }
 
 .ewa-projectlogobox {
@@ -309,4 +308,29 @@ svg {
   fill: rgba(0, 0, 0, 0);
   stroke: none;
   pointer-events: all;
+}
+.log-icon {
+  background-image: url("../images/nologiconsmall.png");
+}
+.log-icon.active {
+  background-image: url("../images/logiconsmall.png");
+}
+.outlines-icon {
+  background-image: url("../images/nobordersiconsmall.png");
+}
+.outlines-icon.active {
+  background-image: url("../images/bordersiconsmall.png");
+}
+.terrain-icon {
+  background-image: url("../images/noterrainiconsmall.png");
+}
+.terrain-icon.active {
+  background-image: url("../images/terrainiconsmall.png");
+}
+.icon-big {
+  width: 40px;
+  height: 40px;
+  border-color: none;
+  background-color: transparent;
+  box-shadow: none;
 }
