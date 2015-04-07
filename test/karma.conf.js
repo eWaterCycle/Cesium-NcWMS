@@ -32,8 +32,8 @@ module.exports = function(config) {
       'bower_components/bootstrap/dist/js/bootstrap.js',
       'bower_components/d3/d3.js',
       'bower_components/angular-mocks/angular-mocks.js',
-      // endbower      
-      'app/scripts/app.module.js',      
+      // endbower
+      'app/scripts/app.module.js',
       '.tmp/template.js',
       'app/scripts/**/*.js',
       'test/mock/**/*.js',
@@ -41,7 +41,7 @@ module.exports = function(config) {
     ],
 
     // list of files / patterns to exclude
-    exclude: [    
+    exclude: [
     ],
 
     // web server port
@@ -66,7 +66,7 @@ module.exports = function(config) {
       'karma-coverage',
       'karma-junit-reporter'
     ],
-    
+
     // coverage reporter generates the coverage
     reporters: ['progress', 'coverage'],
 
@@ -80,8 +80,12 @@ module.exports = function(config) {
 
     // optionally, configure the reporter
     coverageReporter: {
-      type : 'html',
-      dir : 'coverage/'
+      dir: 'test/reports/coverage/',
+      reporters: [{
+        type: 'lcov' // for viewing html pages and SonarQube
+      }, {
+        type: 'cobertura' // for use in Jenkins
+      }]
     },
 
     // Continuous Integration mode

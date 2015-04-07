@@ -1,6 +1,15 @@
 language: node_js
 node_js:
   - '0.10'
-before_script:
+#addons:
+#  code_climate:
+#    repo_token: 72207598c2d5d4f105a0a3edb1d02c21e85b9c64748d40fc62f37620df932e0f
+install:
+  - 'npm install'
   - 'npm install -g bower grunt-cli'
   - 'bower install'
+script:
+  - 'grunt test'
+#after_script:
+#  - codeclimate < test/reports/coverage/*/lcov.info
+sudo: false

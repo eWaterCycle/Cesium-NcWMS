@@ -30,9 +30,19 @@
           'rightBottomLon': value.rightBottomLon,
           'rightBottomLat': value.rightBottomLat
         };
-        if (this.selectedDataset !== null) {
-          this.selectedLabel = this.selectedDataset.label;
-          NcwmsService.getFeatureInfoSeries(this.selectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallback);
+        if (this.followglobalSelectedDataset) {
+          if (this.globalSelectedDataset === null) {
+            this.globalSelectedDataset = NcwmsService.datasets[0];
+          }
+          this.selectedLabel = this.globalSelectedDataset.label;
+          if (this.boundingRect !== null) {
+            NcwmsService.getFeatureInfoSeries(this.globalSelectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallbackSuccess, this.getFeatureInfoSeriesCallbackFailure);
+          }
+        } else {
+          if (this.selectedDataset !== null) {
+            this.selectedLabel = this.selectedDataset.label;
+            NcwmsService.getFeatureInfoSeries(this.selectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallbackSuccess, this.getFeatureInfoSeriesCallbackFailure);
+          }
         }
       }.bind(this));
 
@@ -43,7 +53,7 @@
           if (this.followglobalSelectedDataset) {
             this.selectedLabel = this.globalSelectedDataset.label;
             if (this.boundingRect !== null) {
-              NcwmsService.getFeatureInfoSeries(this.globalSelectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallback);
+              NcwmsService.getFeatureInfoSeries(this.globalSelectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallbackSuccess, this.getFeatureInfoSeriesCallbackFailure);
             }
           }
         }
@@ -56,7 +66,7 @@
       this.selectedLabel = dataset.label;
 
       if (this.boundingRect !== null) {
-        NcwmsService.getFeatureInfoSeries(this.selectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallback);
+        NcwmsService.getFeatureInfoSeries(this.selectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallbackSuccess, this.getFeatureInfoSeriesCallbackFailure);
       }
     }.bind(this);
 
@@ -64,7 +74,7 @@
       this.followglobalSelectedDataset = true;
       if (this.globalSelectedDataset !== null) {
         this.selectedLabel = this.globalSelectedDataset.label;
-        NcwmsService.getFeatureInfoSeries(this.globalSelectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallback);
+        NcwmsService.getFeatureInfoSeries(this.globalSelectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallbackSuccess, this.getFeatureInfoSeriesCallbackFailure);
       }
     }.bind(this);
 
@@ -100,7 +110,7 @@
 
         var parseISO = d3.time.format.utc('%Y-%m-%dT%H:%M:%S.%L%Z').parse;
 
-        this.getFeatureInfoSeriesCallback = function(graphInfo) {
+        this.getFeatureInfoSeriesCallbackSuccess = function(graphInfo) {
           this.data = graphInfo.map(function(d) {
             return {
               date: parseISO(d.time),
@@ -114,9 +124,17 @@
           this.render(this.data);
         }.bind(this);
 
+        this.getFeatureInfoSeriesCallbackFailure = function(errorMessage) {
+          console.log(errorMessage);
+          this.render();
+        }.bind(this);
+
         this.setSubscriptions();
 
         this.render = function(data) {
+          // remove all previous items before render
+          d3.select(container).selectAll('*').remove();
+
           // If we don't pass any data, return out of the element
           if (!data) {
             return;
@@ -127,9 +145,6 @@
           }
 
           renderTimeout = $timeout(function() {
-            // remove all previous items before render
-            d3.select(container).selectAll('*').remove();
-
             // setup variables
             var width = d3.select(element)[0][0].children[0].children[1].offsetWidth - margin;
 

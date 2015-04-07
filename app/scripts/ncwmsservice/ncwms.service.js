@@ -229,7 +229,7 @@
       return times;
     };
 
-    this.getFeatureInfoSeries = function(selectedDataset, selectedPalette, boundingRect, callback) {
+    this.getFeatureInfoSeries = function(selectedDataset, selectedPalette, boundingRect, callbackSuccess, callbackFailure) {
       if (this.datasets.length === 0) {
         return;
       }
@@ -331,8 +331,12 @@
         });
 
         if (graphInfo !== undefined && graphInfo.length > 0) {
-          callback(graphInfo);
+          callbackSuccess(graphInfo);
+        } else {
+          callbackFailure('No graph info could be derived');
         }
+      }, function() {
+        callbackFailure('The http requests failed');
       });
     };
 
