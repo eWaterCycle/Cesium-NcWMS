@@ -60,13 +60,11 @@
       }
     }.bind(this));
 
-    Messagebus.subscribe('ncwmsLoadingComplete', function(event, value) {
-      if (value === true) {
-        this.repaintColorMap();
+    NcwmsService.ready.then(function() {
+      this.repaintColorMap();
 
-        var julianDate = Cesium.JulianDate.fromIso8601(NcwmsService.startDate.toISOString());
-        CesiumViewerService.clock.currentTime = julianDate;
-      }
+      var julianDate = Cesium.JulianDate.fromIso8601(NcwmsService.startDate.toISOString());
+      CesiumViewerService.clock.currentTime = julianDate;
     }.bind(this));
 
     //Translate Cesium selected times to something ncwms can understand (closest available time) and propagate via Messagebus.
@@ -74,27 +72,13 @@
       if (NcwmsService.initialized && NcwmsService.datasets.length > 0) {
         var closest = NcwmsService.datasets[NcwmsService.datasets.indexOf(this.selectedDataset)].datesWithData[0];
 
-        if (NcwmsService.initialized === true) {
-          NcwmsService.datasets[NcwmsService.datasets.indexOf(this.selectedDataset)].datesWithData.forEach(function(date) {
-            if (date < value) {
-              closest = date;
-            }
-          });
+        NcwmsService.datasets[NcwmsService.datasets.indexOf(this.selectedDataset)].datesWithData.forEach(function(date) {
+          if (date < value) {
+            closest = date;
+          }
+        });
 
-          Messagebus.publish('ncwmsTimeSelected', closest);
-        }
-      }
-    }.bind(this));
-
-    Messagebus.subscribe('cesiumCoordinatesClicked', function(event, value) {
-      if (NcwmsService.initialized) {
-        var boundingRect = {
-          'leftTopLon' : value.leftTopLon,
-          'leftTopLat' : value.leftTopLat,
-          'rightBottomLon' : value.rightBottomLon,
-          'rightBottomLat' : value.rightBottomLat
-        };
-        NcwmsService.getFeatureInfoSeries(this.selectedDataset, this.selectedPalette, boundingRect);
+        Messagebus.publish('ncwmsTimeSelected', closest);
       }
     }.bind(this));
 
@@ -164,7 +148,7 @@
           CesiumViewerService.viewer.scene.imageryLayers.remove(oldColorMapLayer, true);
         }
       }
-    };
+    }.bind(this);
   }
 
   angular.module('eWaterCycleApp.cesiumNcwmsLayer').controller('CesiumNcwmsLayerController', CesiumNcwmsLayerController);

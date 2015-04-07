@@ -315,20 +315,11 @@
               // hide the hover-line
               hoverLine.classed('hide', true);
 
-              this.setValueLabelsToLatest();
-
               //debug('MouseOut graph [' + containerId + '] => ' + mouseX + ', ' + mouseY)
 
               // user is no longer interacting
               userCurrentlyInteracting = false;
               currentUserPositionX = -1;
-            };
-
-            /**
-             * Set the value labels to whatever the latest data point is.
-             */
-            this.setValueLabelsToLatest = function(withTransition) {
-              //displayValueLabelsForPositionX(w, withTransition);
             };
 
             this.makeChart = function(data) {

@@ -60,7 +60,7 @@
       Messagebus.publish('cesiumTimeSelected', selection);
     };
 
-    this.onTimelineTick = function(clock) {
+    this.onTimelineTick = function() {
       var selection = Cesium.JulianDate.toDate(CesiumViewerService.clock.currentTime);
 
       Messagebus.publish('cesiumTimeSelected', selection);
@@ -78,9 +78,9 @@
 
     this.addPicking = function() {
       var ellipsoid = CesiumViewerService.viewer.scene.globe.ellipsoid;
-      var labels = new Cesium.LabelCollection();
-      var label = labels.add();
-      CesiumViewerService.viewer.scene.primitives.add(labels);
+      //var labels = new Cesium.LabelCollection();
+      //labels.add();
+      //CesiumViewerService.viewer.scene.primitives.add(labels);
 
       // Mouse over the globe to see the cartographic position
       CesiumViewerService.viewer.handler = new Cesium.ScreenSpaceEventHandler(CesiumViewerService.viewer.scene.canvas);

@@ -108,6 +108,11 @@ a {
   max-width:100%;
 }
 
+.ontop-dropdown {
+  position:absolute;
+  z-index:1000;
+}
+
 .ewa-dropdown {
   color: #ffffff;
   position: relative;
@@ -118,7 +123,11 @@ a {
 .dropdown-menu {
   max-height:400px;
   overflow-y:auto;
-  z-index: 1;
+}
+
+.customgraph-dropdown-menu {
+  max-height:250px;
+  overflow-y:auto;
 }
 
 .ewa-checkbox {
@@ -196,7 +205,7 @@ a {
 .bigLegendFlexText {
   font-size: 10px;
   color: #ffffff;
-  align-self: flex-end;
+  align-self: flex-start;
 }
 
 .bigLegendImg {
@@ -243,6 +252,24 @@ a {
   position:absolute;
   top: 15%;
   left: 3%;
+  max-width:50%;
+  min-width:500px;
+}
+
+.customgraph1 {
+  display: block;
+  position:absolute;
+  top: 15%;
+  left: 1%;
+  max-width:50%;
+  min-width:500px;
+}
+
+.customgraph2 {
+  display: block;
+  position:absolute;
+  top: 50%;
+  left: 1%;
   max-width:50%;
   min-width:500px;
 }
@@ -307,7 +334,7 @@ svg {
 .overlay {
   fill: rgba(0, 0, 0, 0);
   stroke: none;
-  pointer-events: all;
+  pointer-events: painted;
 }
 .log-icon {
   background-image: url("../images/nologiconsmall.png");

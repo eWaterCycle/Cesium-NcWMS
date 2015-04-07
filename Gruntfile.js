@@ -315,7 +315,7 @@ module.exports = function (grunt) {
     },
 
     ngtemplates: {
-      eWaterCycleApp: {
+      'eWaterCycleApp.templates': {
         cwd: 'app/',
         src: 'scripts/*/*.html',
         dest: '.tmp/template.js',

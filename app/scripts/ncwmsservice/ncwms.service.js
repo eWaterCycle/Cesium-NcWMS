@@ -4,16 +4,18 @@
   function NcwmsService($q, $http, Messagebus) {
     this.ncWMSURL = 'http://localhost:8080/ncWMS-2.0-rc1-maartenvm/wms?';
 
-    this.initialized = false;
+    var deferred = $q.defer();
+    this.ready = deferred.promise;
 
     this.ncWMSdata = {
       'metadata': {},
       'palettes': []
     };
     this.datasets = [];
-
     this.startDate = {};
     this.endDate = {};
+
+    this.initialized = false;
 
     this.init = function() {
       // Ask the server to give us the data we need to get started, in
@@ -112,7 +114,6 @@
             start: this.startDate,
             stop: this.endDate
           });
-          //Messagebus.publish('ncwmsTimeSelected', startDate);
 
           Messagebus.publish('ncwmsUnitsChange', this.datasets[0].units);
           Messagebus.publish('legendMinChange', this.datasets[0].min);
@@ -126,29 +127,8 @@
             Messagebus.publish('graphMaxChange',this.datasets[0].max);
           }
 
-          //$scope.timelineWidget.zoomTo(startDate, endDate);
-
-          // Fill the array with legend texts
-          // $scope.setLegendText($scope.selectedDataset.min,
-          // $scope.selectedDataset.max, $scope.logarithmic);
-          // $scope.selectedUnits = $scope.selectedDataset.units;
-
-          // Now that everything is loaded, start watching for changes in
-          // the settings
-
-          //$scope.legendMin = $scope.selectedDataset.min;
-          //$scope.legendMax = $scope.selectedDataset.max;
-
-          //fliplegend($scope.selectedPalette.graphic, "dropdown_canvas");
-          //bigLegend($scope.selectedPalette.graphic, "bigLegend_canvas");
-
-          //setLegendText($scope);
-          //repaintColorMap($scope);
-
-          //setWatchers();
-
+          deferred.resolve();
           this.initialized = true;
-          Messagebus.publish('ncwmsLoadingComplete', true);
         }.bind(this));
 
       }.bind(this), function error(msg) {
@@ -249,7 +229,7 @@
       return times;
     };
 
-    this.getFeatureInfoSeries = function(selectedDataset, selectedPalette, boundingRect) {
+    this.getFeatureInfoSeries = function(selectedDataset, selectedPalette, boundingRect, callback) {
       if (this.datasets.length === 0) {
         return;
       }
@@ -263,7 +243,6 @@
       var httpRequestPromises = [];
 
       var times = this.getSupportedTimesInISOFormat(selectedDataset);
-
 
       times.forEach(function(time) {
         var promise = $http.get(this.ncWMSURL +
@@ -341,7 +320,7 @@
 
           if (time !== undefined && value !== undefined && error !== undefined && resLat !== undefined && resLon !== undefined) {
             graphInfo.push({
-              'time': time.replace('+01:00', '+0100'),
+              'time': time.replace(new RegExp(/\+([0-9]{2}):([0-9]{2})/), '+$1$2'),
               'latitude': resLat,
               'longitude': resLon,
               'value': parseFloat(value),
@@ -352,7 +331,7 @@
         });
 
         if (graphInfo !== undefined && graphInfo.length > 0) {
-          Messagebus.publish('graphUpdateEvent', graphInfo);
+          callback(graphInfo);
         }
       });
     };
@@ -366,8 +345,6 @@
       });
       return result;
     };
-
-    this.init();
   }
 
   angular.module('eWaterCycleApp.ncwms').service('NcwmsService', NcwmsService);
