@@ -1,16 +1,15 @@
 eWaterCycle-Demo
 ================
 
-[![Build Status](https://travis-ci.org/NLeSC/PattyVis.svg?branch=master)](https://travis-ci.org/NLeSC/PattyVis)
-[![Code Climate](https://codeclimate.com/github/NLeSC/PattyVis/badges/gpa.svg)](https://codeclimate.com/github/NLeSC/PattyVis)
-[![Test Coverage](https://codeclimate.com/github/NLeSC/PattyVis/badges/coverage.svg)](https://codeclimate.com/github/NLeSC/PattyVis)
-[![devDependency Status](https://david-dm.org/NLeSC/PattyVis/dev-status.svg)](https://david-dm.org/NLeSC/PattyVis#info=devDependencies)
-[![Codacy Badge](https://www.codacy.com/project/badge/a2ebd9977fe04aa1af6e5c47dc8d6927)](https://www.codacy.com/public/sverhoeven/PattyVis)
+[![Build Status](https://travis-ci.org/NLeSC/Cesium-NcWMS.svg?branch=master)](https://travis-ci.org/NLeSC/Cesium-NcWMS)
+[![Code Climate](https://codeclimate.com/github/NLeSC/Cesium-NcWMS/badges/gpa.svg)](https://codeclimate.com/github/NLeSC/Cesium-NcWMS)
+[![Test Coverage](https://codeclimate.com/github/NLeSC/Cesium-NcWMS/badges/coverage.svg)](https://codeclimate.com/github/NLeSC/Cesium-NcWMS)
+[![devDependency Status](https://david-dm.org/NLeSC/Cesium-NcWMS/dev-status.svg)](https://david-dm.org/NLeSC/Cesium-NcWMS#info=devDependencies)
 
 Cesium (cesiumjs.org) based demo for eWaterCycle project.
 
-![logo](images/eWaterCycle.png "Screenshot 1")
-![logo](images/eWaterCycle2.png "Screenshot 2")
+![logo](DOC/images/ewa-saturation.png "Screenshot 1")
+![logo](DOC/images/ewa-discharge.png "Screenshot 2")
 
 Getting started (windows, from scratch)
 ---------------------------------------
