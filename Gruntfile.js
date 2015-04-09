@@ -364,18 +364,23 @@ module.exports = function (grunt) {
         }, {
           expand: true,
           cwd: 'bower_components',
-          src: 'countries/*',
+          src: 'countries/**/*',
           dest: '<%= yeoman.dist %>/bower_components'
         }, {
           expand: true,
           cwd: 'bower_components',
-          src: 'cesiumjs/Cesium/Assets/*',
+          src: 'cesiumjs/Cesium/Assets/**/*',
           dest: '<%= yeoman.dist %>/bower_components/'
         }, {
           expand: true,
           cwd: 'bower_components',
-          src: 'cesiumjs/Cesium/Workers/*',
+          src: 'cesiumjs/Cesium/Workers/**/*',
           dest: '<%= yeoman.dist %>/bower_components/'
+        }, {
+          expand: true,
+          cwd: 'bower_components/cesiumjs/Cesium/Widgets/Images',
+          src: 'TimelineIcons.png',
+          dest: '<%= yeoman.dist %>/styles/Images/'
         }]
       },
       styles: {

@@ -19,7 +19,7 @@ describe('projectlogo', function() {
         });
 
         it('should create an element with the project logo', function() {
-            expect(html.html()).toContain('img class="logo-custom-ewatercycle" src="images/eWaterCycle_3.svg"');
+            expect(html.html()).toContain('img class="logo-custom-ewatercycle" src="images/eWaterCycle_3_beta.svg"');
         });
     });
 });
