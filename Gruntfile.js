@@ -190,7 +190,7 @@ module.exports = function (grunt) {
         src: [
           '<%= yeoman.dist %>/scripts/{,*/}*.js',
           '<%= yeoman.dist %>/styles/{,*/}*.css',
-          '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+          //'<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
           '<%= yeoman.dist %>/styles/fonts/*'
         ]
       }
@@ -253,6 +253,15 @@ module.exports = function (grunt) {
     // concat: {
     //   dist: {}
     // },
+
+    uglify: {
+      onlyScripts: {
+        files:   [{
+          dest: '<%= yeoman.dist %>/scripts/scripts.js',
+          src:  ['.tmp/concat/scripts/scripts.js']
+        }]
+      }
+    },
 
     imagemin: {
       dist: {
@@ -339,7 +348,8 @@ module.exports = function (grunt) {
             '*.html',
             'views/{,*/}*.html',
             'images/{,*/}*.{webp}',
-            'styles/fonts/{,*/}*.*'
+            'styles/fonts/{,*/}*.*',
+            'serverconfig.json'
           ]
         }, {
           expand: true,
@@ -351,6 +361,21 @@ module.exports = function (grunt) {
           cwd: 'bower_components/bootstrap/dist',
           src: 'fonts/*',
           dest: '<%= yeoman.dist %>'
+        }, {
+          expand: true,
+          cwd: 'bower_components',
+          src: 'countries/*',
+          dest: '<%= yeoman.dist %>/bower_components'
+        }, {
+          expand: true,
+          cwd: 'bower_components',
+          src: 'cesiumjs/Cesium/Assets/*',
+          dest: '<%= yeoman.dist %>/bower_components/'
+        }, {
+          expand: true,
+          cwd: 'bower_components',
+          src: 'cesiumjs/Cesium/Workers/*',
+          dest: '<%= yeoman.dist %>/bower_components/'
         }]
       },
       styles: {
@@ -358,6 +383,12 @@ module.exports = function (grunt) {
         cwd: '<%= yeoman.app %>/styles',
         dest: '.tmp/styles/',
         src: '{,*/}*.css'
+      },
+      vendorJS: {
+        expand: true,
+        cwd:    '.tmp/concat/scripts/',
+        dest:   '<%= yeoman.dist %>/scripts/',
+        src:    'vendor.js'
       }
     },
 
@@ -429,7 +460,8 @@ module.exports = function (grunt) {
     'copy:dist',
     'cdnify',
     'cssmin',
-    'uglify',
+    'uglify:onlyScripts',
+    'copy:vendorJS',
     'filerev',
     'usemin',
     'htmlmin'
@@ -440,4 +472,5 @@ module.exports = function (grunt) {
     'test',
     'build'
   ]);
+
 };
