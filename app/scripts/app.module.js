@@ -37,7 +37,9 @@
 
     //Project logos etc.
     'eWaterCycleApp.logos',
-    'eWaterCycleApp.projectlogo'
+    'eWaterCycleApp.projectlogo',
+
+    'eWaterCycleApp.help'
   ]).run(function(NcwmsService) {
     NcwmsService.init();
   });
@@ -116,4 +118,6 @@
   //Project logos etc.
   angular.module('eWaterCycleApp.logos', []);
   angular.module('eWaterCycleApp.projectlogo', []);
+
+  angular.module('eWaterCycleApp.help', []);
 })();

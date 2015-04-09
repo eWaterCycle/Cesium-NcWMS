@@ -97,7 +97,7 @@ The `dist` folder has production ready distribution.
 Copyrights & Disclaimers
 ------------------------
 
-eWaterCycle-Demo is copyrighted by the Netherlands eScience Center and
+Cesium-NcWMS is copyrighted by the Netherlands eScience Center and
 releases under the Apache License, Version 2.0.
 
 See <http://www.esciencecenter.nl> for more information on the

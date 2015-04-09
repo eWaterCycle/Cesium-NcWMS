@@ -17,6 +17,12 @@
     <!-- endbuild -->
   </head>
   <body ng-app="eWaterCycleApp">
+    <!-- The splash screen must be first -->
+    <div id="splash" ng-cloak>
+      <h2>Loading</h2>
+    </div>
+
+
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -40,38 +46,54 @@
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <script src="scripts/app.module.js"></script>
+
     <script src="scripts/util/decimaladjust.service.js"></script>
+
     <script src="scripts/util/messagebus.service.js"></script>
+
     <script src="scripts/ncwmsservice/ncwms.service.js"></script>
+
     <script src="scripts/cesiumviewer/cesium-viewer.service.js"></script>
     <script src="scripts/cesiumviewer/cesium-viewer.controller.js"></script>
     <script src="scripts/cesiumviewer/cesium-viewer.directive.js"></script>
+
     <script src="scripts/cesiumncwmslayer/cesium.ncwms.layer.controller.js"></script>
     <script src="scripts/cesiumncwmslayer/cesium.ncwms.layer.directive.js"></script>
+
     <script src="scripts/dataset/dataset.controller.js"></script>
     <script src="scripts/dataset/dataset.directive.js"></script>
+
     <script src="scripts/palette/palette.controller.js"></script>
     <script src="scripts/palette/palette.directive.js"></script>
     <script src="scripts/palette/palette.iamlegend.directive.js"></script>
+
     <script src="scripts/viewmodel/viewmodel.controller.js"></script>
     <script src="scripts/viewmodel/viewmodel.directive.js"></script>
+
     <script src="scripts/flyto/flyto.controller.js"></script>
     <script src="scripts/flyto/flyto.directive.js"></script>
+
     <script src="scripts/terrain/terrain.controller.js"></script>
     <script src="scripts/terrain/terrain.directive.js"></script>
+
     <script src="scripts/logarithmic/logarithmic.controller.js"></script>
     <script src="scripts/logarithmic/logarithmic.directive.js"></script>
+
     <script src="scripts/outlines/outlines.controller.js"></script>
     <script src="scripts/outlines/outlines.directive.js"></script>
+
     <script src="scripts/biglegend/biglegend.controller.js"></script>
     <script src="scripts/biglegend/biglegend.directive.js"></script>
+
     <script src="scripts/logos/logos.directive.js"></script>
     <script src="scripts/projectlogo/projectlogo.directive.js"></script>
 
+    <!--
     <script src="scripts/bargraph/bargraph.directive.js"></script>
     <script src="scripts/bargraph/bargraph.controller.js"></script>
     <script src="scripts/linegraph/linegraph.directive.js"></script>
     <script src="scripts/linegraph/linegraph.controller.js"></script>
+    -->
     <script src="scripts/customgraph/customgraph.directive.js"></script>
     <script src="scripts/customgraph/customgraph.controller.js"></script>
 
@@ -80,6 +102,9 @@
     <script src="scripts/cesiumwmslayer/cesium.wms.layer.controller.js"></script>
     <script src="scripts/cesiumwmslayer/cesium.wms.layer.directive.js"></script>
     -->
+
+    <script src="scripts/help/help.directive.js"></script>
+    <script src="scripts/help/help.controller.js"></script>
 
     <!-- endbuild -->
 
@@ -94,6 +119,7 @@
         <li><logarithmic-toggle-directive></logarithmic-toggle-directive></li>
         <li><terrain-toggle-directive></terrain-toggle-directive></li>
         <li><outlines-toggle-directive></outlines-toggle-directive></li>
+        <li><help-directive></help-directive></li>
     </ul>
 
     <!-- <linegraph-directive></linegraph-directive> -->

@@ -1,0 +1,38 @@
+<span class="interface-visible interface-clickable ewa-checkbox">
+  <button ng-click="hc.showHelp=!hc.showHelp" class="icon-big help-icon" ng-class="{active: hc.showHelp}" title="Help"></button>
+</span>
+<div collapse='!hc.showHelp' class="panel panel-default help-panel">
+  <div class="panel-close"><button ng-click="hc.showHelp=!hc.showHelp" class="icon-big close-icon" title="Close"></button></div>
+  <div class="panel-heading">eWaterCycle visualziation with Cesium-NcWMS</div>
+  <div class="panel-body">
+    <h2>Welcome!</h2>
+      <p>You are looking at a visualization tool for NetCDF datasets, in this version used for hydrological forecasting datasets from the eWaterCycle project of the Netherlands eScience Center.</p>
+
+    <h2>Features</h2>
+      <div>
+      <b>The top-right menu</b>
+      <p>The top-right menu is where you can configure your map view. It offers several dropdown menus, from left to right:</p>
+      <ul>
+        <li>The "Fly To" menu: Use this menu to 'fly' to the country you want to focus on.</li>
+        <li>The "View" menu: Use this menu to toggle between globe, columbus, and map views.</li>
+        <li>The "Dataset" menu: Select the dataset you want to see on the globe.</li>
+        <li>The "Palette" menu: Select the palette you want to as a colormap for your dataset.</li>
+        <li>The "Log" button: Toggle between logarithmic and linear scaling of the colormap.</li>
+        <li>The "Terrain" button: Toggle between terrain settings, transparent colormap with terrain, or terrain-less and opaque.</li>
+        <li>The "Borders" button: Toggle country borders on/off.</li>
+      </ul>
+      <div></div>
+      <b>The legend</b>
+      <p>The legend on the right side offers two textboxes, where you are able to set the minimum and maximum value between which you want the colormap to scale.</p>
+      <div></div>
+      <b>The time bar</b>
+      <p>The time bar on the bottom is used to define the time you want to see data of. it is automatically scaled to the extents of your selected dataset.</p>
+      <div></div>
+      <b>The graphs on the left</b>
+      <p>The graphs on the left side appear when the user clicks a location on the map with sufficient time-based data. The graphs initially both show the globally selected dataset, but can be set to a different dataset.</p>
+      </div>
+    <h2>Troubleshooting</h2>
+      <p>If you can only see a globe with normal coloring, and the dropdown menus at the top seem suspiciously empty, that probably means you have no ncWMS server attached, or that server is serving no data at the moment. Please refer to the README file.</p>
+
+  </div>
+</div>

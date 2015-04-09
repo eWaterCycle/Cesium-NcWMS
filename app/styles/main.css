@@ -166,9 +166,11 @@ a {
 }
 
 .navbar-right-custom-top {
-  padding: 2px 0px;
+  position: absolute;
   float: right;
   max-width: 75%;
+  top: 4px;
+  right: 4px;
 }
 
 .bigLegendContainer {
@@ -354,10 +356,45 @@ svg {
 .terrain-icon.active {
   background-image: url("../images/terrainiconsmall.png");
 }
+.help-icon {
+  background-image: url("../images/helpiconsmall.png");
+}
+.close-icon {
+  background-image: url("../images/closeiconsmall.png");
+  position:absolute;
+  top: 7%;
+  right: 1%;
+  border: 0;
+}
 .icon-big {
   width: 40px;
   height: 40px;
   border-color: none;
   background-color: transparent;
   box-shadow: none;
+}
+
+[ng-cloak].splash {
+  display: block !important;
+}
+[ng-cloak] {display: none;}
+.splash {
+  background: blue;
+  color: white;
+}
+.splash h2 {
+  font-size: 2.1em;
+  font-weight: 500;
+}
+
+.help-panel {
+  position: absolute;
+  top: 140%;
+  right: 15%;
+  z-index: 1;
+}
+.help-panel .panel-body {
+  width: 700px;
+  height: 500px;
+  overflow-y: auto;
 }

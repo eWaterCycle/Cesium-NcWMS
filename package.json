@@ -1,12 +1,12 @@
 {
-  "name": "eWaterCycle-Demo",
-  "version": "0.0.0",
+  "name": "Cesium-NcWMS",
+  "version": "1.0.0",
   "author": "Maarten van Meersbergen <m.vanmeersbergen@esiencencenter.nl>",
   "license": "Apache 2.0",
-  "homepage": "https://github.com/NLeSC/eWaterCycle-Demo",
+  "homepage": "https://github.com/NLeSC/Cesium-NcWMS",
   "repository": {
     "type": "git",
-    "url": "https://github.com/NLeSC/eWaterCycle-Demo.git"
+    "url": "https://github.com/NLeSC/Cesium-NcWMS.git"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

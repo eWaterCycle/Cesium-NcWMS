@@ -1,7 +1,7 @@
 {
-  "name": "eWaterCycle-Demo",
-  "version": "0.0.0",
-  "homepage": "https://github.com/NLeSC/eWaterCycle-Demo",
+  "name": "Cesium-NcWMS",
+  "version": "1.0.0",
+  "homepage": "https://github.com/NLeSC/Cesium-NcWMS",
   "authors": [
     "maartenvm <m.vanmeersbergen@esciencecenter.nl>"
   ],
