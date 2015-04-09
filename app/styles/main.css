@@ -123,6 +123,7 @@ a {
 .dropdown-menu {
   max-height:400px;
   overflow-y:auto;
+  overflow-x: hidden;
 }
 
 .customgraph-dropdown-menu {
@@ -171,13 +172,14 @@ a {
   max-width: 75%;
   top: 4px;
   right: 4px;
+  z-index: 2;
 }
 
 .bigLegendContainer {
   display: block;
   position: absolute;
   right: 2%;
-  top: 7%;
+  top: 80px;
   min-width: 75px;
   width: 6%;
   height: 75%;
@@ -390,9 +392,14 @@ svg {
 .help-panel {
   position: absolute;
   top: 140%;
-  right: 15%;
+  right: 20%;
   z-index: 1;
 }
+
+.help-panel a {
+  color: blue;
+}
+
 .help-panel .panel-body {
   width: 700px;
   height: 500px;
