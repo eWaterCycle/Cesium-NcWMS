@@ -18,122 +18,131 @@
     this.initialized = false;
 
     this.init = function() {
-      // Ask the server to give us the data we need to get started, in
-      // this case an overview of the available datasets
-      this.getMenu().then(function success(menuPromise) {
-        // Build an array containing our datasets (--NG--)
-        this.datasets = this.loadMenu(menuPromise);
-        // Store the first dataset as our 'currently selected' dataset
-        // (--NG--)
-        Messagebus.publish('ncwmsDatasetSelected', this.datasets[0]);
+      // load JSON data
+      $http.get('serverconfig.json').then(function(res) {
+        if (res.data.id === 'ncWMS') {
+          this.ncWMSURL = res.data.url;
+        } else {
+          console.log(res.data.url + ' is no valid server config, defaulting to: ' + this.ncWMSURL);
+        }
 
-        // Get the id of the first dataset we got from the server,
-        // because we can
-        // only get some information out of the server if we dig a
-        // little deeper, and we need an ID to do just that.
-        var firstDatasetID = menuPromise.data.children[0].children[0].id;
+        // Ask the server to give us the data we need to get started, in
+        // this case an overview of the available datasets
+        this.getMenu().then(function success(menuPromise) {
+          // Build an array containing our datasets (--NG--)
+          this.datasets = this.loadMenu(menuPromise);
+          // Store the first dataset as our 'currently selected' dataset
+          // (--NG--)
+          Messagebus.publish('ncwmsDatasetSelected', this.datasets[0]);
 
-        // To get the server to give us the available palette names,
-        // we use this first ID
-        this.getMetadata(firstDatasetID).then(function success(firstDatasetMetaDataPromise) {
-          // Store the palette names and image URL's. (--NG--)
-          this.ncWMSdata.palettes = this.loadPalettes(firstDatasetID, firstDatasetMetaDataPromise.data.palettes);
+          // Get the id of the first dataset we got from the server,
+          // because we can
+          // only get some information out of the server if we dig a
+          // little deeper, and we need an ID to do just that.
+          var firstDatasetID = menuPromise.data.children[0].children[0].id;
 
-          // Store the first palette we receive as the currently
-          // selected palette. (--NG--)
-          //me.selectedPalette = this.ncWMSdata.palettes[0];
-          Messagebus.publish('ncwmsPaletteSelected', this.ncWMSdata.palettes[0]);
-        }.bind(this), function error(msg) {
-          console.log('Error in getMetadata, ' + msg);
-        });
+          // To get the server to give us the available palette names,
+          // we use this first ID
+          this.getMetadata(firstDatasetID).then(function success(firstDatasetMetaDataPromise) {
+            // Store the palette names and image URL's. (--NG--)
+            this.ncWMSdata.palettes = this.loadPalettes(firstDatasetID, firstDatasetMetaDataPromise.data.palettes);
 
-        // Define an array to store our waiting promises in
-        var httpRequestPromises = [];
-
-        // Do a new metadata request for every loaded dataset
-        this.datasets.forEach(function(dataset) {
-          var promise = this.getMetadata(dataset.id).then(function success(metaDataPromise) {
-            var workingDataset = this.datasets[this.datasets.indexOf(dataset)];
-            workingDataset.metaData = metaDataPromise.data;
-
-            // Once the metadata request is resolved, store the
-            // dates with
-            // data in
-            // the previously made datasets datastructure.
-            var dates = [];
-            if (metaDataPromise.data.supportsTimeseries) {
-              for (var year in metaDataPromise.data.datesWithData) {
-                var monthArray = metaDataPromise.data.datesWithData[year];
-                for (var month in monthArray) {
-                  var dayArray = monthArray[month];
-                  for (var day in dayArray) {
-                    dates.push(new Date(Date.UTC(year, month, dayArray[day], 0, 0, 0)));
-                  }
-                }
-              }
-            }
-            workingDataset.datesWithData = dates;
-
-            // Store the scale ranges
-            workingDataset.min = parseFloat(metaDataPromise.data.scaleRange[0]);
-            workingDataset.max = parseFloat(metaDataPromise.data.scaleRange[1]);
-
-            workingDataset.units = metaDataPromise.data.units;
+            // Store the first palette we receive as the currently
+            // selected palette. (--NG--)
+            //me.selectedPalette = this.ncWMSdata.palettes[0];
+            Messagebus.publish('ncwmsPaletteSelected', this.ncWMSdata.palettes[0]);
           }.bind(this), function error(msg) {
             console.log('Error in getMetadata, ' + msg);
           });
-          // Add this promise to the array of waiting promises.
-          httpRequestPromises.push(promise);
-        }.bind(this));
 
-        // The $q service lets us wait for an array of promises to be
-        // resolved
-        // before continuing. We wait here until all the promises for
-        // the metadata requests for each dataset are complete.
-        $q.all(httpRequestPromises).then(function() {
-          var dates = this.datasets[this.datasets.indexOf(this.datasets[0])].datesWithData;
+          // Define an array to store our waiting promises in
+          var httpRequestPromises = [];
 
+          // Do a new metadata request for every loaded dataset
           this.datasets.forEach(function(dataset) {
-            var workingDataset = this.datasets[this.datasets.indexOf(dataset)];
-            if (workingDataset.statsGroup) {
-              //If this dataset is a statistics group, modify it's min and max to reflect the actual value represented.
+            var promise = this.getMetadata(dataset.id).then(function success(metaDataPromise) {
+              var workingDataset = this.datasets[this.datasets.indexOf(dataset)];
+              workingDataset.metaData = metaDataPromise.data;
 
-              var id = workingDataset.id.split('/')[0];
-              var ds1 = id + '/' + workingDataset.id.split('/')[1].split(':')[0];
-              var ds2 = id + '/' + workingDataset.id.split('/')[1].split(':')[1].split('-')[0];
+              // Once the metadata request is resolved, store the
+              // dates with
+              // data in
+              // the previously made datasets datastructure.
+              var dates = [];
+              if (metaDataPromise.data.supportsTimeseries) {
+                for (var year in metaDataPromise.data.datesWithData) {
+                  var monthArray = metaDataPromise.data.datesWithData[year];
+                  for (var month in monthArray) {
+                    var dayArray = monthArray[month];
+                    for (var day in dayArray) {
+                      dates.push(new Date(Date.UTC(year, month, dayArray[day], 0, 0, 0)));
+                    }
+                  }
+                }
+              }
+              workingDataset.datesWithData = dates;
 
-              workingDataset.graphicalMin = this.getDatasetByName(ds1).min;
-              workingDataset.graphicalMax = this.getDatasetByName(ds1).max + this.getDatasetByName(ds2).max;
-            }
+              // Store the scale ranges
+              workingDataset.min = parseFloat(metaDataPromise.data.scaleRange[0]);
+              workingDataset.max = parseFloat(metaDataPromise.data.scaleRange[1]);
+
+              workingDataset.units = metaDataPromise.data.units;
+            }.bind(this), function error(msg) {
+              console.log('Error in getMetadata, ' + msg);
+            });
+            // Add this promise to the array of waiting promises.
+            httpRequestPromises.push(promise);
           }.bind(this));
 
-          this.startDate = dates[0];
-          this.endDate = dates[this.datasets[this.datasets.indexOf(this.datasets[0])].datesWithData.length - 1];
+          // The $q service lets us wait for an array of promises to be
+          // resolved
+          // before continuing. We wait here until all the promises for
+          // the metadata requests for each dataset are complete.
+          $q.all(httpRequestPromises).then(function() {
+            var dates = this.datasets[this.datasets.indexOf(this.datasets[0])].datesWithData;
 
-          Messagebus.publish('timeFrameRedefined', {
-            start: this.startDate,
-            stop: this.endDate
-          });
+            this.datasets.forEach(function(dataset) {
+              var workingDataset = this.datasets[this.datasets.indexOf(dataset)];
+              if (workingDataset.statsGroup) {
+                //If this dataset is a statistics group, modify it's min and max to reflect the actual value represented.
 
-          Messagebus.publish('ncwmsUnitsChange', this.datasets[0].units);
-          Messagebus.publish('legendMinChange', this.datasets[0].min);
-          Messagebus.publish('legendMaxChange', this.datasets[0].max);
+                var id = workingDataset.id.split('/')[0];
+                var ds1 = id + '/' + workingDataset.id.split('/')[1].split(':')[0];
+                var ds2 = id + '/' + workingDataset.id.split('/')[1].split(':')[1].split('-')[0];
 
-          if (this.datasets[0].graphicalMin !== 0) {
-            Messagebus.publish('graphMinChange',this.datasets[0].graphicalMin);
-            Messagebus.publish('graphMaxChange',this.datasets[0].graphicalMax);
-          } else {
-            Messagebus.publish('graphMinChange',this.datasets[0].min);
-            Messagebus.publish('graphMaxChange',this.datasets[0].max);
-          }
+                workingDataset.graphicalMin = this.getDatasetByName(ds1).min;
+                workingDataset.graphicalMax = this.getDatasetByName(ds1).max + this.getDatasetByName(ds2).max;
+              }
+            }.bind(this));
 
-          deferred.resolve();
-          this.initialized = true;
-        }.bind(this));
+            this.startDate = dates[0];
+            this.endDate = dates[this.datasets[this.datasets.indexOf(this.datasets[0])].datesWithData.length - 1];
 
-      }.bind(this), function error(msg) {
-        console.log('Error in getMenu, ' + msg);
-      });
+            Messagebus.publish('timeFrameRedefined', {
+              start: this.startDate,
+              stop: this.endDate
+            });
+
+            Messagebus.publish('ncwmsUnitsChange', this.datasets[0].units);
+            Messagebus.publish('legendMinChange', this.datasets[0].min);
+            Messagebus.publish('legendMaxChange', this.datasets[0].max);
+
+            if (this.datasets[0].graphicalMin !== 0) {
+              Messagebus.publish('graphMinChange', this.datasets[0].graphicalMin);
+              Messagebus.publish('graphMaxChange', this.datasets[0].graphicalMax);
+            } else {
+              Messagebus.publish('graphMinChange', this.datasets[0].min);
+              Messagebus.publish('graphMaxChange', this.datasets[0].max);
+            }
+
+            deferred.resolve();
+            this.initialized = true;
+          }.bind(this));
+
+        }.bind(this), function error(msg) {
+          console.log('Error in getMenu, ' + msg);
+        });
+      }.bind(this));
     };
 
     this.getMenu = function() {
