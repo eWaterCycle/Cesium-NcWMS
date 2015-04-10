@@ -1,15 +1,18 @@
 <div class="customgraphContainer">
   <div class="interface-visible interface-clickable" >
-    <a data-toggle="dropdown" class="ontop-dropdown" href="#">{{ customgraph.selectedLabel }} <b class="caret"></b></a>
-    <ul class="dropdown-menu customgraph-dropdown-menu" role="menu">
-      <li>
-        <a ng-click=customgraph.selectDefaultDataset()>Follow the selected colormap dataset.</a>
-      </li>
-      <li ng-repeat="dataset in customgraph.getDatasets()">
-        <a ng-click=customgraph.selectDataset(dataset)>{{dataset.label}}</a>
-      </li>
-    </ul>
+    <button ng-click="customgraph.toggleActivated()" class="icon-big graph-icon" ng-class="{active: customgraph.activated}" title="Graph"></button>
+    <div ng-show="customgraph.activated">
+      <a data-toggle="dropdown" class="ontop-dropdown" href="#">{{ customgraph.selectedLabel }} <b class="caret"></b></a>
+      <ul class="dropdown-menu customgraph-dropdown-menu" role="menu">
+        <li>
+          <a ng-click=customgraph.selectDefaultDataset()>Follow the selected colormap dataset.</a>
+        </li>
+        <li ng-repeat="dataset in customgraph.getDatasets()">
+          <a ng-click=customgraph.selectDataset(dataset)>{{dataset.label}}</a>
+        </li>
+      </ul>
+    </div>
   </div>
-  <div class="interface-visible interface-clickthrough">
+  <div ng-show="customgraph.activated" class="interface-visible interface-clickthrough">
   </div>
 </div>

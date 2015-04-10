@@ -6,11 +6,37 @@
 
   function CustomGraphController($scope, $window, $timeout, $http, d3Service, NcwmsService, Messagebus) {
     this.selectedLabel = '';
+    this.selectedUnits = '';
     this.selectedPalette = 'default';
     this.boundingRect = null;
     this.selectedDataset = null;
     this.globalSelectedDataset = null;
     this.followglobalSelectedDataset = true;
+    this.activated = false;
+
+    this.setSelections = function() {
+      if (this.followglobalSelectedDataset) {
+        if (this.globalSelectedDataset === null) {
+          this.globalSelectedDataset = NcwmsService.datasets[0];
+        }
+        this.selectedLabel = this.globalSelectedDataset.label;
+        this.selectedUnits = this.globalSelectedDataset.units;
+        if (this.boundingRect !== null) {
+          NcwmsService.getFeatureInfoSeries(this.globalSelectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallbackSuccess, this.getFeatureInfoSeriesCallbackFailure);
+        }
+      } else {
+        if (this.selectedDataset !== null) {
+          this.selectedLabel = this.selectedDataset.label;
+          this.selectedUnits = this.selectedDataset.units;
+          NcwmsService.getFeatureInfoSeries(this.selectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallbackSuccess, this.getFeatureInfoSeriesCallbackFailure);
+        }
+      }
+    };
+
+    this.toggleActivated = function() {
+      this.setSelections();
+      this.activated = !this.activated;
+    };
 
     this.getDatasets = function() {
       return NcwmsService.datasets;
@@ -30,32 +56,14 @@
           'rightBottomLon': value.rightBottomLon,
           'rightBottomLat': value.rightBottomLat
         };
-        if (this.followglobalSelectedDataset) {
-          if (this.globalSelectedDataset === null) {
-            this.globalSelectedDataset = NcwmsService.datasets[0];
-          }
-          this.selectedLabel = this.globalSelectedDataset.label;
-          if (this.boundingRect !== null) {
-            NcwmsService.getFeatureInfoSeries(this.globalSelectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallbackSuccess, this.getFeatureInfoSeriesCallbackFailure);
-          }
-        } else {
-          if (this.selectedDataset !== null) {
-            this.selectedLabel = this.selectedDataset.label;
-            NcwmsService.getFeatureInfoSeries(this.selectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallbackSuccess, this.getFeatureInfoSeriesCallbackFailure);
-          }
-        }
+        this.setSelections();
       }.bind(this));
 
       Messagebus.subscribe('ncwmsDatasetSelected', function(event, value) {
         if (this.globalSelectedDataset !== value) {
           this.globalSelectedDataset = value;
 
-          if (this.followglobalSelectedDataset) {
-            this.selectedLabel = this.globalSelectedDataset.label;
-            if (this.boundingRect !== null) {
-              NcwmsService.getFeatureInfoSeries(this.globalSelectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallbackSuccess, this.getFeatureInfoSeriesCallbackFailure);
-            }
-          }
+          this.setSelections();
         }
       }.bind(this));
     }.bind(this);
@@ -63,19 +71,14 @@
     this.selectDataset = function(dataset) {
       this.selectedDataset = dataset;
       this.followglobalSelectedDataset = false;
-      this.selectedLabel = dataset.label;
 
-      if (this.boundingRect !== null) {
-        NcwmsService.getFeatureInfoSeries(this.selectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallbackSuccess, this.getFeatureInfoSeriesCallbackFailure);
-      }
+      this.setSelections();
     }.bind(this);
 
     this.selectDefaultDataset = function() {
       this.followglobalSelectedDataset = true;
-      if (this.globalSelectedDataset !== null) {
-        this.selectedLabel = this.globalSelectedDataset.label;
-        NcwmsService.getFeatureInfoSeries(this.globalSelectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallbackSuccess, this.getFeatureInfoSeriesCallbackFailure);
-      }
+
+      this.setSelections();
     }.bind(this);
 
     this.init = function(element, attrs) {
@@ -136,7 +139,7 @@
           d3.select(container).selectAll('*').remove();
 
           // If we don't pass any data, return out of the element
-          if (!data) {
+          if (!data  || !this.activated) {
             return;
           }
 

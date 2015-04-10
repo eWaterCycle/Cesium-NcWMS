@@ -111,6 +111,8 @@ a {
 .ontop-dropdown {
   position:absolute;
   z-index:1000;
+  left: 50px;
+  top: 30px;
 }
 
 .ewa-dropdown {
@@ -223,6 +225,7 @@ a {
 .bigLegendUnits {
   position: relative;
   float: right;
+  font-size: large;  
   color: #ffffff;
   margin-top:5%;
 }
@@ -267,6 +270,7 @@ a {
   left: 1%;
   max-width:50%;
   min-width:500px;
+  z-index: 1;
 }
 
 .customgraph2 {
@@ -276,6 +280,7 @@ a {
   left: 1%;
   max-width:50%;
   min-width:500px;
+  z-index: 1;
 }
 
 .bargraphContainer {
@@ -358,13 +363,16 @@ svg {
 .terrain-icon.active {
   background-image: url("../images/terrainiconsmall.png");
 }
+.graph-icon {
+  background-image: url("../images/graphiconsmall.png");
+}
 .help-icon {
   background-image: url("../images/helpiconsmall.png");
 }
 .close-icon {
   background-image: url("../images/closeiconsmall.png");
   position:absolute;
-  top: 7%;
+  top: 10%;
   right: 3%;
   border: 0;
 }
@@ -394,6 +402,10 @@ svg {
   top: 140%;
   right: 20%;
   z-index: 1;
+  width: 100%;
+  min-height: 100px;
+  max-height: 1000%;
+  overflow-y: auto;
 }
 
 .help-panel a {
@@ -401,7 +413,4 @@ svg {
 }
 
 .help-panel .panel-body {
-  width: 700px;
-  height: 500px;
-  overflow-y: auto;
 }
