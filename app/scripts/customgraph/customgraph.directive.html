@@ -11,8 +11,8 @@
           <a ng-click=customgraph.selectDataset(dataset)>{{dataset.label}}</a>
         </li>
       </ul>
+      <div class="customgraph-log-div">log? <input type="checkbox" ng-model="customgraph.logarithmic" ng-change="customgraph.toggleLogarithmic()"></div>
     </div>
   </div>
-  <div ng-show="customgraph.activated" class="interface-visible interface-clickthrough">
-  </div>
+  <div ng-show="customgraph.activated" class="interface-visible interface-clickthrough"></div>
 </div>

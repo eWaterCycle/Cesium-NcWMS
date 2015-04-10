@@ -13,6 +13,7 @@
     this.globalSelectedDataset = null;
     this.followglobalSelectedDataset = true;
     this.activated = false;
+    this.logarithmic = false;
 
     this.setSelections = function() {
       if (this.followglobalSelectedDataset) {
@@ -36,6 +37,10 @@
     this.toggleActivated = function() {
       this.setSelections();
       this.activated = !this.activated;
+    };
+
+    this.toggleLogarithmic = function() {
+      this.setSelections();
     };
 
     this.getDatasets = function() {
