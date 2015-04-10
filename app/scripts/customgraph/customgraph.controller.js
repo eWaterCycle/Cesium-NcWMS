@@ -12,8 +12,9 @@
     this.selectedDataset = null;
     this.globalSelectedDataset = null;
     this.followglobalSelectedDataset = true;
-    this.activated = false;
+    this.activated = $scope.activated;
     this.logarithmic = false;
+    this.errorMessage = 'test 123';
 
     this.setSelections = function() {
       if (this.followglobalSelectedDataset) {
@@ -23,7 +24,10 @@
         this.selectedLabel = this.globalSelectedDataset.label;
         this.selectedUnits = this.globalSelectedDataset.units;
         if (this.boundingRect !== null) {
+          this.errorMessage = '';
           NcwmsService.getFeatureInfoSeries(this.globalSelectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallbackSuccess, this.getFeatureInfoSeriesCallbackFailure);
+        } else {
+          this.errorMessage = 'please click a point with data';
         }
       } else {
         if (this.selectedDataset !== null) {
@@ -143,9 +147,16 @@
           // remove all previous items before render
           d3.select(container).selectAll('*').remove();
 
-          // If we don't pass any data, return out of the element
-          if (!data  || !this.activated) {
+          if (!this.activated) {
             return;
+          }
+
+          // If we don't pass any data, return out of the element
+          if (!data) {
+            this.errorMessage = 'please click a point with data';
+            return;
+          } else {
+            this.errorMessage = '';
           }
 
           if (renderTimeout) {

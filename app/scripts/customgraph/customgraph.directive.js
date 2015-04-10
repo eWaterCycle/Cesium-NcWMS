@@ -5,6 +5,7 @@
     return {
       restrict: 'EA',
       scope: {
+        activated: '=',
         data: '=',
         onClick: '&'  // parent execution binding
       },

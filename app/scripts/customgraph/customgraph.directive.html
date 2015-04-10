@@ -12,6 +12,7 @@
         </li>
       </ul>
       <div class="customgraph-log-div">log? <input type="checkbox" ng-model="customgraph.logarithmic" ng-change="customgraph.toggleLogarithmic()"></div>
+      <div class="customgraph-err-div">{{customgraph.errorMessage}}</div>
     </div>
   </div>
   <div ng-show="customgraph.activated" class="interface-visible interface-clickthrough"></div>
