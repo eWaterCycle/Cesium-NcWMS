@@ -112,6 +112,10 @@
 
                 workingDataset.graphicalMin = this.getDatasetByName(ds1).min;
                 workingDataset.graphicalMax = this.getDatasetByName(ds1).max + this.getDatasetByName(ds2).max;
+
+                //Link the error and mean datasets to it
+                workingDataset.datasetMean = this.getDatasetByName(ds1);
+                workingDataset.datasetError = this.getDatasetByName(ds2);
               }
             }.bind(this));
 
@@ -123,17 +127,22 @@
               stop: this.endDate
             });
 
-            Messagebus.publish('ncwmsUnitsChange', this.datasets[0].units);
-            Messagebus.publish('legendMinChange', this.datasets[0].min);
-            Messagebus.publish('legendMaxChange', this.datasets[0].max);
-
-            if (this.datasets[0].graphicalMin !== 0) {
-              Messagebus.publish('graphMinChange', this.datasets[0].graphicalMin);
-              Messagebus.publish('graphMaxChange', this.datasets[0].graphicalMax);
-            } else {
-              Messagebus.publish('graphMinChange', this.datasets[0].min);
-              Messagebus.publish('graphMaxChange', this.datasets[0].max);
+            var datasetForMap = this.datasets[0];
+            if (this.datasets[0].statsGroup) {
+              datasetForMap = this.datasets[0].datasetMean;
             }
+
+            Messagebus.publish('ncwmsUnitsChange', datasetForMap.units);
+            Messagebus.publish('legendMinChange', datasetForMap.min);
+            Messagebus.publish('legendMaxChange', datasetForMap.max);
+
+            // if (this.datasets[0].graphicalMin !== 0) {
+            //   Messagebus.publish('graphMinChange', this.datasets[0].graphicalMin);
+            //   Messagebus.publish('graphMaxChange', this.datasets[0].graphicalMax);
+            // } else {
+            //   Messagebus.publish('graphMinChange', this.datasets[0].min);
+            //   Messagebus.publish('graphMaxChange', this.datasets[0].max);
+            // }
 
             deferred.resolve();
             this.initialized = true;

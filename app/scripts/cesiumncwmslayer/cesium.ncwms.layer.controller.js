@@ -94,18 +94,23 @@
         oldColorMapLayer = colorMapLayer;
       }
 
+      var datasetForMap = this.selectedDataset;
+      if (this.selectedDataset.statsGroup) {
+        datasetForMap = this.selectedDataset.datasetMean;
+      }
+
       var parameters = {
         service: 'WMS',
         version: '1.3.0',
         request: 'GetMap',
         CRS: 'CRS:84',
-        styles: this.selectedDataset.metaData.supportedStyles[0] + '/' + this.selectedPalette.name,
+        styles: datasetForMap.metaData.supportedStyles[0] + '/' + this.selectedPalette.name,
         format: 'image/png',
         LOGSCALE: this.logarithmic
       };
 
-      if (this.selectedDataset.metaData) {
-        if (this.selectedDataset.metaData.supportsTimeseries) {
+      if (datasetForMap.metaData) {
+        if (datasetForMap.metaData.supportsTimeseries) {
           parameters.TIME = this.selectedTime.toISOString();
         }
 
@@ -117,7 +122,7 @@
 
           colorMapLayer = CesiumViewerService.viewer.scene.imageryLayers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
             url: NcwmsService.ncWMSURL,
-            layers: this.selectedDataset.id,
+            layers: datasetForMap.id,
             parameters: parameters,
             enablePickFeatures: false
           }));
@@ -133,7 +138,7 @@
 
           colorMapLayer = CesiumViewerService.viewer.scene.imageryLayers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
             url: NcwmsService.ncWMSURL,
-            layers: this.selectedDataset.id,
+            layers: datasetForMap.id,
             parameters: parameters,
             enablePickFeatures: false
           }));
