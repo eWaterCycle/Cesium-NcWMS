@@ -23,6 +23,9 @@
         }
         this.selectedLabel = this.globalSelectedDataset.label;
         this.selectedUnits = this.globalSelectedDataset.units;
+        if (this.globalSelectedDataset.statsGroup) {
+          this.selectedUnits = this.globalSelectedDataset.datasetMean.units;
+        }
         if (this.boundingRect !== null) {
           this.errorMessage = '';
           NcwmsService.getFeatureInfoSeries(this.globalSelectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallbackSuccess, this.getFeatureInfoSeriesCallbackFailure);
@@ -31,8 +34,11 @@
         }
       } else {
         if (this.selectedDataset !== null) {
-          this.selectedLabel = this.selectedDataset.label;
-          this.selectedUnits = this.selectedDataset.units;
+        this.selectedLabel = this.selectedDataset.label;
+        this.selectedUnits = this.selectedDataset.units;
+          if (this.selectedDataset.statsGroup) {
+            this.selectedUnits = this.selectedDataset.datasetMean.units;
+          }
           NcwmsService.getFeatureInfoSeries(this.selectedDataset, this.selectedPalette, this.boundingRect, this.getFeatureInfoSeriesCallbackSuccess, this.getFeatureInfoSeriesCallbackFailure);
         }
       }
