@@ -3,6 +3,7 @@
 
   function PaletteController(NcwmsService, Messagebus, UserAgent) {
     this.mobile = UserAgent.mobile;
+
     this.getNcWMSdata = function() {
       return NcwmsService.ncWMSdata;
     };
