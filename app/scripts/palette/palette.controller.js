@@ -1,23 +1,23 @@
 (function() {
   'use strict';
 
-    function PaletteController(NcwmsService, Messagebus) {        
-        this.getNcWMSdata = function() { 
-            return NcwmsService.ncWMSdata; 
-        };    
-        
+    function PaletteController(NcwmsService, Messagebus) {
+        this.getNcWMSdata = function() {
+            return NcwmsService.ncWMSdata;
+        };
+
         this.selectedPalette = 'default';
         Messagebus.subscribe('ncwmsPaletteSelected', function(event, value) {
             if (this.selectedPalette !== value) {
                 this.selectedPalette = value;
                 this.setOnload(value.graphic);
             }
-        }.bind(this));   
-        
-        this.selectPalette = function(palette) { 
+        }.bind(this));
+
+        this.selectPalette = function(palette) {
             Messagebus.publish('ncwmsPaletteSelected', palette);
         }; 
-        
+
         this.setOnload = function(imgURL) {
             var context = document.getElementById('paletteDropdownHeaderCanvas').getContext('2d');
             var img = new Image();

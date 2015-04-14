@@ -136,6 +136,7 @@
             Messagebus.publish('legendMinChange', datasetForMap.min);
             Messagebus.publish('legendMaxChange', datasetForMap.max);
 
+            Messagebus.publish('logarithmicChange', true);
             // if (this.datasets[0].graphicalMin !== 0) {
             //   Messagebus.publish('graphMinChange', this.datasets[0].graphicalMin);
             //   Messagebus.publish('graphMaxChange', this.datasets[0].graphicalMax);
