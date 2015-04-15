@@ -12,6 +12,7 @@
       'palettes': []
     };
     this.datasets = [];
+    this.styles = [];
     this.startDate = {};
     this.endDate = {};
 
