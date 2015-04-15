@@ -420,7 +420,7 @@
                 y = d3.scale.linear()
                   .range([chartHeight, 0])
                   .domain([d3.min(data, function(d) {
-                    return d.pct95;
+                    return d.pct05;
                   }), d3.max(data, function(d) {
                     return d.pct95;
                   })]);
