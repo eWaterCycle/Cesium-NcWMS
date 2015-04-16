@@ -14,8 +14,13 @@
     Messagebus.subscribe('logarithmicChange', function(event, value) {
       if (this.logarithmic !== value) {
         this.logarithmic = value;
-        this.legendMin = 1;
-        Messagebus.publish('legendMinChange', 1);
+
+        if (value) {
+          this.legendMin = 1;
+        } else {
+          this.legendMin = this.selectedDataset.min;
+        }
+        Messagebus.publish('legendMinChange', this.legendMin);
         this.repaintColorMap();
       }
     }.bind(this));
@@ -32,6 +37,14 @@
     Messagebus.subscribe('ncwmsDatasetSelected', function(event, value) {
       if (this.selectedDataset !== value) {
         this.selectedDataset = value;
+        this.repaintColorMap();
+      }
+    }.bind(this));
+
+    this.selectedStyle = 'default';
+    Messagebus.subscribe('ncwmsStyleSelected', function(event, value) {
+      if (this.selectedStyle !== value) {
+        this.selectedStyle = value;
         this.repaintColorMap();
       }
     }.bind(this));
@@ -82,16 +95,19 @@
       }
     }.bind(this));
 
-    var colorMapLayer;
+    var colorMapLayer, overlayMapLayer;
 
     this.repaintColorMap = function() {
       if (!NcwmsService.initialized) {
         return;
       }
 
-      var oldColorMapLayer;
+      var oldColorMapLayer, oldOverlayMapLayer;
       if (colorMapLayer !== null) {
         oldColorMapLayer = colorMapLayer;
+      };
+      if (overlayMapLayer !== null) {
+        oldOverlayMapLayer = overlayMapLayer;
       }
 
       var datasetForMap = this.selectedDataset;
@@ -104,7 +120,7 @@
         version: '1.3.0',
         request: 'GetMap',
         CRS: 'CRS:84',
-        styles: datasetForMap.metaData.supportedStyles[0] + '/' + this.selectedPalette.name,
+        styles: this.selectedStyle + '/' + this.selectedPalette.name,
         format: 'image/png',
         LOGSCALE: this.logarithmic
       };

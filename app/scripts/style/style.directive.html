@@ -1,8 +1,8 @@
 <div class="interface-visible interface-clickable ewa-dropdown">
     <a data-toggle="dropdown" href="#">{{ stl.selectedStyle }} <b class="caret"></b></a>
     <ul class="dropdown-menu" role="menu">
-        <li ng-repeat="style in ds.getNcWMSdata().supportedStyles">
-            <a ng-click=ds.selectStyle(style)>{{style}}</a>
+        <li ng-repeat="style in stl.getNcWMSdata().styles">
+            <a ng-click=stl.selectStyle(style)>{{style}}</a>
         </li>
     </ul>
 </div>
