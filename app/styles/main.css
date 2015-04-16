@@ -143,24 +143,26 @@ a {
     position:absolute;
     top:1%;
     left:1%;
-    max-width:25%;
+    max-width:20%;
 }
 
 .ewa-logobox {
-    position:absolute;
-    bottom:4%;
-    right:2%;
-    max-width:25%;
-    max-height:15%
+  position: absolute;
+  bottom: 3%;
+  right: 0%;
+  max-width: 20%;
+  max-height: 15%;
 }
 
 .ewa-logobox-top {
-    position:relative;
+  position:relative;
 }
 
 .ewa-logobox-bottom {
-    position:relative;
-    margin-top: -5%;
+  position: absolute;
+  width: 80%;
+  margin-top: -5%;
+  right: 6%;
 }
 
 .nav-pills>li>a {

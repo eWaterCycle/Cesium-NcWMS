@@ -9,7 +9,8 @@
 
     this.ncWMSdata = {
       'metadata': {},
-      'palettes': []
+      'palettes': [],
+      'styles': []
     };
     this.datasets = [];
     this.styles = [];
@@ -17,6 +18,29 @@
     this.endDate = {};
 
     this.initialized = false;
+
+    Messagebus.subscribe('ncwmsDatasetSelected', function(event, value) {
+      var datasetForMap = value;
+      if (value.statsGroup) {
+        datasetForMap = value.datasetMean;
+      }
+
+      // To get the server to give us the available palette names,
+      // we use this first ID
+      this.getMetadata(datasetForMap.id).then(function success(metaDataPromise) {
+        // Store the palette names and image URL's. (--NG--)
+        this.ncWMSdata.palettes = this.loadPalettes(datasetForMap.id, metaDataPromise.data.palettes);
+        this.ncWMSdata.styles = metaDataPromise.data.supportedStyles;
+
+        // Store the first palette we receive as the currently
+        // selected palette. (--NG--)
+        //me.selectedPalette = this.ncWMSdata.palettes[0];
+        Messagebus.publish('ncwmsPaletteSelected', this.ncWMSdata.palettes[0]);
+        Messagebus.publish('ncwmsStyleSelected', this.ncWMSdata.styles[0]);
+      }.bind(this), function error(msg) {
+        console.log('Error in getMetadata, ' + msg);
+      });
+    }.bind(this));
 
     this.init = function() {
       // load JSON data
@@ -34,7 +58,7 @@
           this.datasets = this.loadMenu(menuPromise);
           // Store the first dataset as our 'currently selected' dataset
           // (--NG--)
-          Messagebus.publish('ncwmsDatasetSelected', this.datasets[0]);
+          //Messagebus.publish('ncwmsDatasetSelected', this.datasets[0]);
 
           // Get the id of the first dataset we got from the server,
           // because we can
@@ -42,19 +66,21 @@
           // little deeper, and we need an ID to do just that.
           var firstDatasetID = menuPromise.data.children[0].children[0].id;
 
-          // To get the server to give us the available palette names,
-          // we use this first ID
-          this.getMetadata(firstDatasetID).then(function success(firstDatasetMetaDataPromise) {
-            // Store the palette names and image URL's. (--NG--)
-            this.ncWMSdata.palettes = this.loadPalettes(firstDatasetID, firstDatasetMetaDataPromise.data.palettes);
-
-            // Store the first palette we receive as the currently
-            // selected palette. (--NG--)
-            //me.selectedPalette = this.ncWMSdata.palettes[0];
-            Messagebus.publish('ncwmsPaletteSelected', this.ncWMSdata.palettes[0]);
-          }.bind(this), function error(msg) {
-            console.log('Error in getMetadata, ' + msg);
-          });
+          // // To get the server to give us the available palette names,
+          // // we use this first ID
+          // this.getMetadata(firstDatasetID).then(function success(firstDatasetMetaDataPromise) {
+          //   // Store the palette names and image URL's. (--NG--)
+          //   this.ncWMSdata.palettes = this.loadPalettes(firstDatasetID, firstDatasetMetaDataPromise.data.palettes);
+          //   this.ncWMSdata.styles = firstDatasetMetaDataPromise.data.supportedStyles;
+          //
+          //   // Store the first palette we receive as the currently
+          //   // selected palette. (--NG--)
+          //   //me.selectedPalette = this.ncWMSdata.palettes[0];
+          //   Messagebus.publish('ncwmsPaletteSelected', this.ncWMSdata.palettes[0]);
+          //   Messagebus.publish('ncwmsStyleSelected', this.ncWMSdata.styles[0]);
+          // }.bind(this), function error(msg) {
+          //   console.log('Error in getMetadata, ' + msg);
+          // });
 
           // Define an array to store our waiting promises in
           var httpRequestPromises = [];
@@ -119,6 +145,8 @@
                 workingDataset.datasetError = this.getDatasetByName(ds2);
               }
             }.bind(this));
+
+            Messagebus.publish('ncwmsDatasetSelected', this.datasets[0]);
 
             this.startDate = dates[0];
             this.endDate = dates[this.datasets[this.datasets.indexOf(this.datasets[0])].datesWithData.length - 1];
