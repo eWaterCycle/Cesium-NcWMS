@@ -6,7 +6,9 @@ Cesium-NcWMS
 [![Test Coverage](https://codeclimate.com/github/NLeSC/Cesium-NcWMS/badges/coverage.svg)](https://codeclimate.com/github/NLeSC/Cesium-NcWMS)
 [![devDependency Status](https://david-dm.org/NLeSC/Cesium-NcWMS/dev-status.svg)](https://david-dm.org/NLeSC/Cesium-NcWMS#info=devDependencies)
 
-Cesium (cesiumjs.org) based visualization using ncWMS to serve NetCDF data and D3 (d3js.org) to display graphs.
+Cesium (cesiumjs.org) based visualization using ncWMS to serve NetCDF data and D3 (d3js.org) to display graphs.  
+A live running version of this software can be found here: http://forecast.ewatercycle.org
+
 
 ![logo](DOC/images/ewa-saturation.png "Screenshot 1")
 ![logo](DOC/images/ewa-discharge.png "Screenshot 2")
