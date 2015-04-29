@@ -1,57 +1,57 @@
 (function() {
     'use strict';
 
-    function BigLegendController($scope, DecimalAdjust, Messagebus) {                
+    function BigLegendController($scope, DecimalAdjust, Messagebus) {
         this.logarithmic = false;
         Messagebus.subscribe('logarithmicChange', function(event, value) {
-            this.logarithmic = value;
+            this.logarithmic = value.logarithmic;
             this.setLegendText();
         }.bind(this));
-        
+
         this.legendText = [ 40, 30, 20, 10 ];
-        
+
         //Define the legend max initial value
         this.legendMin = 0;
         //Subscribe to the message bus for changes to this value.
         Messagebus.subscribe('legendMinChange', function(event, value) {
-            this.legendMin = value;
+            this.legendMin = value.min;
             this.setLegendText();
-        }.bind(this));     
-        // Set watcher for change on the legend min setting, use it to publish changes.   
+        }.bind(this));
+        // Set watcher for change on the legend min setting, use it to publish changes.
         $scope.$watch('blc.legendMin', function(newValue, oldValue) {
             if (newValue === oldValue) {
                 //Initialization, so we ignore this event.
             } else {
-                Messagebus.publish('legendMinChange', newValue);
+                Messagebus.publish('legendMinChange', {'layerId':0,'min':newValue});
             }
         });
-        
+
         //Define the legend max initial value
         this.legendMax = 50;
         //Subscribe to the message bus for changes to this value.
         Messagebus.subscribe('legendMaxChange', function(event, value) {
-            this.legendMax = value;
+            this.legendMax = value.max;
             this.setLegendText();
-        }.bind(this));                
+        }.bind(this));
         // Set watcher for change on the legend max setting, use it to publish changes.
         $scope.$watch('blc.legendMax', function(newValue, oldValue) {
             if (newValue === oldValue) {
                 //Initialization, so we ignore this event.
             } else {
-                Messagebus.publish('legendMaxChange', newValue);
+                Messagebus.publish('legendMaxChange', {'layerId':0,'max':newValue});
             }
         });
-        
+
         Messagebus.subscribe('ncwmsPaletteSelected', function(event, value) {
-            this.setOnload(value.graphic);
+            this.setOnload(value.palette.graphic);
         }.bind(this));
-        
-        
+
+
         this.selectedUnits = 'cm above average';
         Messagebus.subscribe('ncwmsUnitsChange', function(event, value) {
-            this.selectedUnits = value;
+            this.selectedUnits = value.units;
         }.bind(this));
-        
+
         this.setLegendText = function() {
             var diff = this.legendMax - this.legendMin;
             var interval = 0.2 * diff;

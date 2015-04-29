@@ -4,7 +4,7 @@
     function OutlinesController($scope, $http, Cesium, CesiumViewerService, Messagebus) {
         this.outlines = false;
         this.values = [];
-
+        
         this.toggleOutlines = function() {
           this.outlines = !this.outlines;
           Messagebus.publish('outlinesChange', this.outlines);
@@ -19,7 +19,7 @@
                 Messagebus.publish('outlinesChange', newValue);
             }
         }.bind(this));
-*/          
+*/
         Messagebus.subscribe('outlinesChange', function(event, value) {
             this.values.forEach(function(entityValue) {
                 entityValue.polygon.show = new Cesium.ConstantProperty(value);

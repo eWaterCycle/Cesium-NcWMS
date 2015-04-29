@@ -4,6 +4,7 @@
   function styleDirective() {
     return {
       restrict: 'E',
+      scope: { layerId: '=' },
       templateUrl: 'scripts/style/style.directive.html',
       controller: 'StyleController',
       controllerAs: 'stl'

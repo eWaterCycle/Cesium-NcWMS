@@ -20,9 +20,9 @@
     this.initialized = false;
 
     Messagebus.subscribe('ncwmsDatasetSelected', function(event, value) {
-      var datasetForMap = value;
-      if (value.statsGroup) {
-        datasetForMap = value.datasetMean;
+      var datasetForMap = value.dataset;
+      if (value.dataset.statsGroup) {
+        datasetForMap = value.dataset.datasetMean;
       }
 
       // To get the server to give us the available palette names,
@@ -35,8 +35,8 @@
         // Store the first palette we receive as the currently
         // selected palette. (--NG--)
         //me.selectedPalette = this.ncWMSdata.palettes[0];
-        Messagebus.publish('ncwmsPaletteSelected', this.ncWMSdata.palettes[0]);
-        Messagebus.publish('ncwmsStyleSelected', this.ncWMSdata.styles[0]);
+        Messagebus.publish('ncwmsPaletteSelected', {'layerId':0, 'palette':this.ncWMSdata.palettes[0]});
+        Messagebus.publish('ncwmsStyleSelected', {'layerId':0, 'style':this.ncWMSdata.styles[0]});
       }.bind(this), function error(msg) {
         console.log('Error in getMetadata, ' + msg);
       });
@@ -146,7 +146,8 @@
               }
             }.bind(this));
 
-            Messagebus.publish('ncwmsDatasetSelected', this.datasets[0]);
+            Messagebus.publish('ncwmsDatasetSelected', {'layerId':0, 'dataset':this.datasets[0]});
+            Messagebus.publish('ncwmsDatasetSelected', {'layerId':1, 'dataset':this.datasets[0]});
 
             this.startDate = dates[0];
             this.endDate = dates[this.datasets[this.datasets.indexOf(this.datasets[0])].datesWithData.length - 1];
@@ -161,11 +162,15 @@
               datasetForMap = this.datasets[0].datasetMean;
             }
 
-            Messagebus.publish('ncwmsUnitsChange', datasetForMap.units);
-            Messagebus.publish('legendMinChange', datasetForMap.min);
-            Messagebus.publish('legendMaxChange', datasetForMap.max);
+            Messagebus.publish('ncwmsUnitsChange', {'layerId':0, 'units':datasetForMap.units});
+            Messagebus.publish('ncwmsUnitsChange', {'layerId':1, 'units':datasetForMap.units});
+            Messagebus.publish('legendMinChange', {'layerId':0, 'min':datasetForMap.min});
+            Messagebus.publish('legendMinChange', {'layerId':1, 'min':datasetForMap.min});
+            Messagebus.publish('legendMaxChange', {'layerId':0, 'max':datasetForMap.max});
+            Messagebus.publish('legendMaxChange', {'layerId':1, 'max':datasetForMap.max});
 
-            Messagebus.publish('logarithmicChange', true);
+            Messagebus.publish('logarithmicChange', {'layerId':0, 'logarithmic':true});
+            Messagebus.publish('logarithmicChange', {'layerId':1, 'logarithmic':true});
             // if (this.datasets[0].graphicalMin !== 0) {
             //   Messagebus.publish('graphMinChange', this.datasets[0].graphicalMin);
             //   Messagebus.publish('graphMaxChange', this.datasets[0].graphicalMax);

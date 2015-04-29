@@ -173,9 +173,33 @@ a {
 .navbar-right-custom-top {
   position: absolute;
   float: right;
-  max-width: 75%;
+  width: 75%;
   top: 4px;
   right: 4px;
+  z-index: 2;
+}
+
+.navbar-buttons {
+  position: absolute;
+  top:0px;
+  right:0px;
+}
+
+.navbar-help {
+  right:0px;
+}
+.navbar-outlines {
+  right:45px;
+}
+.navbar-terrain {
+  right:90px;
+}
+
+.navbar-layer1 {
+  position: absolute;
+  float: right;
+  top: 4px;
+  right: 140px;
   z-index: 2;
 }
 
