@@ -6,22 +6,37 @@
     Messagebus.subscribe('ncwmsTimeSelected', function(event, value) {
       if (this.selectedTime !== value) {
         this.selectedTime = value;
-        this.repaintColorMap();
+        this.repaintColorMap(0);
       }
     }.bind(this));
 
-    this.logarithmic = false;
+    this.layers = [{
+      dataset : 'default',
+      logarithmic : false,
+      palette : 'default',
+      style : 'default',
+      min : 0,
+      max : 100
+    },{
+      dataset : 'default',
+      logarithmic : false,
+      palette : 'default',
+      style : 'default',
+      min : 0,
+      max : 100
+    }];
+
     Messagebus.subscribe('logarithmicChange', function(event, value) {
-      if (this.logarithmic !== value) {
-        this.logarithmic = value;
+      if (this.logarithmic !== value.logartihmic) {
+        this.layers[value.layerId].logarithmic = value.logartihmic;
 
         if (value) {
-          this.legendMin = 1;
+          this.layers[value.layerId].min = 1;
         } else {
-          this.legendMin = this.selectedDataset.min;
+          this.layers[value.layerId].min = this.layers[value.layerId].dataset.min;
         }
-        Messagebus.publish('legendMinChange', this.legendMin);
-        this.repaintColorMap();
+        Messagebus.publish('legendMinChange', {'layerId':value.layerId, 'min':this.layers[value.layerId].min});
+        this.repaintColorMap(0);
       }
     }.bind(this));
 
@@ -29,52 +44,47 @@
     Messagebus.subscribe('terrainChange', function(event, value) {
       if (this.terrain !== value) {
         this.terrain = value;
-        this.repaintColorMap();
+        this.repaintColorMap(0);
       }
     }.bind(this));
 
-    this.selectedDataset = 'default';
     Messagebus.subscribe('ncwmsDatasetSelected', function(event, value) {
-      if (this.selectedDataset !== value) {
-        this.selectedDataset = value;
-        this.repaintColorMap();
+      if (this.layers[value.layerId].dataset !== value.dataset) {
+        this.layers[value.layerId].dataset = value.dataset;
+        this.repaintColorMap(0);
       }
     }.bind(this));
 
-    this.selectedStyle = 'default';
     Messagebus.subscribe('ncwmsStyleSelected', function(event, value) {
-      if (this.selectedStyle !== value) {
-        this.selectedStyle = value;
-        this.repaintColorMap();
+      if (this.layers[value.layerId].style !== value.style) {
+        this.layers[value.layerId].style = value.style;
+        this.repaintColorMap(0);
       }
     }.bind(this));
 
-    this.selectedPalette = 'default';
     Messagebus.subscribe('ncwmsPaletteSelected', function(event, value) {
-      if (this.selectedPalette !== value) {
-        this.selectedPalette = value;
-        this.repaintColorMap();
+      if (this.layers[value.layerId].palette !== value.palette) {
+        this.layers[value.layerId].palette = value.palette;
+        this.repaintColorMap(0);
       }
     }.bind(this));
 
-    this.legendMin = 0;
     Messagebus.subscribe('legendMinChange', function(event, value) {
-      if (this.legendMin !== value) {
-        this.legendMin = value;
-        this.repaintColorMap();
+      if (this.layers[value.layerId].min !== value.min) {
+        this.layers[value.layerId].min = value.min;
+        this.repaintColorMap(0);
       }
     }.bind(this));
 
-    this.legendMax = 50;
     Messagebus.subscribe('legendMaxChange', function(event, value) {
-      if (this.legendMax !== value) {
-        this.legendMax = value;
-        this.repaintColorMap();
+      if (this.layers[value.layerId].max !== value.max) {
+        this.layers[value.layerId].max = value.max;
+        this.repaintColorMap(0);
       }
     }.bind(this));
 
     NcwmsService.ready.then(function() {
-      this.repaintColorMap();
+      this.repaintColorMap(0);
 
       var julianDate = Cesium.JulianDate.fromIso8601(NcwmsService.startDate.toISOString());
       CesiumViewerService.clock.currentTime = julianDate;
@@ -83,9 +93,9 @@
     //Translate Cesium selected times to something ncwms can understand (closest available time) and propagate via Messagebus.
     Messagebus.subscribe('cesiumTimeSelected', function(event, value) {
       if (NcwmsService.initialized && NcwmsService.datasets.length > 0) {
-        var closest = NcwmsService.datasets[NcwmsService.datasets.indexOf(this.selectedDataset)].datesWithData[0];
+        var closest = NcwmsService.datasets[NcwmsService.datasets.indexOf(this.layers[0].dataset)].datesWithData[0];
 
-        NcwmsService.datasets[NcwmsService.datasets.indexOf(this.selectedDataset)].datesWithData.forEach(function(date) {
+        NcwmsService.datasets[NcwmsService.datasets.indexOf(this.layers[0].dataset)].datesWithData.forEach(function(date) {
           if (date < value) {
             closest = date;
           }
@@ -95,24 +105,21 @@
       }
     }.bind(this));
 
-    var colorMapLayer, overlayMapLayer;
+    var colorMapLayers = [];
 
-    this.repaintColorMap = function() {
+    this.repaintColorMap = function(layerId) {
       if (!NcwmsService.initialized) {
         return;
       }
 
-      var oldColorMapLayer, oldOverlayMapLayer;
-      if (colorMapLayer !== null) {
-        oldColorMapLayer = colorMapLayer;
+      var oldColorMapLayer;
+      if (colorMapLayers[layerId] !== null) {
+        oldColorMapLayer = colorMapLayers[layerId];
       };
-      if (overlayMapLayer !== null) {
-        oldOverlayMapLayer = overlayMapLayer;
-      }
 
-      var datasetForMap = this.selectedDataset;
-      if (this.selectedDataset.statsGroup) {
-        datasetForMap = this.selectedDataset.datasetMean;
+      var datasetForMap = this.layers[layerId].dataset;
+      if (this.layers[layerId].dataset.statsGroup) {
+        datasetForMap = this.layers[layerId].dataset.datasetMean;
       }
 
       var parameters = {
@@ -120,9 +127,9 @@
         version: '1.3.0',
         request: 'GetMap',
         CRS: 'CRS:84',
-        styles: this.selectedStyle + '/' + this.selectedPalette.name,
+        styles: this.layers[layerId].style + '/' + this.layers[layerId].palette.name,
         format: 'image/png',
-        LOGSCALE: this.logarithmic
+        LOGSCALE: this.layers[layerId].logarithmic
       };
 
       if (datasetForMap.metaData) {
@@ -132,35 +139,35 @@
 
         if (this.terrain) {
           parameters.TRANSPARENT = 'true';
-          parameters.COLORSCALERANGE = this.logarithmic ? (1 + ',' + this.legendMax) : (this.legendMin + ',' + this.legendMax);
+          parameters.COLORSCALERANGE = ('' + this.layers[layerId].min + ',' + this.layers[layerId].max);
           parameters.ABOVEMAXCOLOR = 'extend';
           parameters.BELOWMINCOLOR = 'extend';
 
-          colorMapLayer = CesiumViewerService.viewer.scene.imageryLayers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
+          colorMapLayers[layerId] = CesiumViewerService.viewer.scene.imageryLayers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
             url: NcwmsService.ncWMSURL,
             layers: datasetForMap.id,
             parameters: parameters,
             enablePickFeatures: false
           }));
 
-          colorMapLayer.alpha = 0.3;
-          colorMapLayer.brightness = 2.0;
+          colorMapLayers[layerId].alpha = 0.3;
+          colorMapLayers[layerId].brightness = 2.0;
         } else {
           parameters.TRANSPARENT = 'false';
-          parameters.COLORSCALERANGE = this.logarithmic ? (1 + ',' + this.legendMax) : (this.legendMin + ',' + this.legendMax);
+          parameters.COLORSCALERANGE = ('' + this.layers[layerId].min + ',' + this.layers[layerId].max);
           parameters.BGCOLOR = '0x000011';
           parameters.ABOVEMAXCOLOR = 'extend';
           parameters.BELOWMINCOLOR = '0x000000';
 
-          colorMapLayer = CesiumViewerService.viewer.scene.imageryLayers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
+          colorMapLayers[layerId] = CesiumViewerService.viewer.scene.imageryLayers.addImageryProvider(new Cesium.WebMapServiceImageryProvider({
             url: NcwmsService.ncWMSURL,
             layers: datasetForMap.id,
             parameters: parameters,
             enablePickFeatures: false
           }));
 
-          colorMapLayer.alpha = 1.0;
-          colorMapLayer.brightness = 2.0;
+          colorMapLayers[layerId].alpha = 1.0;
+          colorMapLayers[layerId].brightness = 2.0;
         }
 
         // viewer.scene.imageryLayers.addImageryProvider(provider);

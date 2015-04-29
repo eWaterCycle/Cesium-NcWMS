@@ -6,7 +6,7 @@
 
         this.toggleLogarithmic = function() {
           this.logarithmic = !this.logarithmic;
-          Messagebus.publish('logarithmicChange', this.logarithmic);
+          Messagebus.publish('logarithmicChange', {'layerId':this.layerId, 'logarithmic':this.logarithmic});
         };
 /*
         // Set watcher for change
@@ -20,7 +20,7 @@
 */
         Messagebus.subscribe('logarithmicChange', function(event, value) {
             if (value !== this.logarithmic) {
-                this.logarithmic = value;
+                this.logarithmic = value.logarithmic;
             }
         }.bind(this));
     }

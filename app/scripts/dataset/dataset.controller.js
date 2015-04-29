@@ -1,29 +1,29 @@
 (function() {
   'use strict';
 
-    function DatasetController(NcwmsService, Messagebus) {
+    function DatasetController($scope, NcwmsService, Messagebus) {
         this.getDatasets = function() {
             return NcwmsService.datasets;
         };
 
         this.selectedDataset = 'default';
         Messagebus.subscribe('ncwmsDatasetSelected', function(event, value) {
-            if (this.selectedDataset !== value) {
-                this.selectedDataset = value;
+            if (this.selectedDataset !== value.dataset) {
+                this.selectedDataset = value.dataset;
             }
         }.bind(this));
 
         this.selectDataset = function(dataset) {
-            Messagebus.publish('ncwmsDatasetSelected', dataset);
+            Messagebus.publish('ncwmsDatasetSelected', {'layerId':$scope.layerId, 'dataset':dataset)};
 
             var datasetForMap = this.selectedDataset;
             if (this.selectedDataset.statsGroup) {
               datasetForMap = this.selectedDataset.datasetMean;
             }
 
-            Messagebus.publish('ncwmsUnitsChange', datasetForMap.units);
-            Messagebus.publish('legendMinChange', datasetForMap.min);
-            Messagebus.publish('legendMaxChange', datasetForMap.max);
+            Messagebus.publish('ncwmsUnitsChange', {'layerId':$scope.layerId, 'units':datasetForMap.units});
+            Messagebus.publish('legendMinChange', {'layerId':$scope.layerId, 'min':datasetForMap.min});
+            Messagebus.publish('legendMaxChange', {'layerId':$scope.layerId, 'max':datasetForMap.max});
 
             // if (dataset.graphicalMin !== 0) {
             //   Messagebus.publish('graphMinChange', dataset.graphicalMin);

@@ -4,6 +4,7 @@
   function datasetDirective() {
     return {
       restrict: 'E',
+      scope: { layerId: '=' },
       templateUrl: 'scripts/dataset/dataset.directive.html',
       controller: 'DatasetController',
       controllerAs: 'ds'
