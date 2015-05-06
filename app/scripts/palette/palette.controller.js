@@ -6,11 +6,11 @@
             return NcwmsService.ncWMSdata;
         };
 
-        this.selectedPalette = 'default';
+        this.selectedPalettes = [];
         Messagebus.subscribe('ncwmsPaletteSelected', function(event, value) {
-            if (this.selectedPalette !== value.palette) {
-                this.selectedPalette = value.palette;
-                this.setOnload(value.palette.graphic);
+            if (value.layerId === $scope.layerId && this.selectedPalettes[$scope.layerId] !== value.palette) {
+              this.selectedPalettes[$scope.layerId] = value.palette;
+              this.setOnload(value.palette.graphic);
             }
         }.bind(this));
 
@@ -19,7 +19,7 @@
         };
 
         this.setOnload = function(imgURL) {
-            var context = document.getElementById('paletteDropdownHeaderCanvas').getContext('2d');
+            var context = document.getElementById('paletteDropdownHeaderCanvas'+$scope.layerId).getContext('2d');
             var img = new Image();
             img.src = imgURL;
 

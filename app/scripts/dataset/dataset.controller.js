@@ -2,37 +2,30 @@
   'use strict';
 
     function DatasetController($scope, NcwmsService, Messagebus) {
-        this.getDatasets = function() {
-            return NcwmsService.datasets;
-        };
+      this.getDatasets = function() {
+        return NcwmsService.datasets;
+      };
 
-        this.selectedDataset = 'default';
-        Messagebus.subscribe('ncwmsDatasetSelected', function(event, value) {
-            if (this.selectedDataset !== value.dataset) {
-                this.selectedDataset = value.dataset;
-            }
-        }.bind(this));
+      this.selectedDatasets = [];
 
-        this.selectDataset = function(dataset) {
-            Messagebus.publish('ncwmsDatasetSelected', {'layerId':$scope.layerId, 'dataset':dataset)};
+      Messagebus.subscribe('ncwmsDatasetSelected', function(event, value) {
+        if (value.layerId === $scope.layerId && this.selectedDataset !== value.dataset) {
+          this.selectedDatasets[$scope.layerId] = value.dataset;
+        }
+      }.bind(this));
 
-            var datasetForMap = this.selectedDataset;
-            if (this.selectedDataset.statsGroup) {
-              datasetForMap = this.selectedDataset.datasetMean;
-            }
+      this.selectDataset = function(dataset) {
+        Messagebus.publish('ncwmsDatasetSelected', {'layerId':$scope.layerId, 'dataset':dataset});
 
-            Messagebus.publish('ncwmsUnitsChange', {'layerId':$scope.layerId, 'units':datasetForMap.units});
-            Messagebus.publish('legendMinChange', {'layerId':$scope.layerId, 'min':datasetForMap.min});
-            Messagebus.publish('legendMaxChange', {'layerId':$scope.layerId, 'max':datasetForMap.max});
+        var datasetForMap = this.selectedDatasets[$scope.layerId];
+        if (this.selectedDatasets[$scope.layerId].statsGroup) {
+          datasetForMap = this.selectedDatasets[$scope.layerId].datasetMean;
+        }
 
-            // if (dataset.graphicalMin !== 0) {
-            //   Messagebus.publish('graphMinChange', dataset.graphicalMin);
-            //   Messagebus.publish('graphMaxChange', dataset.graphicalMax);
-            // } else {
-            //   Messagebus.publish('graphMinChange', dataset.min);
-            //   Messagebus.publish('graphMaxChange', dataset.max);
-            // }
-        };
+        Messagebus.publish('ncwmsUnitsChange', {'layerId':$scope.layerId, 'units':datasetForMap.units});
+        Messagebus.publish('legendMinChange', {'layerId':$scope.layerId, 'min':datasetForMap.min});
+        Messagebus.publish('legendMaxChange', {'layerId':$scope.layerId, 'max':datasetForMap.max});
+      };
     }
 
   angular.module('eWaterCycleApp.dataset').controller('DatasetController', DatasetController);

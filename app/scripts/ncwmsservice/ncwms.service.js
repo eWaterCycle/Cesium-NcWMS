@@ -35,8 +35,8 @@
         // Store the first palette we receive as the currently
         // selected palette. (--NG--)
         //me.selectedPalette = this.ncWMSdata.palettes[0];
-        Messagebus.publish('ncwmsPaletteSelected', {'layerId':0, 'palette':this.ncWMSdata.palettes[0]});
-        Messagebus.publish('ncwmsStyleSelected', {'layerId':0, 'style':this.ncWMSdata.styles[0]});
+        Messagebus.publish('ncwmsPaletteSelected', {'layerId':value.layerId, 'palette':this.ncWMSdata.palettes[0]});
+        Messagebus.publish('ncwmsStyleSelected', {'layerId':value.layerId, 'style':this.ncWMSdata.styles[0]});
       }.bind(this), function error(msg) {
         console.log('Error in getMetadata, ' + msg);
       });
@@ -169,8 +169,8 @@
             Messagebus.publish('legendMaxChange', {'layerId':0, 'max':datasetForMap.max});
             Messagebus.publish('legendMaxChange', {'layerId':1, 'max':datasetForMap.max});
 
-            Messagebus.publish('logarithmicChange', {'layerId':0, 'logarithmic':true});
-            Messagebus.publish('logarithmicChange', {'layerId':1, 'logarithmic':true});
+            Messagebus.publish('logarithmicChange', {'layerId':0, 'logarithmic':false});
+            Messagebus.publish('logarithmicChange', {'layerId':1, 'logarithmic':false});
             // if (this.datasets[0].graphicalMin !== 0) {
             //   Messagebus.publish('graphMinChange', this.datasets[0].graphicalMin);
             //   Messagebus.publish('graphMaxChange', this.datasets[0].graphicalMax);
