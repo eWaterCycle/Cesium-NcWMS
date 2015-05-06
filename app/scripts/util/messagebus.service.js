@@ -12,6 +12,7 @@
      * @see $rootScope.$emit
      */
     this.publish = function() {
+      //console.log(arguments);
       $rootScope.$emit.apply($rootScope, arguments);
     };
     /**

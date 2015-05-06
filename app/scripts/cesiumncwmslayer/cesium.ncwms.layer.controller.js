@@ -1,12 +1,12 @@
 (function() {
   'use strict';
 
-  function CesiumNcwmsLayerController($q, $http, Cesium, CesiumViewerService, NcwmsService, Messagebus) {
+  function CesiumNcwmsLayerController($q, $http, $timeout, Cesium, CesiumViewerService, NcwmsService, Messagebus) {
     this.selectedTime = new Date(Date.UTC(1960, 0, 31, 0, 0, 0));
     Messagebus.subscribe('ncwmsTimeSelected', function(event, value) {
       if (this.selectedTime !== value) {
         this.selectedTime = value;
-        this.repaintColorMap(0);
+        this.repaintColorMap();
       }
     }.bind(this));
 
@@ -26,9 +26,11 @@
       max : 100
     }];
 
+    this.displayedLayers = [];
+
     Messagebus.subscribe('logarithmicChange', function(event, value) {
-      if (this.logarithmic !== value.logartihmic) {
-        this.layers[value.layerId].logarithmic = value.logartihmic;
+      if (this.layers[value.layerId].logarithmic !== value.logarithmic) {
+        this.layers[value.layerId].logarithmic = value.logarithmic;
 
         if (value) {
           this.layers[value.layerId].min = 1;
@@ -36,7 +38,7 @@
           this.layers[value.layerId].min = this.layers[value.layerId].dataset.min;
         }
         Messagebus.publish('legendMinChange', {'layerId':value.layerId, 'min':this.layers[value.layerId].min});
-        this.repaintColorMap(0);
+        this.repaintColorMap();
       }
     }.bind(this));
 
@@ -44,47 +46,47 @@
     Messagebus.subscribe('terrainChange', function(event, value) {
       if (this.terrain !== value) {
         this.terrain = value;
-        this.repaintColorMap(0);
+        this.repaintColorMap();
       }
     }.bind(this));
 
     Messagebus.subscribe('ncwmsDatasetSelected', function(event, value) {
       if (this.layers[value.layerId].dataset !== value.dataset) {
         this.layers[value.layerId].dataset = value.dataset;
-        this.repaintColorMap(0);
+        this.repaintColorMap();
       }
     }.bind(this));
 
     Messagebus.subscribe('ncwmsStyleSelected', function(event, value) {
       if (this.layers[value.layerId].style !== value.style) {
         this.layers[value.layerId].style = value.style;
-        this.repaintColorMap(0);
+        this.repaintColorMap();
       }
     }.bind(this));
 
     Messagebus.subscribe('ncwmsPaletteSelected', function(event, value) {
       if (this.layers[value.layerId].palette !== value.palette) {
         this.layers[value.layerId].palette = value.palette;
-        this.repaintColorMap(0);
+        this.repaintColorMap();
       }
     }.bind(this));
 
     Messagebus.subscribe('legendMinChange', function(event, value) {
       if (this.layers[value.layerId].min !== value.min) {
         this.layers[value.layerId].min = value.min;
-        this.repaintColorMap(0);
+        this.repaintColorMap();
       }
     }.bind(this));
 
     Messagebus.subscribe('legendMaxChange', function(event, value) {
       if (this.layers[value.layerId].max !== value.max) {
         this.layers[value.layerId].max = value.max;
-        this.repaintColorMap(0);
+        this.repaintColorMap();
       }
     }.bind(this));
 
     NcwmsService.ready.then(function() {
-      this.repaintColorMap(0);
+      this.repaintColorMap();
 
       var julianDate = Cesium.JulianDate.fromIso8601(NcwmsService.startDate.toISOString());
       CesiumViewerService.clock.currentTime = julianDate;
@@ -107,15 +109,29 @@
 
     var colorMapLayers = [];
 
-    this.repaintColorMap = function(layerId) {
-      if (!NcwmsService.initialized) {
+    this.compareLayerSetings = function(one, two) {
+      if (one === undefined || two === undefined) {return false;}
+      if (one.dataset !== two.dataset) {return false;}
+      if (one.logarithmic !== two.logarithmic) {return false;}
+      if (one.palette !== two.palette) {return false;}
+      if (one.style !== two.style) {return false;}
+      if (one.min !== two.min) {return false;}
+      if (one.max !== two.max) {return false;}
+      return true;
+    };
+
+    this.changeLayer = function(layerId) {
+      if (this.compareLayerSetings(this.displayedLayers[layerId], this.layers[layerId])) {
+        this.displayedLayers[layerId] = this.layers[layerId].copy;
         return;
+      } else {
+        this.displayedLayers[layerId] = this.layers[layerId].copy;
       }
 
       var oldColorMapLayer;
       if (colorMapLayers[layerId] !== null) {
         oldColorMapLayer = colorMapLayers[layerId];
-      };
+      }
 
       var datasetForMap = this.layers[layerId].dataset;
       if (this.layers[layerId].dataset.statsGroup) {
@@ -153,7 +169,7 @@
           colorMapLayers[layerId].alpha = 0.3;
           colorMapLayers[layerId].brightness = 2.0;
         } else {
-          parameters.TRANSPARENT = 'false';
+          parameters.TRANSPARENT = 'true';
           parameters.COLORSCALERANGE = ('' + this.layers[layerId].min + ',' + this.layers[layerId].max);
           parameters.BGCOLOR = '0x000011';
           parameters.ABOVEMAXCOLOR = 'extend';
@@ -166,7 +182,7 @@
             enablePickFeatures: false
           }));
 
-          colorMapLayers[layerId].alpha = 1.0;
+          colorMapLayers[layerId].alpha = 0.5;
           colorMapLayers[layerId].brightness = 2.0;
         }
 
@@ -176,6 +192,27 @@
           CesiumViewerService.viewer.scene.imageryLayers.remove(oldColorMapLayer, true);
         }
       }
+    };
+
+    this.callAfterTimeout = function() {
+      for (var i=0; i < this.layers.length; i++) {
+        this.changeLayer(i);
+      }
+
+      this.timeoutPromise = undefined;
+    }.bind(this);
+
+    this.timeoutPromise = undefined;
+    this.repaintColorMap = function() {
+      if (!NcwmsService.initialized) {
+        return;
+      }
+
+      if (this.timeoutPromise !== undefined) {
+        $timeout.cancel(this.timeoutPromise);
+      }
+      this.timeoutPromise = $timeout(this.callAfterTimeout, 100);
+
     }.bind(this);
   }
 

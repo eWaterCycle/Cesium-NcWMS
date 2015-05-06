@@ -59,8 +59,8 @@
 
     this.setSubscriptions = function() {
       Messagebus.subscribe('ncwmsPaletteSelected', function(event, value) {
-        if (this.selectedPalette !== value) {
-          this.selectedPalette = value;
+        if (this.selectedPalette !== value.palette) {
+          this.selectedPalette = value.palette;
         }
       }.bind(this));
 
@@ -75,8 +75,8 @@
       }.bind(this));
 
       Messagebus.subscribe('ncwmsDatasetSelected', function(event, value) {
-        if (this.globalSelectedDataset !== value) {
-          this.globalSelectedDataset = value;
+        if (this.globalSelectedDataset !== value.dataset) {
+          this.globalSelectedDataset = value.dataset;
 
           this.setSelections();
         }

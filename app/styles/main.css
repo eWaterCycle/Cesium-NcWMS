@@ -198,7 +198,15 @@ a {
 .navbar-layer1 {
   position: absolute;
   float: right;
-  top: 4px;
+  top: 0px;
+  right: 140px;
+  z-index: 2;
+}
+
+.navbar-layer2 {
+  position: absolute;
+  float: right;
+  top: 20px;
   right: 140px;
   z-index: 2;
 }
@@ -387,10 +395,10 @@ svg {
   pointer-events: painted;
 }
 .log-icon {
-  background-image: url("../images/nologiconsmall.png");
+  background-image: url("../images/logiconsmallletterbox.png");
 }
 .log-icon.active {
-  background-image: url("../images/logiconsmall.png");
+  background-image: url("../images/logiconsmallletterbox_active.png");
 }
 .outlines-icon {
   background-image: url("../images/nobordersiconsmall.png");
@@ -423,6 +431,14 @@ svg {
   border-color: none;
   background-color: transparent;
   box-shadow: none;
+}
+.icon-letterbox {
+  width: 40px;
+  height: 20px;
+  border-color: none;
+  background-color: transparent;
+  box-shadow: none;
+  margin-top: 5px;
 }
 
 [ng-cloak].splash {

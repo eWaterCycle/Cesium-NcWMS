@@ -17,6 +17,7 @@
       CesiumViewerService.clock.onTick.addEventListener(this.onTimelineTick);
 
       this.addPicking();
+      this.addMapLayer();
     };
 
     //this.startTime = new Date(Date.UTC(1960, 0, 31, 0, 0, 0));
@@ -75,6 +76,18 @@
 
       Messagebus.publish('cesiumTimeSelected', selection);
     });
+
+    this.terrain = true;
+    Messagebus.subscribe('terrainChange', function(event, value) {
+      if (this.terrain !== value) {
+        this.terrain = value;
+        if (this.terrain) {
+          this.addMapLayer();
+        } else {
+          this.removeMapLayer();
+        }
+      }
+    }.bind(this));
 
     this.addPicking = function() {
       var ellipsoid = CesiumViewerService.viewer.scene.globe.ellipsoid;
@@ -140,6 +153,18 @@
         }
       }.bind(this), Cesium.ScreenSpaceEventType.LEFT_CLICK);
     }.bind(this);
+
+    this.addMapLayer = function() {
+      this.mapLayer = CesiumViewerService.viewer.scene.imageryLayers.addImageryProvider(new Cesium.BingMapsImageryProvider({
+        url: '//dev.virtualearth.net',
+        key: 'AsP2TER1bj7tMZGuQtDkvWtX9vOezdG3zbeJp3tOv8d1Q4XrDLd6bEMz_nFsmcKi',
+        mapStyle: Cesium.BingMapsStyle.AERIAL
+      }));
+    };
+
+    this.removeMapLayer = function() {
+      CesiumViewerService.viewer.scene.imageryLayers.remove(this.mapLayer, true);
+    };
   }
 
   angular.module('eWaterCycleApp.cesiumViewer').controller('CesiumViewerController', CesiumViewerController);
