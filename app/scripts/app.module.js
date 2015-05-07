@@ -10,6 +10,7 @@
     'eWaterCycleApp.palette',
     'eWaterCycleApp.dataset',
     'eWaterCycleApp.style',
+    'eWaterCycleApp.slider',
 
     //Modules dependent on wms
     //'eWaterCycleApp.wms',
@@ -54,6 +55,7 @@
   angular.module('eWaterCycleApp.palette', ['eWaterCycleApp.ncwms', 'eWaterCycleApp.utils']);
   angular.module('eWaterCycleApp.dataset', ['eWaterCycleApp.ncwms', 'eWaterCycleApp.utils']);
   angular.module('eWaterCycleApp.style', ['eWaterCycleApp.ncwms', 'eWaterCycleApp.utils']);
+  angular.module('eWaterCycleApp.slider', ['eWaterCycleApp.ncwms', 'eWaterCycleApp.utils']);
 
   //Modules dependent on wms
   //angular.module('eWaterCycleApp.wms', [ 'eWaterCycleApp.utils' ]);

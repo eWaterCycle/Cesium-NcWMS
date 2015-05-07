@@ -165,6 +165,10 @@ a {
   right: 6%;
 }
 
+.nav-pills>li {
+  list-style:none;
+}
+
 .nav-pills>li>a {
   border-radius: 4px;
   z-index: 2;
@@ -470,4 +474,8 @@ svg {
 }
 
 .help-panel .panel-body {
+}
+
+.opacity-slider {
+  margin-top: 5px;
 }
