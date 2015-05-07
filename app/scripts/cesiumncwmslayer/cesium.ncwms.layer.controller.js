@@ -11,6 +11,7 @@
     }.bind(this));
 
     this.layers = [{
+      opacity: 0.5,
       dataset : 'default',
       logarithmic : false,
       palette : 'default',
@@ -18,6 +19,7 @@
       min : 0,
       max : 100
     },{
+      opacity: 0.5,
       dataset : 'default',
       logarithmic : false,
       palette : 'default',
@@ -85,6 +87,13 @@
       }
     }.bind(this));
 
+    Messagebus.subscribe('opacityChange', function(event, value) {
+      if (this.layers[value.layerId].opacity !== value.opacity) {
+        this.layers[value.layerId].opacity = value.opacity;
+        this.restyleColorMap();
+      }
+    }.bind(this));
+
     NcwmsService.ready.then(function() {
       this.repaintColorMap();
 
@@ -109,25 +118,7 @@
 
     var colorMapLayers = [];
 
-    this.compareLayerSetings = function(one, two) {
-      if (one === undefined || two === undefined) {return false;}
-      if (one.dataset !== two.dataset) {return false;}
-      if (one.logarithmic !== two.logarithmic) {return false;}
-      if (one.palette !== two.palette) {return false;}
-      if (one.style !== two.style) {return false;}
-      if (one.min !== two.min) {return false;}
-      if (one.max !== two.max) {return false;}
-      return true;
-    };
-
     this.changeLayer = function(layerId) {
-      if (this.compareLayerSetings(this.displayedLayers[layerId], this.layers[layerId])) {
-        this.displayedLayers[layerId] = this.layers[layerId].copy;
-        return;
-      } else {
-        this.displayedLayers[layerId] = this.layers[layerId].copy;
-      }
-
       var oldColorMapLayer;
       if (colorMapLayers[layerId] !== null) {
         oldColorMapLayer = colorMapLayers[layerId];
@@ -166,7 +157,7 @@
             enablePickFeatures: false
           }));
 
-          colorMapLayers[layerId].alpha = 0.3;
+          colorMapLayers[layerId].alpha = this.layers[layerId].opacity;
           colorMapLayers[layerId].brightness = 2.0;
         } else {
           parameters.TRANSPARENT = 'true';
@@ -182,7 +173,7 @@
             enablePickFeatures: false
           }));
 
-          colorMapLayers[layerId].alpha = 0.5;
+          colorMapLayers[layerId].alpha = this.layers[layerId].opacity;
           colorMapLayers[layerId].brightness = 2.0;
         }
 
@@ -214,6 +205,16 @@
       this.timeoutPromise = $timeout(this.callAfterTimeout, 100);
 
     }.bind(this);
+
+    this.restyleLayer = function(layerId) {
+      colorMapLayers[layerId].alpha = this.layers[layerId].opacity;
+    };
+
+    this.restyleColorMap = function() {
+      for (var i=0; i < this.layers.length; i++) {
+        this.restyleLayer(i);
+      }
+    };
   }
 
   angular.module('eWaterCycleApp.cesiumNcwmsLayer').controller('CesiumNcwmsLayerController', CesiumNcwmsLayerController);
