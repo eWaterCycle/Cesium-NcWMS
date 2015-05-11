@@ -1,4 +1,4 @@
-<div class="interface-visible interface-clickable ewa-dropdown">
+<div ng-hide='fdd.mobile' class="interface-visible interface-clickable ewa-dropdown">
   <a data-toggle="dropdown" href="#"> Fly To <b class="caret"></b></a>
   <ul class="dropdown-menu" role="menu">
     <li ng-repeat="country in fdd.data.locations.countries | orderBy:'country'">

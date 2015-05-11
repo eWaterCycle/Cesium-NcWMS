@@ -37,6 +37,7 @@
       CESIUM_BASE_URL = 'bower_components/cesiumjs/Cesium/';
     </script>
 
+
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -62,8 +63,8 @@
     <script src="scripts/app.module.js"></script>
 
     <script src="scripts/util/decimaladjust.service.js"></script>
-
     <script src="scripts/util/messagebus.service.js"></script>
+    <script src="scripts/util/userAgent.service.js"></script>
 
     <script src="scripts/ncwmsservice/ncwms.service.js"></script>
 
@@ -120,6 +121,8 @@
     <script src="scripts/help/help.directive.js"></script>
     <script src="scripts/help/help.controller.js"></script>
 
+    <script src="scripts/helpModal/helpModal.directive.js"></script>
+    <script src="scripts/helpModal/helpModal.controller.js"></script>
     <!-- endbuild -->
 
     <!-- Add your site or application content here -->
@@ -139,12 +142,15 @@
     <!-- <linegraph-directive></linegraph-directive> -->
     <customgraph-directive activated="false" class="customgraph1"></customgraph-directive>
     <customgraph-directive activated="false" class="customgraph2"></customgraph-directive>
+
     <!-- <bargraph-directive></bargraph-directive> -->
     <big-legend-directive></big-legend-directive>
     <logo-box-directive></logo-box-directive>
 
     <cesium-viewer-directive id="cesiumContainer" ></cesium-viewer-directive>
     <cesium-ncwms-layer-directive></cesium-ncwms-layer-directive>
+
+    <help-modal-directive></help-modal-directive>
 
     <!-- <cesium-wms-layer-directive></cesium-wms-layer-directive> -->
 

@@ -163,6 +163,10 @@ a {
     margin-top: -5%;
 }
 
+.nav-pills>li {
+  list-style:none;
+}
+
 .nav-pills>li>a {
   border-radius: 4px;
   z-index: 2;
@@ -181,10 +185,14 @@ a {
   display: block;
   position: absolute;
   right: 2%;
-  top: 80px;
-  min-width: 75px;
+  top: 7%;
+
   width: 6%;
   height: 75%;
+}
+
+.bigLegendFlexMobileContainer {
+  height: 100%;
 }
 
 .bigLegendFlexContainer {
@@ -412,20 +420,15 @@ svg {
   font-weight: 500;
 }
 
-.help-panel {
-  position: absolute;
-  top: 140%;
-  right: 20%;
-  z-index: 1;
-  width: 100%;
-  min-height: 100px;
-  max-height: 1000%;
-  overflow-y: auto;
-}
-
-.help-panel a {
+.modal a {
   color: blue;
 }
 
-.help-panel .panel-body {
+.modal-backdrop {
+  z-index:1020;
+}
+
+.help-glyph {
+  color: #fff;
+  font-size: x-large;
 }

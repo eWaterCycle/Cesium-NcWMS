@@ -26,8 +26,8 @@
     //'eWaterCycleApp.cesiumWmsLayer',
 
     //Modules dependent on d3
-    'eWaterCycleApp.bargraph',
-    'eWaterCycleApp.linegraph',
+    //'eWaterCycleApp.bargraph',
+    //'eWaterCycleApp.linegraph',
     'eWaterCycleApp.customgraph',
 
     //Standalone modules
@@ -39,7 +39,8 @@
     'eWaterCycleApp.logos',
     'eWaterCycleApp.projectlogo',
 
-    'eWaterCycleApp.help'
+    'eWaterCycleApp.help',
+    'eWaterCycleApp.helpModal'
   ]).run(function(NcwmsService) {
     NcwmsService.init();
   });
@@ -104,8 +105,8 @@
         return d3service;
       }
     ]);
-  angular.module('eWaterCycleApp.bargraph', ['d3']);
-  angular.module('eWaterCycleApp.linegraph', ['d3', 'eWaterCycleApp.utils']);
+  //angular.module('eWaterCycleApp.bargraph', ['d3', 'eWaterCycleApp.utils']);
+  //angular.module('eWaterCycleApp.linegraph', ['d3', 'eWaterCycleApp.utils']);
   angular.module('eWaterCycleApp.customgraph', ['d3', 'eWaterCycleApp.ncwms', 'eWaterCycleApp.utils']);
 
   //Standalone modules
@@ -119,5 +120,6 @@
   angular.module('eWaterCycleApp.logos', []);
   angular.module('eWaterCycleApp.projectlogo', []);
 
-  angular.module('eWaterCycleApp.help', []);
+  angular.module('eWaterCycleApp.help', ['eWaterCycleApp.utils']);
+  angular.module('eWaterCycleApp.helpModal', ['eWaterCycleApp.utils']);
 })();

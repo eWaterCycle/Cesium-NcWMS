@@ -4,7 +4,9 @@
     source: D3 example @ http://bl.ocks.org/rkirsling/33a9e350516da54a5d4f
   */
 
-  function CustomGraphController($scope, $window, $timeout, $http, d3Service, NcwmsService, Messagebus) {
+  function CustomGraphController($scope, $window, $timeout, $http, d3Service, NcwmsService, Messagebus, UserAgent) {
+    this.mobile = UserAgent.mobile;
+    
     this.selectedLabel = '';
     this.selectedUnits = '';
     this.selectedPalette = 'default';
