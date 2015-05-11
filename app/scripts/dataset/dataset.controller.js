@@ -8,7 +8,6 @@
       return NcwmsService.datasets;
     };
 
-<<<<<<< HEAD
     this.selectedDataset = 'default';
     Messagebus.subscribe('ncwmsDatasetSelected', function(event, value) {
       if (this.selectedDataset !== value) {
@@ -27,31 +26,16 @@
       Messagebus.publish('ncwmsUnitsChange', datasetForMap.units);
       Messagebus.publish('legendMinChange', datasetForMap.min);
       Messagebus.publish('legendMaxChange', datasetForMap.max);
+
+      // if (dataset.graphicalMin !== 0) {
+      //   Messagebus.publish('graphMinChange', dataset.graphicalMin);
+      //   Messagebus.publish('graphMaxChange', dataset.graphicalMax);
+      // } else {
+      //   Messagebus.publish('graphMinChange', dataset.min);
+      //   Messagebus.publish('graphMaxChange', dataset.max);
+      // }
     };
   }
-=======
-        this.selectDataset = function(dataset) {
-            Messagebus.publish('ncwmsDatasetSelected', dataset);
-
-            var datasetForMap = this.selectedDataset;
-            if (this.selectedDataset.statsGroup) {
-              datasetForMap = this.selectedDataset.datasetMean;
-            }
-
-            Messagebus.publish('ncwmsUnitsChange', datasetForMap.units);
-            Messagebus.publish('legendMinChange', datasetForMap.min);
-            Messagebus.publish('legendMaxChange', datasetForMap.max);
-
-            // if (dataset.graphicalMin !== 0) {
-            //   Messagebus.publish('graphMinChange', dataset.graphicalMin);
-            //   Messagebus.publish('graphMaxChange', dataset.graphicalMax);
-            // } else {
-            //   Messagebus.publish('graphMinChange', dataset.min);
-            //   Messagebus.publish('graphMaxChange', dataset.max);
-            // }
-        };
-    }
->>>>>>> 6310eab69eaa64d3fb0268aa52634c82bdfd9980
 
   angular.module('eWaterCycleApp.dataset').controller('DatasetController', DatasetController);
 })();
