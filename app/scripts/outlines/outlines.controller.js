@@ -9,6 +9,15 @@
 
     this.toggleOutlines = function() {
       this.outlines = !this.outlines;
+
+      if (this.outlines && !this.initialized) {
+        this.init();
+      } else if (this.initialized) {
+        this.values.forEach(function(entityValue) {
+          entityValue.polygon.show = new Cesium.ConstantProperty(this.outlines);
+        }.bind(this));
+      }
+
       Messagebus.publish('outlinesChange', this.outlines);
     };
 
@@ -45,10 +54,13 @@
               values.forEach(function(value) {
                 value.polygon.material = new Cesium.ColorMaterialProperty(interiorColor);
                 value.polygon.outlineColor = new Cesium.ColorMaterialProperty(outlineColor);
-                value.polygon.show = new Cesium.ConstantProperty(false);
+                value.polygon.show = new Cesium.ConstantProperty(true);
 
                 this.values.push(value);
               }.bind(this));
+
+              this.initialized = true;
+
             }.bind(this));
           }.bind(this));
         }.bind(this));

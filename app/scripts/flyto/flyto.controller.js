@@ -3,13 +3,22 @@
 
   function FlyToController($http, Messagebus, UserAgent) {
     this.mobile = UserAgent.mobile;
-    
+
     var me = this;
     this.selectedCountry = {};
 
     this.data = {
       'locations': {}
     };
+
+    Messagebus.subscribe('flyToCountryByName', function(event, value) {
+      me.data.locations.countries.forEach(function(country) {
+        if (country.name.common === value) {
+          this.selectCountry(country);
+          return;
+        }
+      }.bind(this));
+    }.bind(this));
 
     this.init = function() {
       // load JSON data

@@ -23,6 +23,8 @@
           'rightBottomLat': -1.5382920595787892,
           'rightBottomLon': 17.231038211799913
         });
+
+        Messagebus.publish('flyToCountryByName', 'DR Congo');
       }
 
       this.everClosed = true;

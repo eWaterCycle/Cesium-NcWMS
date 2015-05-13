@@ -50,6 +50,22 @@
       });
     });
 
+    Messagebus.subscribe('cesiumCoordinatesClicked', function(event, value) {
+      var ellipsoid = CesiumViewerService.viewer.scene.globe.ellipsoid;
+      var cartesian = ellipsoid.cartographicToCartesian(new Cesium.Cartographic(value.longitude, value.latitude, 0));
+
+      CesiumViewerService.viewer.entities.remove(this.marker);
+      this.marker = CesiumViewerService.viewer.entities.add({
+        position: cartesian,
+        billboard : {
+            image : 'images/magnifying-glass.png',
+            width : 64,
+            height : 64
+        }
+      });
+
+    }.bind(this));
+
     //Add eventlisteners for the timeline
     this.onTimelineScrub = function(e) {
       CesiumViewerService.clock.currentTime = e.timeJulian;
@@ -96,18 +112,6 @@
         }
       }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 
-/*
-      CesiumViewerService.viewer.handler.setInputAction(function(movement) {
-        var cartesian = CesiumViewerService.viewer.scene.camera.pickEllipsoid(movement.endPosition, ellipsoid);
-        if (cartesian) {
-          var cartographic = ellipsoid.cartesianToCartographic(cartesian);
-          label.show = true;
-          label.text = '(' + Cesium.Math.toDegrees(cartographic.longitude).toFixed(2) +
-            ', ' + Cesium.Math.toDegrees(cartographic.latitude).toFixed(2) + ')';
-          label.position = cartesian;
-        }
-      }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-*/
       CesiumViewerService.viewer.handler.setInputAction(function(singleclick) {
         var cartesian = CesiumViewerService.viewer.scene.camera.pickEllipsoid(singleclick.position, ellipsoid);
         if (cartesian) {
