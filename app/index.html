@@ -103,20 +103,8 @@
     <script src="scripts/logos/logos.directive.js"></script>
     <script src="scripts/projectlogo/projectlogo.directive.js"></script>
 
-    <!--
-    <script src="scripts/bargraph/bargraph.directive.js"></script>
-    <script src="scripts/bargraph/bargraph.controller.js"></script>
-    <script src="scripts/linegraph/linegraph.directive.js"></script>
-    <script src="scripts/linegraph/linegraph.controller.js"></script>
-    -->
     <script src="scripts/customgraph/customgraph.directive.js"></script>
     <script src="scripts/customgraph/customgraph.controller.js"></script>
-
-    <!--
-    <script src="scripts/wmsservice/wms.service.js"></script>
-    <script src="scripts/cesiumwmslayer/cesium.wms.layer.controller.js"></script>
-    <script src="scripts/cesiumwmslayer/cesium.wms.layer.directive.js"></script>
-    -->
 
     <script src="scripts/help/help.directive.js"></script>
     <script src="scripts/help/help.controller.js"></script>
@@ -133,17 +121,14 @@
         <li><cesium-viewmodel-dropdown-directive></cesium-viewmodel-dropdown-directive></li>
         <li><dataset-directive></dataset-directive></li>
         <li><palette-dropdown-directive></palette-dropdown-directive></li>
-        <li><logarithmic-toggle-directive></logarithmic-toggle-directive></li>
-        <li><terrain-toggle-directive></terrain-toggle-directive></li>
+        <li><logarithmic-toggle-directive activated="true"></logarithmic-toggle-directive></li>
+        <li><terrain-toggle-directive activated="false"></terrain-toggle-directive></li>
         <li><outlines-toggle-directive></outlines-toggle-directive></li>
         <li><help-directive></help-directive></li>
     </ul>
 
-    <!-- <linegraph-directive></linegraph-directive> -->
-    <customgraph-directive activated="false" class="customgraph1"></customgraph-directive>
-    <customgraph-directive activated="false" class="customgraph2"></customgraph-directive>
+    <customgraph-directive activated="true" class="customgraph1"></customgraph-directive>
 
-    <!-- <bargraph-directive></bargraph-directive> -->
     <big-legend-directive></big-legend-directive>
     <logo-box-directive></logo-box-directive>
 
@@ -151,8 +136,5 @@
     <cesium-ncwms-layer-directive></cesium-ncwms-layer-directive>
 
     <help-modal-directive></help-modal-directive>
-
-    <!-- <cesium-wms-layer-directive></cesium-wms-layer-directive> -->
-
 </body>
 </html>

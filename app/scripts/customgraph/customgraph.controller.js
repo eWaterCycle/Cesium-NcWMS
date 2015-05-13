@@ -6,7 +6,7 @@
 
   function CustomGraphController($scope, $window, $timeout, $http, d3Service, NcwmsService, Messagebus, UserAgent) {
     this.mobile = UserAgent.mobile;
-    
+
     this.selectedLabel = '';
     this.selectedUnits = '';
     this.selectedPalette = 'default';
@@ -16,7 +16,7 @@
     this.followglobalSelectedDataset = true;
     this.activated = $scope.activated;
     this.logarithmic = false;
-    this.errorMessage = 'test 123';
+    this.errorMessage = 'please click a point with data';
 
     this.setSelections = function() {
       if (this.followglobalSelectedDataset) {

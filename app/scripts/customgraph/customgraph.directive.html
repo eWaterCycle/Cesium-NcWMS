@@ -1,7 +1,8 @@
 <div ng-hide='customgraph.mobile' class="customgraphContainer">
   <div class="interface-visible interface-clickable" >
-    <button ng-click="customgraph.toggleActivated()" class="icon-big graph-icon" ng-class="{active: customgraph.activated}" title="Graph"></button>
+    <!-- <button ng-click="customgraph.toggleActivated()" class="icon-big graph-icon" ng-class="{active: customgraph.activated}" title="Graph"></button> -->
     <div ng-show="customgraph.activated">
+      <!--
       <a data-toggle="dropdown" class="ontop-dropdown" href="#">{{ customgraph.selectedLabel }} <b class="caret"></b></a>
       <ul class="dropdown-menu customgraph-dropdown-menu" role="menu">
         <li>
@@ -12,6 +13,7 @@
         </li>
       </ul>
       <div class="customgraph-log-div">log? <input type="checkbox" ng-model="customgraph.logarithmic" ng-change="customgraph.toggleLogarithmic()"></div>
+      -->
       <div class="customgraph-err-div">{{customgraph.errorMessage}}</div>
     </div>
   </div>

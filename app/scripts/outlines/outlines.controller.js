@@ -4,23 +4,14 @@
   function OutlinesController($scope, $http, Cesium, CesiumViewerService, Messagebus, UserAgent) {
     this.mobile = UserAgent.mobile;
     this.outlines = false;
+    this.initialized = false;
     this.values = [];
 
     this.toggleOutlines = function() {
       this.outlines = !this.outlines;
       Messagebus.publish('outlinesChange', this.outlines);
     };
-    /*
-            // Set watcher for change
-            $scope.$watch('ol.outlines', function(newValue, oldValue) {
-                if (newValue === oldValue) {
-                    //Initialization, so we ignore this event.
-                } else {
-                    this.outlines = newValue;
-                    Messagebus.publish('outlinesChange', newValue);
-                }
-            }.bind(this));
-    */
+
     Messagebus.subscribe('outlinesChange', function(event, value) {
       this.values.forEach(function(entityValue) {
         entityValue.polygon.show = new Cesium.ConstantProperty(value);
@@ -28,6 +19,10 @@
 
       if (value !== this.outlines) {
         this.outlines = value;
+
+        if (this.outlines && !this.initialized) {
+          this.init();
+        }
       }
     }.bind(this));
 
@@ -59,8 +54,6 @@
         }.bind(this));
       }.bind(this));
     };
-
-    this.init();
   }
 
   angular.module('eWaterCycleApp.outlines').controller('OutlinesController', OutlinesController);

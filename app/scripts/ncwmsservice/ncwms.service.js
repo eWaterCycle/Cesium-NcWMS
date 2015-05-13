@@ -137,13 +137,6 @@
             Messagebus.publish('legendMaxChange', datasetForMap.max);
 
             Messagebus.publish('logarithmicChange', true);
-            // if (this.datasets[0].graphicalMin !== 0) {
-            //   Messagebus.publish('graphMinChange', this.datasets[0].graphicalMin);
-            //   Messagebus.publish('graphMaxChange', this.datasets[0].graphicalMax);
-            // } else {
-            //   Messagebus.publish('graphMinChange', this.datasets[0].min);
-            //   Messagebus.publish('graphMaxChange', this.datasets[0].max);
-            // }
 
             deferred.resolve();
             this.initialized = true;
@@ -302,26 +295,36 @@
         throw new Error('No XML parser found');
       }
 
+      function trimSpace(val) {
+          var lines = val.split('\n');
+          var out='';
+          for(var i = 0;i < lines.length;i++){
+              out += lines[i].trim();
+          }
+          return out;
+      }
+
       $q.all(httpRequestPromises).then(function(res) {
         var graphInfo = [];
 
         res.forEach(function(individualResolve) {
-          var xml = parseXml(individualResolve.data);
+          var strippedString = trimSpace(individualResolve.data);
+          var xml = parseXml(strippedString);
 
           var timeHTML = xml.getElementsByTagName('time')[0];
           var time;
           if (timeHTML !== undefined) {
-            time = timeHTML.innerHTML;
+            time = timeHTML.textContent;
           }
           var valueHTML = xml.getElementsByTagName('value')[0];
           var value;
           if (valueHTML !== undefined) {
-            value = valueHTML.innerHTML;
+            value = valueHTML.textContent;
           }
           var errorHTML = xml.getElementsByTagName('value')[1];
           var error;
           if (errorHTML !== undefined) {
-            error = errorHTML.innerHTML;
+            error = errorHTML.textContent;
           } else {
             error = 0;
           }
@@ -329,12 +332,12 @@
           var resLatHTML = xml.getElementsByTagName('latitude')[0];
           var resLat;
           if (resLatHTML !== undefined) {
-            resLat = resLatHTML.innerHTML;
+            resLat = resLatHTML.textContent;
           }
           var resLonHTML = xml.getElementsByTagName('longitude')[0];
           var resLon;
           if (resLonHTML !== undefined) {
-            resLon = resLonHTML.innerHTML;
+            resLon = resLonHTML.textContent;
           }
 
           if (time !== undefined && value !== undefined && error !== undefined && resLat !== undefined && resLon !== undefined) {
