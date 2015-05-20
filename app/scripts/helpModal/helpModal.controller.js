@@ -16,15 +16,15 @@
     this.onClose = function() {
       if (!this.everClosed) {
         Messagebus.publish('cesiumCoordinatesClicked', {
-          'latitude': -0.04430155381687794,
-          'longitude': 0.2832850578129212,
-          'leftTopLat': -3.5382920595787892,
-          'leftTopLon': 15.231038211799913,
-          'rightBottomLat': -1.5382920595787892,
-          'rightBottomLon': 17.231038211799913
+          'latitude': 0.3743970603556857,
+          'longitude':1.6634872646065932,
+          'leftTopLat': 20.451371420485543,
+          'leftTopLon': 94.3107995357198,
+          'rightBottomLat': 22.451371420485543,
+          'rightBottomLon': 96.3107995357198
         });
 
-        Messagebus.publish('flyToCountryByName', 'DR Congo');
+        Messagebus.publish('flyToCountryByName', 'Myanmar');
       }
 
       this.everClosed = true;
