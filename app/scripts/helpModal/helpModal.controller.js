@@ -28,7 +28,7 @@
       }
 
       this.everClosed = true;
-    }
+    };
   }
 
   angular.module('eWaterCycleApp.helpModal').controller('HelpModalController', HelpModalController);
