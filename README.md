@@ -1,6 +1,7 @@
 Cesium-NcWMS
 ============
 
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.60031.svg)](http://dx.doi.org/10.5281/zenodo.60031)
 [![Build Status](https://travis-ci.org/NLeSC/Cesium-NcWMS.svg?branch=master)](https://travis-ci.org/NLeSC/Cesium-NcWMS)
 [![Code Climate](https://codeclimate.com/github/NLeSC/Cesium-NcWMS/badges/gpa.svg)](https://codeclimate.com/github/NLeSC/Cesium-NcWMS)
 [![Test Coverage](https://codeclimate.com/github/NLeSC/Cesium-NcWMS/badges/coverage.svg)](https://codeclimate.com/github/NLeSC/Cesium-NcWMS)
