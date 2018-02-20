@@ -49,5 +49,6 @@
     "test": "grunt test"
   },
   "dependencies": {
+    "grunt-cli": "^1.2.0"
   }
 }

@@ -1,5 +1,5 @@
 <div ng-hide='vm.mobile' class="interface-visible interface-clickable ewa-dropdown">
-    <a data-toggle="dropdown" href="#">{{ vm.viewmodel }} <b class="caret"></b></a>
+    <a data-toggle="dropdown" class="ewa-menu-href" href="#">{{ vm.viewmodel }} <b class="caret ewa-menu-href"></b></a>
     <ul class="dropdown-menu" role="menu">
         <li ng-repeat="choice in vm.data.viewmodels">
             <a ng-click=vm.selectViewmodel(choice)>{{choice}}</a>

@@ -3,6 +3,7 @@
 
   //Tying it all together
   angular.module('eWaterCycleApp', [
+    'ui.router',
     'ui.bootstrap',
 
     //Modules dependent on ncwms
