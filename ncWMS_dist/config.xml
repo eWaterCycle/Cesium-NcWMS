@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config>
+    <datasets>
+        <dataset id="1" title="forecast" location="/data/discharge/" queryable="
+true" dataReaderClass="" copyrightStatement="" moreInfo="" disabled="false" upda
+teInterval="30" metadataUrl="" metadataDesc="" metadataMimetype="">
+            <variables/>
+        </dataset>
+    </datasets>
+    <dynamicServices/>
+    <contact>
+        <name></name>
+        <organization></organization>
+        <telephone></telephone>
+        <email></email>
+    </contact>
+    <server>
+        <title>ncWMS Server</title>
+        <allowFeatureInfo>true</allowFeatureInfo>
+        <maxImageWidth>1024</maxImageWidth>
+        <maxImageHeight>1024</maxImageHeight>
+        <abstract></abstract>
+        <keywords></keywords>
+        <url></url>
+        <allowglobalcapabilities>true</allowglobalcapabilities>
+    </server>
+    <cache enabled="false">
+        <inMemorySizeMB>256</inMemorySizeMB>
+        <elementLifetimeMinutes>0.0</elementLifetimeMinutes>
+    </cache>
+</config>

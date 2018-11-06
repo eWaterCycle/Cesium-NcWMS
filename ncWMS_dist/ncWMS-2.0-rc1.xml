@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context>
+    <Parameter name="configDir" value="/root/.ncWMS-2.0-rc1" override="false"/>
+    <!-- <Parameter name="paletteDirs" value="$HOME/.ncWMS2-testserver/palettes" override="false"/>
+    <Parameter name="styleDirs" value="$HOME/.ncWMS2-testserver/styles" override="false"/>
+    <Parameter name="defaultPalette" value="[whatever]" override="false"/>
+    <Parameter name="advertisedPalettes" value="[whatever]" override="false"/> -->
+</Context>

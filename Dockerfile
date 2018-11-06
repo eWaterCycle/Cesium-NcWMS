@@ -18,14 +18,8 @@ RUN apt-get upgrade -y
 RUN apt-get install -y \
     git \
     ssh \
-    rsync \
-    curl \
-    wget \
-    python3 \
-    python3-pip \
-    cmake \
+    libpng* \
     build-essential \
-    libsqlite3-dev \
     locales
 
 # Generic stuff
@@ -36,9 +30,6 @@ ENV LANG='en_US.UTF-8' LC_ALL='en_US.UTF-8'
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 RUN apt-get install -y nodejs
 RUN npm install -g bower grunt-cli
-
-# environment
-ENV PYTHON_HOME /usr/lib/python3
 
 # make barebones
 RUN mkdir /src
@@ -63,4 +54,14 @@ RUN cp /src/Cesium-NcWMS/ncWMS_dist/ncWMS-2.0-rc1.war $CATALINA_HOME/webapps/
 COPY tomcat_conf/tomcat-users.xml $CATALINA_HOME/conf/
 COPY tomcat_conf/manager.xml $CATALINA_HOME/conf/Catalina/localhost/
 
-RUN echo "{	\"id\": \"ncWMS\", \"url\": \"http://localhost:8080/ncWMS-2.0-rc1/wms?\" }" > app/serverconfig.json
+WORKDIR $CATALINA_HOME/webapps/ROOT
+RUN echo "{	\"id\": \"ncWMS\", \"url\": \"http://localhost:8080/ncWMS-2.0-rc1/wms?\" }" > serverconfig.json
+
+WORKDIR $CATALINA_HOME
+# CMD ["catalina.sh", "run"]
+
+# copy the ncWMS config
+RUN mkdir /root/.ncWMS-2.0-rc1/
+COPY ncWMS_dist/config.xml /root/./root/.ncWMS-2.0-rc1/
+
+EXPOSE 8080
