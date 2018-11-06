@@ -5,3 +5,4 @@ dist
 bower_components
 coverage
 scripts/serverconfig.json
+package-lock.json
