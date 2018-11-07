@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <config>
     <datasets>
-        <dataset id="1" title="forecast" location="/data/discharge/" queryable="
-true" dataReaderClass="" copyrightStatement="" moreInfo="" disabled="false" upda
-teInterval="30" metadataUrl="" metadataDesc="" metadataMimetype="">
+        <dataset id="1" title="forecast" location="/data/discharge/dischargeEns.nc" queryable="true" dataReaderClass="" copyrightStatement="" moreInfo="" disabled="false" updateInterval="30" metadataUrl="" metadataDesc="" metadataMimetype="">
             <variables/>
         </dataset>
     </datasets>
@@ -20,7 +18,6 @@ teInterval="30" metadataUrl="" metadataDesc="" metadataMimetype="">
         <maxImageWidth>1024</maxImageWidth>
         <maxImageHeight>1024</maxImageHeight>
         <abstract></abstract>
-        <keywords></keywords>
         <url></url>
         <allowglobalcapabilities>true</allowglobalcapabilities>
     </server>

@@ -128,7 +128,7 @@
           this.render(this.data);
         }.bind(this));
 
-        var parseISO = d3.time.format.utc('%Y-%m-%dT%H:%M:%S.%L%Z').parse;
+        var parseISO = d3.time.format.utc('%Y-%m-%dT%H:%M:%S.%LZ').parse;
 
         this.getFeatureInfoSeriesCallbackSuccess = function(graphInfo) {
           this.data = graphInfo.map(function(d) {

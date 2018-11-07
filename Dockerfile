@@ -43,6 +43,16 @@ RUN bower install --allow-root
 RUN npm install
 RUN grunt build
 
+# copy the ncWMS config
+RUN mkdir /root/.ncWMS-edal/
+COPY ncWMS_dist/config.xml /root/.ncWMS-edal/
+RUN chmod 444 /root/.ncWMS-edal/config.xml
+
+# (temporarily) copy data file to correct dir
+RUN mkdir /data/
+RUN mkdir /data/discharge/
+COPY data/dischargeEns.nc /data/discharge/
+
 # copy the built webapp to the proper tomcat dir
 RUN rm -rf $CATALINA_HOME/webapps/ROOT
 RUN cp -r dist/ $CATALINA_HOME/webapps/ROOT/
@@ -55,13 +65,7 @@ COPY tomcat_conf/tomcat-users.xml $CATALINA_HOME/conf/
 COPY tomcat_conf/manager.xml $CATALINA_HOME/conf/Catalina/localhost/
 
 WORKDIR $CATALINA_HOME/webapps/ROOT
-RUN echo "{	\"id\": \"ncWMS\", \"url\": \"http://localhost:8080/ncWMS-2.0-rc1/wms?\" }" > serverconfig.json
+COPY tomcat_conf/serverconfig.json serverconfig.json
 
 WORKDIR $CATALINA_HOME
-# CMD ["catalina.sh", "run"]
-
-# copy the ncWMS config
-RUN mkdir /root/.ncWMS-2.0-rc1/
-COPY ncWMS_dist/config.xml /root/./root/.ncWMS-2.0-rc1/
-
 EXPOSE 8080
