@@ -51,7 +51,6 @@ RUN chmod 444 /root/.ncWMS-edal/config.xml
 # (temporarily) copy data file to correct dir
 RUN mkdir /data/
 RUN mkdir /data/discharge/
-COPY data/dischargeEns.nc /data/discharge/
 
 # copy the built webapp to the proper tomcat dir
 RUN rm -rf $CATALINA_HOME/webapps/ROOT
